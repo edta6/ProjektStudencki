@@ -1,0 +1,1 @@
+Początek uzywania GitHub
