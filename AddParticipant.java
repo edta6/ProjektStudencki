@@ -10,14 +10,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -41,6 +37,7 @@ public class AddParticipant extends Stage {
     private VBox Main;
     private RestrictiveTextField NamePar, LastNamePar;
     private Button addParButton, vievButton, editButton, addButton, closeButton;
+    private CheckBox active; 
     private Text gridAddTitle; 
     private Label Year, UserNumber, lNamePar, lLastNamePar;
     int userID; 
@@ -98,15 +95,24 @@ public class AddParticipant extends Stage {
         LastNamePar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
         gridAdd.add(LastNamePar, 1, 3);
         
+        active = new CheckBox();
+        active.setText("Aktywny");
+        active.setSelected(true);
+        gridAdd.add(active, 1, 4);
+        
         addParButton = new Button("Potwierdź");
         addParButton.setMinWidth(100);
         addParButton.setId("addParButton");
-        gridAdd.add(addParButton, 0, 4, 2, 1);
+        gridAdd.add(addParButton, 0, 5, 2, 1);
         
         addParButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
             addParcitipants();
+            getUserId();
+            refresh();
+            NamePar.clear();
+            LastNamePar.clear();
             }
         });
     }
@@ -193,8 +199,7 @@ public class AddParticipant extends Stage {
             
             rs.next();
        
-            result=rs.getInt(1);
-              
+            result=rs.getInt(1);      
         }  
         
         catch (SQLException ex) {
