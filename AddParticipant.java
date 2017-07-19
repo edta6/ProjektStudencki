@@ -8,22 +8,30 @@ package testowa;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  *
@@ -36,79 +44,221 @@ public class AddParticipant extends Stage {
     
     private Scene SceneParticipant;
     private BorderPane borderPane;
-    private GridPane gridAdd;
-    private HBox hbGridAddTitle, hbuttonMenu;
+    private GridPane gridAdd, gridUpdate;
+    private HBox hbGridAddTitle, hbuttonMenu, hbGridAddParButton, hbGridUpdateComBoxPar;
     private VBox Main;
     private RestrictiveTextField NamePar, LastNamePar;
     private Button addParButton, vievButton, editButton, addButton, closeButton;
+    private ComboBox participant;
+    private CheckBox active; 
     private Text gridAddTitle; 
     private Label Year, UserNumber, lNamePar, lLastNamePar;
+    private EventHandler key;
+    private ObservableList<ParticipantData> data;
     int userID; 
     
     public AddParticipant() {
         
        prepareScene();
-       prepareGridPaneAdd();
+       createItem();
        
        borderPane = new BorderPane();
        borderPane.setTop(hbuttonMenu);
        borderPane.setCenter(Main);
         
-       SceneParticipant = new Scene(borderPane, 400, 300);
+       SceneParticipant = new Scene(borderPane, 400, 400);
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);
        setTitle("Add Participant");    
     }
     
+    private void createItem() {
+        
+        gridAddTitle = new Text();
+        gridAddTitle.setId("gridAddTitle");
+        hbGridAddTitle = new HBox();
+        hbGridAddTitle.setId("hbGridAddTitle");
+        hbGridAddTitle.getChildren().add(gridAddTitle);
+         
+        Year = new Label();
+        Year.setId("YearUserNumber");
+        UserNumber = new Label();
+        UserNumber.setId("YearUserNumber");
+        
+        lNamePar = new Label("Imię: ");
+        lNamePar.setId("lNamePar");
+        
+        NamePar = new RestrictiveTextField();
+        NamePar.setMaxLength(15);
+        NamePar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
+        
+        lLastNamePar = new Label("Nazwisko: ");
+        lLastNamePar.setId("lNamePar");
+        
+        LastNamePar = new RestrictiveTextField();
+        LastNamePar.setMaxLength(20);
+        LastNamePar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
+        
+        active = new CheckBox();
+        active.setId("lNamePar");
+    }
+    
+    /**
+     *  Funkcja prepareGridPaneAdd przygotowuje okno, które 
+     *  pozwala dodać osobę do bazy danych, ma w sobie
+     *  Listener, który blokuje dodanie samego nazwiska lub imienia,
+     *  można dodać osobę za pomocą przycisku addParButton lub poprzez 
+     *  naciśnięcie ENTER.
+     * 
+     *  Głównym zarządcą jest GridPane, w którym są umieszczone wszystkie 
+     *  elementy. 
+     *  GridPane jest dzieckiem BorderPane umieszczonym 
+     *  w Centrum BorderPane.
+     */
     private void prepareGridPaneAdd(){
         
         gridAdd = new GridPane();
         gridAdd.setId("gridAdd");
         
-        gridAddTitle = new Text("Dodaj Uczestnika");
-        gridAddTitle.setId("gridAddTitle");
-        hbGridAddTitle = new HBox();
-        hbGridAddTitle.setId("hbGridAddTitle");
-        hbGridAddTitle.getChildren().add(gridAddTitle);
+        gridAddTitle.setText("Dodaj Uczestnika");
         gridAdd.add(hbGridAddTitle, 0, 0, 2, 1); 
         
-        Year = new Label();
-        Year.setId("YearUserNumber");
         gridAdd.add(Year, 0, 1);
-        UserNumber = new Label();
-        UserNumber.setId("YearUserNumber");
         gridAdd.add(UserNumber, 1, 1);
            
-        lNamePar = new Label("Imię: ");
-        lNamePar.setId("lNamePar");
         gridAdd.add(lNamePar, 0, 2);
         
-        NamePar = new RestrictiveTextField();
-        NamePar.setMaxLength(15);
-        NamePar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
         gridAdd.add(NamePar, 1, 2);
-       
-        lLastNamePar = new Label("Nazwisko: ");
-        lLastNamePar.setId("lNamePar");
-        gridAdd.add(lLastNamePar, 0, 3);
         
-        LastNamePar = new RestrictiveTextField();
-        LastNamePar.setMaxLength(20);
-        LastNamePar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
+        NamePar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                String first_name =  LastNamePar.getText();
+               
+                if(t1.equals("") || first_name.equals("")) 
+                    addParButton.setDisable(true);
+                else {
+                    addParButton.setDisable(false);
+                    LastNamePar.setOnKeyPressed(key);
+                    NamePar.setOnKeyPressed(key);
+                }                    
+            }
+        }); 
+       
+        gridAdd.add(lLastNamePar, 0, 3);
         gridAdd.add(LastNamePar, 1, 3);
+        
+        LastNamePar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                String first_name =  NamePar.getText();
+               
+                if(t1.equals("") || first_name.equals("")) 
+                    addParButton.setDisable(true);
+                else {
+                    addParButton.setDisable(false);
+                    LastNamePar.setOnKeyPressed(key);
+                    NamePar.setOnKeyPressed(key);
+                }     
+            }
+        }); 
+        
+        active.setText("Aktywny");
+        active.setSelected(true);
+        gridAdd.add(active, 1, 4);
         
         addParButton = new Button("Potwierdź");
         addParButton.setMinWidth(100);
         addParButton.setId("addParButton");
-        gridAdd.add(addParButton, 0, 4, 2, 1);
+        addParButton.setDisable(true);
         
+        hbGridAddParButton = new HBox();
+        hbGridAddParButton.setId("hbGridAddTitle");
+        hbGridAddParButton.getChildren().add(addParButton);
+        gridAdd.add(hbGridAddParButton, 0, 5, 2, 1);
+                
         addParButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            addParcitipants();
+                addParcitipants();
+                getUserId();
+                refresh();
+                NamePar.clear();
+                LastNamePar.clear();
             }
         });
+        
+        key = new EventHandler<KeyEvent>(){
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ENTER) {
+                    addParcitipants();
+                    getUserId();
+                    refresh();
+                    NamePar.clear();
+                    LastNamePar.clear();
+                }
+            }
+        };        
+    }
+    
+    private void prepareGridPaneUpdate() {
+        
+        refreshCombo();
+        
+        gridUpdate = new GridPane();
+        gridUpdate.setId("gridAdd");
+        
+        gridAddTitle.setText("Zmień Dane Uczestnika");
+        gridUpdate.add(hbGridAddTitle, 0, 0, 2, 1);
+        
+        
+        participant = new ComboBox(data);
+        //participant.getSelectionModel().selectFirst();
+        
+        participant.setCellFactory(new Callback<ListView<ParticipantData>,ListCell<ParticipantData>>(){
+ 
+            @Override
+            public ListCell<ParticipantData> call(ListView<ParticipantData> p) {
+                 
+                final ListCell<ParticipantData> cell = new ListCell<ParticipantData>(){
+ 
+                    @Override
+                    protected void updateItem(ParticipantData t, boolean bln) {
+                        super.updateItem(t, bln);
+                         
+                        if(t != null){
+                            setText(t.first_name + " " + t.last_name);
+                        }else{
+                            setText(null);
+                        }
+                    }
+  
+                };
+                 
+                return cell;
+            }
+        });
+        
+        hbGridUpdateComBoxPar = new HBox();
+        hbGridUpdateComBoxPar.getChildren().add(participant);
+        
+        gridUpdate.add(hbGridUpdateComBoxPar, 0, 1, 2, 1);
+       
+        gridUpdate.add(Year, 0, 2);
+        gridUpdate.add(UserNumber, 1, 2);
+           
+        gridUpdate.add(lNamePar, 0, 3);
+        
+        gridUpdate.add(NamePar, 1, 3);
+        
+        gridUpdate.add(lLastNamePar, 0, 4);
+        gridUpdate.add(LastNamePar, 1, 4);
+        
+        gridUpdate.add(active, 1, 5);
     }
     
     private void prepareScene(){
@@ -142,15 +292,17 @@ public class AddParticipant extends Stage {
         
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) { 
+            public void handle(ActionEvent event) {
+            prepareGridPaneAdd();    
             borderPane.setCenter(gridAdd);
             }
         });
        
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {    
-            borderPane.setCenter(gridAdd);
+            public void handle(ActionEvent event) {   
+            prepareGridPaneUpdate();    
+            borderPane.setCenter(gridUpdate);
             }
         });
         
@@ -193,8 +345,7 @@ public class AddParticipant extends Stage {
             
             rs.next();
        
-            result=rs.getInt(1);
-              
+            result=rs.getInt(1);      
         }  
         
         catch (SQLException ex) {
@@ -208,7 +359,16 @@ public class AddParticipant extends Stage {
 
     private void addParcitipants() {
         
+        int statusActive;
+        
+        if(active.isSelected()) 
+            statusActive = 0;
+        else 
+            statusActive = 1;
+        
+        
         int id_part = userID;
+        
         String first_name =  NamePar.getText();
         String last_name  =  LastNamePar.getText();
         
@@ -218,7 +378,7 @@ public class AddParticipant extends Stage {
             
             String addRow = "Insert Into participants (id_part, first_name, last_name, active)"
                           + " Values (" + id_part + ",'" + first_name + "','" 
-                          + last_name + "',0)";
+                          + last_name + "'," + statusActive + ")";
             
            st.executeUpdate(addRow);
             
@@ -226,4 +386,32 @@ public class AddParticipant extends Stage {
           
         }
     }
+    
+    public void refreshCombo() {                                              
+  
+        data = FXCollections.observableArrayList();
+            
+        try {
+        
+            st = db.con.createStatement();
+            
+            String query = "SELECT id_part, first_name, last_name, active FROM participants";
+      
+            ResultSet rs = st.executeQuery(query);
+        
+            while (rs.next()){
+                ParticipantData unit = new ParticipantData(
+                        rs.getInt("id_part"), 
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getInt("active")
+                );
+                data.add(unit); 
+            }
+                     
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    } 
+    
 }

@@ -1,0 +1,84 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2017-07-12, 22:17:42
+    Author     : Andrzej Pawlik
+*/
+
+
+#gridAdd {
+    -fx-hgap: 20px;
+    -fx-vgap: 20px;
+    -fx-padding: 10 40 10 40;
+    -fx-grid-lines-visible: false;
+    -fx-background-color: #e6e6fb;
+}
+
+#gridAddTitle {
+       -fx-font-size: 20px;
+       -fx-font-family: "Arial Black";
+}
+
+#hbGridAddTitle {
+    -fx-alignment: center;
+    -fx-border-color: #330033;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 10 0;
+    -fx-border-style: solid;
+}
+
+#YearUserNumber {
+    -fx-font-size:   16px;
+    -fx-font-family: "Arial Black";
+    -fx-padding: 0 10 0 10;
+}
+
+#lNamePar {
+    -fx-font-size:   14px;
+    -fx-font-family: "Arial Black";
+    -fx-padding: 0 30 0 25;
+    -fx-text-fill:   #000000;    
+}
+
+#addParButton {
+    -fx-background-color: 
+        #3c7fb1,
+        linear-gradient(#fafdfe, #e8f5fc),
+        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 2 20 2 20;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-border-color: black; 
+    -fx-border-width: 1 0.5 1 0.5;
+    -fx-font-weight: bold;
+    -fx-alignment: center;   
+}
+
+// Definicje stylu przycisków na gorze okienka.
+#hbuttonMenu {
+    -fx-background-color: 
+        #3c7fb1,
+        linear-gradient(#fafdfe, #e8f5fc),
+        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);
+    -fx-padding: 3 0 3 0;
+}
+
+#windows7-default {
+    -fx-background-color: 
+        #3c7fb1,
+        linear-gradient(#fafdfe, #e8f5fc),
+        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 2 20 2 20;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-border-color: black; 
+    -fx-border-width: 1 0.5 1 0.5;
+    -fx-font-weight: bold;
+}
