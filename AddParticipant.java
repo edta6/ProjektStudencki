@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -55,6 +57,7 @@ public class AddParticipant extends Stage {
     private Label Year, UserNumber, lNamePar, lLastNamePar;
     private EventHandler key;
     private ObservableList<ParticipantData> data;
+    private ListProperty<ParticipantData> listData;
     int userID; 
     
     public AddParticipant() {
@@ -185,7 +188,8 @@ public class AddParticipant extends Stage {
             public void handle(ActionEvent event) {
                 addParcitipants();
                 getUserId();
-                refresh();
+                userID = getUserId();
+                refresh(userID);
                 NamePar.clear();
                 LastNamePar.clear();
             }
@@ -197,7 +201,8 @@ public class AddParticipant extends Stage {
                 if (ke.getCode() == KeyCode.ENTER) {
                     addParcitipants();
                     getUserId();
-                    refresh();
+                    userID = getUserId();
+                    refresh(userID);
                     NamePar.clear();
                     LastNamePar.clear();
                 }
@@ -214,7 +219,6 @@ public class AddParticipant extends Stage {
         
         gridAddTitle.setText("Zmień Dane Uczestnika");
         gridUpdate.add(hbGridAddTitle, 0, 0, 2, 1);
-        
         
         participant = new ComboBox(data);
         //participant.getSelectionModel().selectFirst();
@@ -243,6 +247,13 @@ public class AddParticipant extends Stage {
             }
         });
         
+        participant.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ParticipantData>() {           
+            @Override
+            public void changed(ObservableValue<? extends ParticipantData> ov, ParticipantData t, ParticipantData t1) {
+                comboRefresh();
+            }
+        }); 
+        
         hbGridUpdateComBoxPar = new HBox();
         hbGridUpdateComBoxPar.getChildren().add(participant);
         
@@ -260,6 +271,22 @@ public class AddParticipant extends Stage {
         
         gridUpdate.add(active, 1, 5);
     }
+    
+    private void comboRefresh() {
+        
+        int ItemId;
+
+        ItemId =   participant.getSelectionModel().getSelectedIndex();
+        
+        NamePar.setText(data.get(ItemId).first_name);
+        LastNamePar.setText(data.get(ItemId).last_name);
+        
+        int itemID = data.get(ItemId).id_part;
+        
+        refresh(itemID);
+        
+    }
+    
     
     private void prepareScene(){
        
@@ -293,6 +320,10 @@ public class AddParticipant extends Stage {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+            userID = getUserId();
+            refresh(userID);
+            NamePar.clear();
+            LastNamePar.clear();
             prepareGridPaneAdd();    
             borderPane.setCenter(gridAdd);
             }
@@ -300,7 +331,9 @@ public class AddParticipant extends Stage {
        
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {   
+            public void handle(ActionEvent event) { 
+            int first = 1;
+            refresh(first);
             prepareGridPaneUpdate();    
             borderPane.setCenter(gridUpdate);
             }
@@ -317,12 +350,10 @@ public class AddParticipant extends Stage {
        Main.getChildren().addAll();         
     }
     
-    public void refresh() {
-        
-        userID = getUserId();
-        
-        int yearUserID = userID/10000;
-        int numberUserID=(userID/10)-(yearUserID*1000); 
+    public void refresh(int userId) {
+         
+        int yearUserID = userId/10000;
+        int numberUserID=(userId/10)-(yearUserID*1000); 
         
         String year = "Rok: ";
         String number = "Numer: ";
@@ -331,7 +362,7 @@ public class AddParticipant extends Stage {
         UserNumber.setText(number + Integer.toString(numberUserID));        
     }
     
-    private int getUserId() {
+    public int getUserId() {
         
         int result = 0;
         
@@ -412,6 +443,9 @@ public class AddParticipant extends Stage {
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        listData = new SimpleListProperty<>();
+        listData.set(data);
     } 
     
 }
