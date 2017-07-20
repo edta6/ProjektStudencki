@@ -18,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -30,6 +31,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -54,10 +56,9 @@ public class AddParticipant extends Stage {
     private ComboBox participant;
     private CheckBox active; 
     private Text gridAddTitle; 
-    private Label Year, UserNumber, lNamePar, lLastNamePar;
+    private Label Year, UserNumber, lNamePar, lLastNamePar, lParticipant;
     private EventHandler key;
     private ObservableList<ParticipantData> data;
-    private ListProperty<ParticipantData> listData;
     int userID; 
     
     public AddParticipant() {
@@ -221,7 +222,7 @@ public class AddParticipant extends Stage {
         gridUpdate.add(hbGridAddTitle, 0, 0, 2, 1);
         
         participant = new ComboBox(data);
-        //participant.getSelectionModel().selectFirst();
+        participant.setMinWidth(200);
         
         participant.setCellFactory(new Callback<ListView<ParticipantData>,ListCell<ParticipantData>>(){
  
@@ -254,37 +255,65 @@ public class AddParticipant extends Stage {
             }
         }); 
         
+        
+        lParticipant = new Label("Wybierz: ");
         hbGridUpdateComBoxPar = new HBox();
-        hbGridUpdateComBoxPar.getChildren().add(participant);
+        hbGridUpdateComBoxPar.getChildren().addAll(lParticipant, participant);
         
         gridUpdate.add(hbGridUpdateComBoxPar, 0, 1, 2, 1);
        
         gridUpdate.add(Year, 0, 2);
         gridUpdate.add(UserNumber, 1, 2);
            
-        gridUpdate.add(lNamePar, 0, 3);
-        
+        gridUpdate.add(lNamePar, 0, 3);        
         gridUpdate.add(NamePar, 1, 3);
         
-        gridUpdate.add(lLastNamePar, 0, 4);
+        StackPane stack = new StackPane();
+        stack.getChildren().add(lLastNamePar);
+        stack.setMinWidth(130);
+        gridUpdate.add(stack, 0, 4);
         gridUpdate.add(LastNamePar, 1, 4);
         
         gridUpdate.add(active, 1, 5);
+        
+        active.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
+                        
+                    if(active.isSelected()){
+                        active.setText("Aktywny");
+                    }
+                    else {
+                        active.setText("Nieaktywny");
+                    }        
+                }
+            });        
     }
     
     private void comboRefresh() {
         
         int ItemId;
+        int activeStatus;
 
-        ItemId =   participant.getSelectionModel().getSelectedIndex();
-        
-        NamePar.setText(data.get(ItemId).first_name);
-        LastNamePar.setText(data.get(ItemId).last_name);
+        ItemId = participant.getSelectionModel().getSelectedIndex();
         
         int itemID = data.get(ItemId).id_part;
         
         refresh(itemID);
         
+        NamePar.setText(data.get(ItemId).first_name);
+        LastNamePar.setText(data.get(ItemId).last_name);
+        
+        activeStatus = data.get(ItemId).active;
+        
+        if(activeStatus==0){
+            active.setText("Aktywny");
+            active.setSelected(true);    
+        }
+        else {
+            active.setText("Nieaktywny");
+            active.setSelected(false);     
+        }   
     }
     
     
@@ -397,7 +426,6 @@ public class AddParticipant extends Stage {
         else 
             statusActive = 1;
         
-        
         int id_part = userID;
         
         String first_name =  NamePar.getText();
@@ -442,10 +470,7 @@ public class AddParticipant extends Stage {
                      
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        listData = new SimpleListProperty<>();
-        listData.set(data);
+        }    
     } 
     
 }
