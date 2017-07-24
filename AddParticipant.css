@@ -13,7 +13,7 @@ and open the template in the editor.
     -fx-hgap: 20px;
     -fx-vgap: 20px;
     -fx-padding: 10 40 10 40;
-    -fx-grid-lines-visible: false;
+    -fx-grid-lines-visible: true;
     -fx-background-color: #e6e6fb;
 }
 
@@ -39,7 +39,7 @@ and open the template in the editor.
 #lNamePar {
     -fx-font-size:   14px;
     -fx-font-family: "Arial Black";
-    -fx-padding: 0 30 0 25;
+    -fx-padding: 0 15 0 25;
     -fx-text-fill:   #000000;    
 }
 
