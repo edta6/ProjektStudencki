@@ -5,6 +5,15 @@
  */
 package testowa;
 
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,8 +30,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -32,7 +39,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 /**
  *
@@ -52,17 +58,23 @@ public class AddParticipant extends Stage {
     private VBox Main;
     private RestrictiveTextField NamePar, LastNamePar;
     private Button addParButton, editParButton, vievButton, editButton, addButton, closeButton;
+    private Button pdfButton;
     private ComboBox participant;
     private CheckBox active; 
     private Text gridAddTitle; 
     private Label Year, UserNumber, lNamePar, lLastNamePar, lParticipant;
-    private EventHandler key;
+    private EventHandler key, keyUpdate;
     private ObservableList<ParticipantData> data;
     int userID;
     int IdPart;
     int ItemId;
     int activeStatus;
     
+    /**
+     * Konstruktor bezargumentowy, tworzący okienko.
+     * Dwie funkcje preprareScene() oraz createItem() zawierają wszystkie elemety.
+     * 
+     */
     public AddParticipant() {
         
        prepareScene();
@@ -108,6 +120,21 @@ public class AddParticipant extends Stage {
         
         active = new CheckBox();
         active.setId("lNamePar");
+        
+        active.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
+                        
+                if(active.isSelected()){
+                    active.setText("Aktywny");
+                    activeStatus = 0;
+                }
+                else {
+                    active.setText("Nieaktywny");
+                    activeStatus = 1;
+                }        
+            }
+        });        
     }
     
     /**
@@ -142,7 +169,7 @@ public class AddParticipant extends Stage {
                
                 bodyListenerTextField(t1, LastNamePar.getText());
                               
-            }
+             }
         }); 
        
         gridAdd.add(lLastNamePar, 0, 3);
@@ -154,7 +181,7 @@ public class AddParticipant extends Stage {
                
                 bodyListenerTextField(t1, NamePar.getText());
                    
-            }
+             }
         }); 
         
         active.setText("Aktywny");
@@ -188,28 +215,32 @@ public class AddParticipant extends Stage {
         };        
     }
     
-    public void bodyaddParButtonAndKey() {
-        addParcitipants();
+    private void bodyaddParButtonAndKey() {
+        
+        String addParticipant = "Insert Into participants (id_part, first_name, last_name, active)"
+                          + " Values (" + userID + ",'" + NamePar.getText() + "','" 
+                          + LastNamePar.getText() + "'," + activeStatus + ")";
+        
+        sqlQuery(addParticipant);
+        addParticipantData();
         userID = getUserId();
         refresh(userID);
         NamePar.clear();
         LastNamePar.clear();                
     }
     
-    public void bodyListenerTextField(String t1, String ex){
+    private void bodyListenerTextField(String t1, String ex){
         if(t1.equals("") || ex.equals("")) 
             addParButton.setDisable(true);
         else {
             addParButton.setDisable(false);
             LastNamePar.setOnKeyPressed(key);
             NamePar.setOnKeyPressed(key);
-            }         
+        }         
     }
     
     private void prepareGridPaneUpdate() {
-        
-        addParticipantData();
-        
+                
         gridUpdate = new GridPane();
         gridUpdate.setId("gridAdd");
         
@@ -219,45 +250,42 @@ public class AddParticipant extends Stage {
         participant = new ComboBox(data);
         participant.setMinWidth(200);
         
-        participant.setCellFactory(new Callback<ListView<ParticipantData>,ListCell<ParticipantData>>(){
- 
-            @Override
-            public ListCell<ParticipantData> call(ListView<ParticipantData> p) {
-                 
-                final ListCell<ParticipantData> cell = new ListCell<ParticipantData>(){
- 
-                    @Override
-                    protected void updateItem(ParticipantData t, boolean bln) {
-                        super.updateItem(t, bln);
-                         
-                        if(t != null){
-                            setText(t.first_name + " " + t.last_name);
-                        }else{
-                            setText(null);
-                        }
-                    }
-                };
-                 
-                return cell;
-            }
-        });
+        comboItemRefresh();
         
         participant.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ParticipantData>() {           
             @Override
             public void changed(ObservableValue<? extends ParticipantData> ov, ParticipantData t, ParticipantData t1) {
-                comboRefresh();
+                comboRefresh(); 
             }
         }); 
         
+        NamePar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                bodyListenerEditParButtonandKey(t1, LastNamePar.getText());                  
+            }
+        }); 
+        
+        LastNamePar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                
+                bodyListenerEditParButtonandKey(t1, NamePar.getText());
+            }
+        });
+        
         lParticipant = new Label("Wybierz: ");
+        lParticipant.setId("lNamePar");
         hbGridUpdateComBoxPar = new HBox();
+        hbGridUpdateComBoxPar.setId("hbGridAddTitle");
         hbGridUpdateComBoxPar.getChildren().addAll(lParticipant, participant);
         
-        gridUpdate.add(hbGridUpdateComBoxPar, 0, 1, 2, 1);
-       
+        gridUpdate.add(hbGridUpdateComBoxPar, 0, 1, 2, 1);       
         gridUpdate.add(Year, 0, 2);
-        gridUpdate.add(UserNumber, 1, 2);
-           
+        Year.setText("Rok:");
+        gridUpdate.add(UserNumber, 1, 2);   
+        UserNumber.setText("Numer:");
         gridUpdate.add(lNamePar, 0, 3);        
         gridUpdate.add(NamePar, 1, 3);
         
@@ -268,56 +296,95 @@ public class AddParticipant extends Stage {
         gridUpdate.add(LastNamePar, 1, 4);        
         gridUpdate.add(active, 1, 5);
         
-        active.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
-                        
-                    if(active.isSelected()){
-                        active.setText("Aktywny");
-                    }
-                    else {
-                        active.setText("Nieaktywny");
-                    }        
-                }
-            });
-        
         editParButton = new Button("Zmień dane Uczestnika");
+        editParButton.setId("addParButton");
+        editParButton.setDisable(true);
         hbGridEditParButton = new HBox();
+        hbGridEditParButton.setId("hbGridAddTitle");
         hbGridEditParButton.getChildren().add(editParButton);
         gridUpdate.add(hbGridEditParButton, 0, 6, 2, 1);
         
         editParButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {    
-                changeParcitipants();
+            public void handle(ActionEvent event) {
+                    bodyEditParButtonandKey();
             }
-        });
+        }); 
         
+        keyUpdate = new EventHandler<KeyEvent>(){
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ENTER) {
+                    bodyEditParButtonandKey();
+                }
+            }
+        };      
+    }
+    
+    private void bodyEditParButtonandKey() {
+            
+        String changeParticipant = "UPDATE participants SET"
+                          +  " first_name = '" + NamePar.getText() + "'," 
+                          +  " last_name = '" + LastNamePar.getText() + "',"
+                          +  " active = " + activeStatus 
+                          +  " WHERE id_part = " + IdPart;
+                
+        sqlQuery(changeParticipant);
+        participant.getSelectionModel().clearSelection();
+        comboItemRefresh();
+    }
+    
+    private void bodyListenerEditParButtonandKey (String t1, String ex){
+        if(t1.equals("") || ex.equals("")) 
+            editParButton.setDisable(true);
+        else {
+            editParButton.setDisable(false);
+            LastNamePar.setOnKeyPressed(keyUpdate);
+            NamePar.setOnKeyPressed(keyUpdate);
+            }         
+    }
+    
+    private void comboItemRefresh() {
+      
+        addParticipantData();
+
+        for (ParticipantData data1 : data) {
+            participant.setItems(data);
+        }  
     }
     
     private void comboRefresh() {
-
+     
         ItemId = participant.getSelectionModel().getSelectedIndex();
         
-        IdPart = data.get(ItemId).id_part;
-        
-        refresh(IdPart);
-        
-        NamePar.setText(data.get(ItemId).first_name);
-        LastNamePar.setText(data.get(ItemId).last_name);
-        
-        activeStatus = data.get(ItemId).active;
-        
-        if(activeStatus==0){
-            active.setText("Aktywny");
-            active.setSelected(true);    
+        if(ItemId==-1){
+            NamePar.clear();
+            LastNamePar.clear();
+            editParButton.setDisable(true);
+            Year.setText("Rok:");
+            UserNumber.setText("Numer:");  
         }
         else {
-            active.setText("Nieaktywny");
-            active.setSelected(false);     
-        }   
+        
+            IdPart = data.get(ItemId).id_part;
+        
+            refresh(IdPart);
+        
+            NamePar.setText(data.get(ItemId).first_name);
+            LastNamePar.setText(data.get(ItemId).last_name);
+        
+            activeStatus = data.get(ItemId).active;
+        
+            if(activeStatus==0){
+                active.setText("Aktywny");
+                active.setSelected(true);    
+            }
+            else {
+                active.setText("Nieaktywny");
+                active.setSelected(false);     
+            }  
+        }  
     }
-    
     
     private void prepareScene(){
        
@@ -362,9 +429,9 @@ public class AddParticipant extends Stage {
        
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) { 
-            int first = 1;
-            refresh(first);
+            public void handle(ActionEvent event) {   
+//            int first = 1;
+//            refresh(first);
             prepareGridPaneUpdate();    
             borderPane.setCenter(gridUpdate);
             }
@@ -378,69 +445,83 @@ public class AddParticipant extends Stage {
         });
        
        Main = new VBox();
-       Main.getChildren().addAll();         
+       pdfButton = new Button("Raport");
+       
+        pdfButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            
+                String DEST = "C:\\Users\\pawlia15\\Desktop\\hello_word.pdf";
+               
+                try {
+                    createPdf(DEST);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
+                }  
+            }
+        });
+       
+       Main.getChildren().addAll(pdfButton);         
+    }
+    
+    private void createPdf(String dest) throws FileNotFoundException  {
+        
+        PdfWriter writer = new PdfWriter(dest);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+        
+        PdfFont font = null;
+        try {
+            font = PdfFontFactory.createFont("./src/testowa/arial.ttf", "CP1250", true);
+        } catch (IOException ex) {
+            Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        document.setFont(font);
+        document.add(new Paragraph("Wykaz uczestników dodanych do bazy"));
+ 
+        Table table = new Table(4);
+        table.addCell("Numer");
+        table.addCell("Imię");
+        table.addCell("Nazwisko");
+        table.addCell("Aktywny");
+        
+        for (ParticipantData data1 : data) {
+            int numer = data1.id_part;
+            int yearUserID1 = numer/10000;
+            int numberUserID2=(numer/10)-(yearUserID1*1000);
+            table.addCell(Integer.toString(numberUserID2));
+            table.addCell(data1.first_name);
+            table.addCell(data1.last_name);
+            if(data1.active==0)  table.addCell("TAK");
+            else table.addCell("NIE");
+        }
+        
+        document.add(table);
+        document.close();
     }
     
     public void refresh(int userId) {
          
         int yearUserID = userId/10000;
         int numberUserID=(userId/10)-(yearUserID*1000); 
-        
-        String year = "Rok: ";
-        String number = "Numer: ";
-        
-        Year.setText(year + Integer.toString(yearUserID));
-        UserNumber.setText(number + Integer.toString(numberUserID));        
+          
+        Year.setText("Rok: " + Integer.toString(yearUserID));
+        UserNumber.setText("Numer: " + Integer.toString(numberUserID));        
     }
     
     public int getUserId() {
-        
-        int result = 0;
-        
-        try {
-            
-            st = db.con.createStatement();
-            
-            String query = "SELECT max(id_part) FROM participants";
-            
-            ResultSet rs = st.executeQuery(query);
-            
-            rs.next();
-       
-            result=rs.getInt(1);      
-        }  
-        
-        catch (SQLException ex) {
-            
-        } 
-        
+                
+        int result = data.get(data.size()-1).id_part;
         GeneratorUserId userId = new GeneratorUserId(result);
-        return userId.getUserId();
-        
+        return userId.getUserId();        
     }
 
-    private void addParcitipants() {
-        
-        if(active.isSelected()) 
-            activeStatus = 0;
-        else 
-            activeStatus = 1;
-        
-        int id_part = userID;
-        
-        String first_name =  NamePar.getText();
-        String last_name  =  LastNamePar.getText();
+    private void sqlQuery(String query) {
         
         try {
-            
             st = db.con.createStatement();
-            
-            String addRow = "Insert Into participants (id_part, first_name, last_name, active)"
-                          + " Values (" + id_part + ",'" + first_name + "','" 
-                          + last_name + "'," + activeStatus + ")";
-            
-           st.executeUpdate(addRow);
-            
+            st.executeUpdate(query);    
         } catch (SQLException ex) {
           
         }
@@ -471,35 +552,5 @@ public class AddParticipant extends Stage {
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }    
-    } 
-    
-    private void changeParcitipants() {
-        
-        if(active.isSelected()) 
-            activeStatus = 0;
-        else 
-            activeStatus = 1;
-        
-        String first_name =  NamePar.getText();
-        String last_name  =  LastNamePar.getText();
-        
-        try {
-            
-            st = db.con.createStatement();
-            
-            String addRow = "UPDATE participants SET first_name = '" + first_name + "'," 
-                            +  " last_name = '" + last_name + "',"
-                            +  " active = " + activeStatus 
-                            +  " WHERE id_part = " + IdPart;
-            
-            System.out.println(addRow);
- 
-           st.executeUpdate(addRow);
-            
-        } catch (SQLException ex) {
-          
-        }
-        
-    } 
-    
+    }       
 }
