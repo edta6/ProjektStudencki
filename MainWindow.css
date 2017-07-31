@@ -1,0 +1,46 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2017-01-24, 20:09:24
+    Author     : andrzej
+*/
+
+#windows7 {
+    -fx-background-color: 
+        #3c7fb1,
+        linear-gradient(#fafdfe, #e8f5fc),
+        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 2 20 2 20;
+    -fx-text-fill: black;
+    -fx-font-size: 1.5em;
+    -fx-border-color: black; 
+    -fx-border-width: 1 0.5 1 0.5;
+    -fx-font-weight: bold;
+}
+
+#hbuttonMenu {
+    -fx-background-color: 
+        #3c7fb1;
+/*        linear-gradient(#fafdfe, #e8f5fc),
+        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);*/
+    -fx-padding: 1 0 1 0;
+}
+
+#userText {
+    -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
+    -fx-text-fill: red;
+}
+
+.table-view .column-header,
+.table-view .column-header .filler,
+.table-view .column-header-background .filler {
+    -fx-font-size: 1.25em;
+    -fx-border-color: black;
+    -fx-font-weight: bold;
+}

@@ -13,7 +13,7 @@ and open the template in the editor.
     -fx-hgap: 20px;
     -fx-vgap: 20px;
     -fx-padding: 10 40 10 40;
-    -fx-grid-lines-visible: true;
+    -fx-grid-lines-visible: false;
     -fx-background-color: #e6e6fb;
 }
 
@@ -28,6 +28,7 @@ and open the template in the editor.
     -fx-border-width: 0 0 2 0;
     -fx-padding: 0 0 10 0;
     -fx-border-style: solid;
+    -fx-spacing: 10;
 }
 
 #YearUserNumber {
@@ -81,4 +82,11 @@ and open the template in the editor.
     -fx-border-color: black; 
     -fx-border-width: 1 0.5 1 0.5;
     -fx-font-weight: bold;
+}
+
+#vbpane {
+   -fx-padding: 10 40 10 40; 
+   -fx-background-color: #e6e6fb;
+   -fx-spacing: 10;
+   -fx-alignment: TOP_CENTER;
 }

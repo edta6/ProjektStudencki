@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,8 +24,12 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -38,51 +43,48 @@ public class MainWindow extends Stage {
     User login;
     
     private Scene sceneMainWindow;
-    public TableView<DataWypis> table; 
+    private BorderPane borderPane;
+    private StackPane stackTable;
+    private GridPane bottomPane;
+    private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
+    public  TableView<DataWypis> table; 
     private ObservableList<DataWypis> data;
-    private Button btn, refreshbtn;
+    private Button buttonExit, buttonHome, buttonAdmin, buttonClose;
     private Label uTextNow, ExitPeople;
+    private Label nameLogin, userText;
+   
     
-    public MainWindow() {
+    String user;
+   
+    public MainWindow(String user) {
+        this.user = user;
         prepareScene();
     }
     
     private void prepareScene(){
         
-        MenuBar menuBar = new MenuBar();
+        borderPane = new BorderPane();
         
-        // --- Menu File
-        Menu menuFile = new Menu("File");
- 
-        // --- Menu Edit
-        Menu menuEdit = new Menu("Edit");
- 
-        // --- Menu View
-        Menu menuView = new Menu("View");
- 
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuView);
+        prepareBorderPaneTop ();
+        borderPane.setTop(hbuttonMenuLeft);
         
-        Label uText = new Label("Użytkownik: ");
-        uText.setId("uText");
-        uTextNow = new Label();
-        uTextNow.setId("uTextNow");
-        ExitPeople = new Label();
-        ExitPeople.setId("ExitPeople");
-
-        HBox uLabelEntry = new HBox();
-        uLabelEntry.getChildren().addAll(ExitPeople);
-        uLabelEntry.setId("uLabelEntry");
-        uLabelEntry.setAlignment(Pos.CENTER_RIGHT);
+        prepareBorderPaneCenter();
+        borderPane.setCenter(stackTable);
         
-        HBox uLabel = new HBox();
-        uLabel.setId("uLabel");
-        uLabel.setSpacing(10);
-        uLabel.getChildren().addAll(uText, uTextNow, uLabelEntry);
+        prepareBorderPaneBottom();
+        borderPane.setBottom(bottomPane);
         
-        prepareTableView();
-        
-        btn = new Button("Sign in");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        sceneMainWindow = new Scene(borderPane, 1200, 650);
+        sceneMainWindow.getStylesheets().add(Testowa.class.getResource("MainWindow.css").toExternalForm());
+        setScene(sceneMainWindow);
+        setTitle("The book out and trips");
+    }
+    
+    private void prepareBorderPaneTop () {
+    
+        buttonExit = new Button("Wypisz");
+        buttonExit.setId("windows7");
+        buttonExit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 Subscribe wypisz = new Subscribe();
@@ -94,117 +96,58 @@ public class MainWindow extends Stage {
             }
         });
         
-        refreshbtn = new Button("Odśwież");
-        refreshbtn.setOnAction(new EventHandler<ActionEvent>() {
+        buttonHome = new Button("Powroty");
+        buttonHome.setId("windows7");
+        buttonHome.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                AddParticipant participant = new AddParticipant();
-                participant.db = db;
-                participant.refresh(participant.getUserId());
-                participant.showAndWait();
+ 
             }
-            });
+        });
         
-        VBox vboxAll1 = new VBox();
-        vboxAll1.setSpacing(10);
-        vboxAll1.getChildren().addAll(menuBar, table, btn, refreshbtn, uLabel);
-        sceneMainWindow = new Scene(vboxAll1, 1200, 700);
-        sceneMainWindow.getStylesheets().add(Testowa.class.getResource("MainWindow.css").toExternalForm());
-        setScene(sceneMainWindow);
-        setTitle("The book out and trips");
+        buttonAdmin = new Button("Panel Administratora");
+        buttonAdmin.setId("windows7");
+        buttonAdmin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                AdminPane panelAdmin = new AdminPane();
+                panelAdmin.db = db;
+                panelAdmin.showAndWait();
+            }
+        });
+        
+        nameLogin = new Label();
+        userText = new Label();
+        userText.setText(user);
+        userText.setId("userText");
+        nameLogin.setText("Użytkownik: ");
+        hbnameLogin = new HBox();
+        hbnameLogin.getChildren().addAll(nameLogin, userText);
+        hbnameLogin.setId("windows7");
+        
+        buttonClose = new Button("Zamknij");
+        buttonClose.setId("windows7");
+        buttonClose.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            close();
+            }
+        });
+        
+        hbuttonMenuLeft = new HBox();
+        hbuttonMenuRight = new HBox();
+        hbuttonMenuRight.setAlignment(Pos.CENTER_RIGHT);
+        hbuttonMenuRight.setMinWidth(760);
+        hbuttonMenuRight.getChildren().addAll(hbnameLogin, buttonClose);
+        hbuttonMenuRight.setId("hbuttonMenu");
+        hbuttonMenuLeft.setId("hbuttonMenu");
+        hbuttonMenuLeft.setAlignment(Pos.CENTER_LEFT);
+        hbuttonMenuLeft.setMinWidth(1200);
+        hbuttonMenuLeft.getChildren().addAll(buttonExit, buttonHome, buttonAdmin, hbuttonMenuRight);
     }
     
-    public void refresh() {                                              
-  
-        data = FXCollections.observableArrayList();
+    private void prepareBorderPaneCenter(){
         
-        uTextNow.setText(login.getUser());
-        numberExitPeople();
-            
-        try {
-        
-            st = db.con.createStatement();
-        
-            String query = "SELECT Lp, imie_nazwisko,cel_wyjscia,w_data,w_czas,adres,"
-                     + "p_data,p_czas,uwagi FROM wypis where p_data is null";
-        
-            ResultSet rs = st.executeQuery(query);
-        
-            while (rs.next()){
-                DataWypis unit = new DataWypis(
-                        rs.getInt("Lp"), 
-                        rs.getString("imie_nazwisko"),
-                        rs.getString("cel_wyjscia"),
-                        rs.getString("w_data"),
-                        rs.getString("w_czas"),
-                        rs.getString("adres"),
-                        rs.getString("p_data"),        
-                        rs.getString("p_czas"),
-                        rs.getString("uwagi")   
-                );
-                data.add(unit); 
-            }
-            table.setItems(data);             
-        } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }   
-    
-    public void getUserId() {
-        
-        try {
-            
-            st = db.con.createStatement();
-            
-            String query = "Select max(id_part) From participants";
-            
-            int wynik = IntegerSqlQuery(query);
-            
-            GeneratorUserId userId = new GeneratorUserId(wynik);
-            
-            System.out.println(userId.getUserId());
-            
-        }  catch (SQLException ex) {
-            
-        }                  
-    }
-    
-    
-    public void refresh1() {    
-        
-        uTextNow.setText(login.getUser());
-  
-        data = FXCollections.observableArrayList();
-            
-        try {
-        
-            st = db.con.createStatement();
-        
-            String query = "SELECT * FROM wypis";
-        
-            ResultSet rs = st.executeQuery(query);
-        
-            while (rs.next()){
-                DataWypis unit = new DataWypis(
-                        rs.getInt("Lp"), 
-                        rs.getString("imie_nazwisko"),
-                        rs.getString("cel_wyjscia"),
-                        rs.getString("w_data"),
-                        rs.getString("w_czas"),
-                        rs.getString("adres"),
-                        rs.getString("p_data"),        
-                        rs.getString("p_czas"),
-                        rs.getString("uwagi")
-                );
-                data.add(unit); 
-            }
-            table.setItems(data);             
-        } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }   
-    
-    public void prepareTableView(){
         table = new TableView<>();
         table.setId("table");
         table.setEditable(false);
@@ -245,7 +188,91 @@ public class MainWindow extends Stage {
         cameBack.getColumns().addAll(datacameBack, timecameBack);
         
         table.getColumns().addAll(lp, name, target, exit, adres, cameBack, comments);
+        
+        stackTable = new StackPane();
+        stackTable.getChildren().add(table);
     }
+    
+    private void prepareBorderPaneBottom(){
+        
+        bottomPane = new GridPane();
+        bottomPane.setPrefHeight(200.0);
+        uTextNow = new Label("Dół do zrobienia!");
+        bottomPane.add(uTextNow, 0, 1);
+        
+    }
+    
+    
+    
+    public void refresh() {                                              
+  
+        data = FXCollections.observableArrayList();
+        
+        //uTextNow.setText(login.getUser());
+        numberExitPeople();
+            
+        try {
+        
+            st = db.con.createStatement();
+        
+            String query = "SELECT Lp, imie_nazwisko,cel_wyjscia,w_data,w_czas,adres,"
+                     + "p_data,p_czas,uwagi FROM wypis where p_data is null";
+        
+            ResultSet rs = st.executeQuery(query);
+        
+            while (rs.next()){
+                DataWypis unit = new DataWypis(
+                        rs.getInt("Lp"), 
+                        rs.getString("imie_nazwisko"),
+                        rs.getString("cel_wyjscia"),
+                        rs.getString("w_data"),
+                        rs.getString("w_czas"),
+                        rs.getString("adres"),
+                        rs.getString("p_data"),        
+                        rs.getString("p_czas"),
+                        rs.getString("uwagi")   
+                );
+                data.add(unit); 
+            }
+            table.setItems(data);             
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }   
+    
+    public void refresh1() {    
+        
+      //  uTextNow.setText(login.getUser());
+  
+        data = FXCollections.observableArrayList();
+            
+        try {
+        
+            st = db.con.createStatement();
+        
+            String query = "SELECT * FROM wypis";
+        
+            ResultSet rs = st.executeQuery(query);
+        
+            while (rs.next()){
+                DataWypis unit = new DataWypis(
+                        rs.getInt("Lp"), 
+                        rs.getString("imie_nazwisko"),
+                        rs.getString("cel_wyjscia"),
+                        rs.getString("w_data"),
+                        rs.getString("w_czas"),
+                        rs.getString("adres"),
+                        rs.getString("p_data"),        
+                        rs.getString("p_czas"),
+                        rs.getString("uwagi")
+                );
+                data.add(unit); 
+            }
+            table.setItems(data);             
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }   
     
     //Funkcja pomocnicza dla 4 funkcji
     //public void numberExitPeople()
