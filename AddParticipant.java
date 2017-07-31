@@ -49,8 +49,8 @@ public class AddParticipant extends Stage {
     DB db;
     Statement st;
     
-    private Scene SceneParticipant;
-    private BorderPane borderPane;
+    private final Scene SceneParticipant;
+    private final BorderPane borderPane;
     private GridPane gridAdd, gridUpdate;
     private StackPane stack;
     private HBox hbGridAddTitle, hbuttonMenu, hbGridAddParButton, hbGridUpdateComBoxPar;
@@ -430,8 +430,6 @@ public class AddParticipant extends Stage {
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {   
-//            int first = 1;
-//            refresh(first);
             prepareGridPaneUpdate();    
             borderPane.setCenter(gridUpdate);
             }
@@ -468,38 +466,33 @@ public class AddParticipant extends Stage {
         
         PdfWriter writer = new PdfWriter(dest);
         PdfDocument pdf = new PdfDocument(writer);
-        Document document = new Document(pdf);
-        
-        PdfFont font = null;
-        try {
-            font = PdfFontFactory.createFont("./src/testowa/arial.ttf", "CP1250", true);
-        } catch (IOException ex) {
-            Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
+        try (Document document = new Document(pdf)) {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont("./src/testowa/arial.ttf", "CP1250", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            document.setFont(font);
+            document.add(new Paragraph("Wykaz uczestników dodanych do bazy"));
+            Table table = new Table(4);
+            table.addCell("Numer");
+            table.addCell("Imię");
+            table.addCell("Nazwisko");
+            table.addCell("Aktywny");
+            for (ParticipantData data1 : data) {
+                int numer = data1.id_part;
+                int yearUserID1 = numer/10000;
+                int numberUserID2=(numer/10)-(yearUserID1*1000);
+                table.addCell(Integer.toString(numberUserID2));
+                table.addCell(data1.first_name);
+                table.addCell(data1.last_name);
+                if(data1.active==0)  table.addCell("TAK");
+                else table.addCell("NIE");
         }
-        
-        document.setFont(font);
-        document.add(new Paragraph("Wykaz uczestników dodanych do bazy"));
- 
-        Table table = new Table(4);
-        table.addCell("Numer");
-        table.addCell("Imię");
-        table.addCell("Nazwisko");
-        table.addCell("Aktywny");
-        
-        for (ParticipantData data1 : data) {
-            int numer = data1.id_part;
-            int yearUserID1 = numer/10000;
-            int numberUserID2=(numer/10)-(yearUserID1*1000);
-            table.addCell(Integer.toString(numberUserID2));
-            table.addCell(data1.first_name);
-            table.addCell(data1.last_name);
-            if(data1.active==0)  table.addCell("TAK");
-            else table.addCell("NIE");
-        }
-        
-        document.add(table);
-        document.close();
+            document.add(table);
     }
+    }    
     
     public void refresh(int userId) {
          
