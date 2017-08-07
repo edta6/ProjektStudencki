@@ -5,6 +5,8 @@
  */
 package testowa;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -38,6 +40,8 @@ public class Testowa extends Application {
     private EventHandler key;
     public User login;
     MainWindow window;
+    DB db;
+    Statement st;
     
     /* 
     Funkcja, która przygotuje okienko logowania wraz z dodanymi dwoma zdarzeniami
@@ -147,9 +151,20 @@ public class Testowa extends Application {
     */
     public void sendCon(String user, String pswd) {
            
-        DB db = new DB();
+        db = new DB();
         login = new User(user);
         db.DBConect(user, pswd);
+        
+        
+        //DODAWANIE TABELI
+        if(sqlQuery("USE OHP;")) {
+           sqlQuery("CREATE DATABASE OHP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;");
+           sqlQuery("USE OHP;");
+           sqlQuery("CREATE TABLE participants (id_part int PRIMARY KEY, first_name varchar(15), last_name varchar(20), active int);");
+           sqlQuery("CREATE TABLE exitreturn (id_part int PRIMARY KEY, exit_return int);");
+           sqlQuery("CREATE TABLE targets (id_target int PRIMARY KEY, target_name varchar(20));");
+        }
+        else sqlQuery("use OHP;");
         
         if(db.isError){
             actiontarget.setText("Zły login lub hasło"); 
@@ -162,7 +177,22 @@ public class Testowa extends Application {
             primaryStage.hide(); 
         }      
     }
+    
+    private boolean sqlQuery(String query) {
         
+        boolean error;
+        
+        try {
+            error=false;
+            st = db.con.createStatement();
+            st.execute(query);    
+        } catch (SQLException ex) {
+            error = true;
+        }
+        
+        return error;  
+    }
+     
     /**
      * @param args the command line arguments
      */

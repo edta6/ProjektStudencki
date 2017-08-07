@@ -10,7 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -63,8 +62,8 @@ public class AdminPane extends Stage {
                 AddParticipant participant = new AddParticipant();
                 participant.db = db;
                 participant.addParticipantData();
-                participant.refresh(participant.getUserId());
-                participant.showAndWait();
+                participant.show();
+                close();
             }
         });
         
@@ -74,7 +73,11 @@ public class AdminPane extends Stage {
         buttonAddTarget.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+                AddTarget target = new AddTarget(); 
+                target.db = db;
+                target.addTargetData();
+                target.show();
+                close();
             }
         });
         
@@ -99,6 +102,5 @@ public class AdminPane extends Stage {
         });
         
         vbpane.getChildren().addAll(hbGridAddTitle, buttonAddParticipant, buttonAddTarget, buttonAddUser, buttonClose);   
-     }
-    
+     }    
 }
