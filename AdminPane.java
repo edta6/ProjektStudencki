@@ -87,7 +87,10 @@ public class AdminPane extends Stage {
         buttonAddUser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+                AddUser user = new AddUser();
+                user.db = db;
+                user.show();
+                close();
             }
         });
         

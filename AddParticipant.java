@@ -5,13 +5,16 @@
  */
 package testowa;
 
+import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.property.TextAlignment;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -62,7 +65,7 @@ public class AddParticipant extends Stage {
     private ComboBox participant;
     private CheckBox active; 
     private Text gridAddTitle; 
-    private Label Year, UserNumber, lNamePar, lLastNamePar, lParticipant;
+    private Label Year, UserNumber, lNamePar, lLastNamePar, lParticipant, lViev;
     private EventHandler key, keyUpdate;
     private ObservableList<ParticipantData> data;
     int userID;
@@ -79,6 +82,7 @@ public class AddParticipant extends Stage {
         
        prepareScene();
        createItem();
+       prepareViev();
        
        borderPane = new BorderPane();
        borderPane.setTop(hbuttonMenu);
@@ -221,7 +225,11 @@ public class AddParticipant extends Stage {
                           + " Values (" + userID + ",'" + NamePar.getText() + "','" 
                           + LastNamePar.getText() + "'," + activeStatus + ")";
         
+        String addExitReturn = "Insert Into exitreturn (id_part, exit_return)"
+                             + " Values (" + userID + ",0)";
+        
         sqlQuery(addParticipant);
+        sqlQuery(addExitReturn);
         addParticipantData();
         userID = getUserId();
         refresh(userID);
@@ -328,7 +336,7 @@ public class AddParticipant extends Stage {
                           +  " last_name = '" + LastNamePar.getText() + "',"
                           +  " active = " + activeStatus 
                           +  " WHERE id_part = " + IdPart;
-                
+        
         sqlQuery(changeParticipant);
         participant.getSelectionModel().clearSelection();
         comboItemRefresh();
@@ -439,12 +447,31 @@ public class AddParticipant extends Stage {
             @Override
             public void handle(ActionEvent event) {
             close();
+            
             }
-        });
+        });                       
+    }
+    
+    private void prepareViev() {
        
-       Main = new VBox();
-       pdfButton = new Button("Raport");
-       
+        Main = new VBox();
+        Main.setId("vbpane");
+        pdfButton = new Button("Generuj raport uczestników");
+        pdfButton.setId("windows7-default");
+        pdfButton.setMinWidth(320);
+        
+        String description = "Panel w którym dodajemy:\n- uczestników OHP,"
+                           + " \n- zmieniamy dane uczestnika (imię, nazwisko) oraz jego status:"
+                           + " \n- aktywny oznacza, iż uczestnik jest zaewidencjonowany,"
+                           + " \n- nieaktywny oznacza, iż uczestnik odszedł z OHP.\n\n"
+                           + " Jest też możliwość wygenerowania raportu w postaci pliku PDF,"
+                           + " który zostanie zapisany na Pulpicie.";
+         
+        lViev = new Label();
+        lViev.setText(description);
+        lViev.setWrapText(true);
+        lViev.setId("lViev");
+        
         pdfButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -459,7 +486,7 @@ public class AddParticipant extends Stage {
             }
         });
        
-       Main.getChildren().addAll(pdfButton);         
+       Main.getChildren().addAll(lViev, pdfButton);     
     }
     
     private void createPdf(String dest) throws FileNotFoundException  {
@@ -467,19 +494,16 @@ public class AddParticipant extends Stage {
         PdfWriter writer = new PdfWriter(dest);
         PdfDocument pdf = new PdfDocument(writer);
         try (Document document = new Document(pdf)) {
-            PdfFont font = null;
-            try {
-                font = PdfFontFactory.createFont("./src/testowa/arial.ttf", "CP1250", true);
-            } catch (IOException ex) {
-                Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
+            PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN, "CP1250", true);
+
             document.setFont(font);
             document.add(new Paragraph("Wykaz uczestników dodanych do bazy"));
             Table table = new Table(4);
-            table.addCell("Numer");
-            table.addCell("Imię");
-            table.addCell("Nazwisko");
-            table.addCell("Aktywny");
+            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Numer"));
+            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Imię"));
+            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Nazwisko"));
+            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Aktywny"));
             for (ParticipantData data1 : data) {
                 int numer = data1.id_part;
                 int yearUserID1 = numer/10000;
@@ -491,7 +515,9 @@ public class AddParticipant extends Stage {
                 else table.addCell("NIE");
         }
             document.add(table);
-    }
+    }   catch (IOException ex) {
+            Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }    
     
     public void refresh(int userId) {
@@ -504,8 +530,11 @@ public class AddParticipant extends Stage {
     }
     
     public int getUserId() {
-                
-        int result = data.get(data.size()-1).id_part;
+        
+        int result;
+        
+        if(data.size()== 0) result = 0; 
+        else  result = data.get(data.size()-1).id_part;
         GeneratorUserId userId = new GeneratorUserId(result);
         return userId.getUserId();        
     }

@@ -10,17 +10,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -28,8 +23,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -48,13 +41,10 @@ public class MainWindow extends Stage {
     private GridPane bottomPane;
     private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
     public  TableView<DataWypis> table; 
-    private ObservableList<DataWypis> data;
     private Button buttonExit, buttonHome, buttonAdmin, buttonClose;
-    private Label uTextNow, ExitPeople;
+    private Label uTextNow;
     private Label nameLogin, userText;
-   
-    
-    String user;
+    public final String user;
    
     public MainWindow(String user) {
         this.user = user;
@@ -91,8 +81,7 @@ public class MainWindow extends Stage {
                 wypisz.db = db;
                 wypisz.login = login;
                 wypisz.refreshCombo();
-                wypisz.showAndWait(); // to pokazuje że trzeba czekać i potem coś zrobić
-                refresh();
+                wypisz.show();
             }
         });
         
@@ -202,114 +191,21 @@ public class MainWindow extends Stage {
         
     }
     
-    
-    
-    public void refresh() {                                              
-  
-        data = FXCollections.observableArrayList();
+    private void userRole() {
         
-        //uTextNow.setText(login.getUser());
-        numberExitPeople();
-            
-        try {
+         try {
         
             st = db.con.createStatement();
-        
-            String query = "SELECT Lp, imie_nazwisko,cel_wyjscia,w_data,w_czas,adres,"
-                     + "p_data,p_czas,uwagi FROM wypis where p_data is null";
-        
-            ResultSet rs = st.executeQuery(query);
-        
-            while (rs.next()){
-                DataWypis unit = new DataWypis(
-                        rs.getInt("Lp"), 
-                        rs.getString("imie_nazwisko"),
-                        rs.getString("cel_wyjscia"),
-                        rs.getString("w_data"),
-                        rs.getString("w_czas"),
-                        rs.getString("adres"),
-                        rs.getString("p_data"),        
-                        rs.getString("p_czas"),
-                        rs.getString("uwagi")   
-                );
-                data.add(unit); 
-            }
-            table.setItems(data);             
-        } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }   
-    
-    public void refresh1() {    
-        
-      //  uTextNow.setText(login.getUser());
-  
-        data = FXCollections.observableArrayList();
             
-        try {
-        
-            st = db.con.createStatement();
-        
-            String query = "SELECT * FROM wypis";
-        
-            ResultSet rs = st.executeQuery(query);
-        
-            while (rs.next()){
-                DataWypis unit = new DataWypis(
-                        rs.getInt("Lp"), 
-                        rs.getString("imie_nazwisko"),
-                        rs.getString("cel_wyjscia"),
-                        rs.getString("w_data"),
-                        rs.getString("w_czas"),
-                        rs.getString("adres"),
-                        rs.getString("p_data"),        
-                        rs.getString("p_czas"),
-                        rs.getString("uwagi")
-                );
-                data.add(unit); 
-            }
-            table.setItems(data);             
-        } catch (SQLException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }   
-    
-    //Funkcja pomocnicza dla 4 funkcji
-    //public void numberExitPeople()
-    //public void numberExitPeopleDate()
-    //public void numberHomePeopleDate()
-    //public void sum()
-    public Integer IntegerSqlQuery(String query){
-        
-        int numberRow=0;
-        
-        try {
-           
-            st = db.con.createStatement();
-            
+            String query = "Select role from user_ohp where nick like '" + user + "'";
+      
             ResultSet rs = st.executeQuery(query);
             
-            while(rs.next()) {
-                numberRow = rs.getInt(1);
-            }
-        }    
-        catch (SQLException ex) {} 
-        
-        return numberRow;    
+            
+
+         } catch (SQLException ex) {
+            
+        }  
     }
     
-    // Funkcja zlicza ile osób jest obecnie na wypisie//
-    public void numberExitPeople(){
-        
-        String query = "SELECT count(*) FROM wypis where p_data is null";
-        
-        int numberRow=IntegerSqlQuery(query);
-                    
-        if(numberRow==1){
-            ExitPeople.setText("Obecnie wypisany jest " + numberRow + " uczestnik.");    
-            }
-        else{
-            ExitPeople.setText("  Obecnie wypisanych jest " + numberRow + " uczestników.");     
-            }    
-    }
-}       
+}

@@ -8,3 +8,31 @@ and open the template in the editor.
     Author     : andrzej
 */
 
+#gridAdd {
+    -fx-hgap: 20px;
+    -fx-vgap: 20px;
+    -fx-padding: 10 40 10 40;
+    -fx-grid-lines-visible: false;
+    -fx-background-color: #e6e6fb;
+}
+
+#gridAddTitle {
+       -fx-font-size: 20px;
+       -fx-font-family: "Arial Black";
+}
+
+#hbGridAddTitle {
+    -fx-alignment: center;
+    -fx-border-color: #330033;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 10 0;
+    -fx-border-style: solid;
+    -fx-spacing: 10;
+}
+
+#lNamePar {
+    -fx-font-size:   14px;
+    -fx-font-family: "Arial Black";
+    -fx-padding: 0 15 0 25;
+    -fx-text-fill:   #000000;
+}

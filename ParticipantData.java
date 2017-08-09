@@ -44,7 +44,7 @@ class ParticipantData {
     @Override
     public String toString() {
         
-        String fullName = first_name + " " + last_name;
+        String fullName = last_name + " " + first_name;
         
         return fullName;
     }
