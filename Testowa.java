@@ -5,6 +5,7 @@
  */
 package testowa;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.application.Application;
@@ -154,22 +155,24 @@ public class Testowa extends Application {
         db = new DB();
         login = new User(user);
         db.DBConect(user, pswd);
-        
-        if(sqlQuery("USE OHP;")) {
-           sqlQuery("CREATE DATABASE OHP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;");
-           sqlQuery("USE OHP;");
-           sqlQuery("CREATE TABLE participants (id_part int PRIMARY KEY, first_name varchar(15), last_name varchar(20), active int);");
-           sqlQuery("CREATE TABLE exitreturn (id_part int PRIMARY KEY, exit_return int);");
-           sqlQuery("CREATE TABLE user_ohp(id_part int NOT NULL AUTO_INCREMENT PRIMARY KEY, first_name varchar(15), last_name varchar(20), nick varchar(20),  role int);");
-           sqlQuery("CREATE TABLE targets (id_target int PRIMARY KEY, target_name varchar(20));");
-        }
-        else sqlQuery("use OHP;");
-        
+         
         if(db.isError){
             actiontarget.setText("Zły login lub hasło"); 
         }
         else {
-            window = new MainWindow(user);
+                if(sqlQuery("USE OHP;")) {
+                    sqlQuery("CREATE DATABASE OHP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;");
+                    sqlQuery("USE OHP;");
+                    sqlQuery("CREATE TABLE participants (id_part int PRIMARY KEY, first_name varchar(15), last_name varchar(20), active int);");
+                    sqlQuery("CREATE TABLE exitreturn (id_part int PRIMARY KEY, exit_return int);");
+                    sqlQuery("CREATE TABLE user_ohp(id_part int NOT NULL AUTO_INCREMENT PRIMARY KEY, first_name varchar(15), last_name varchar(20), nick varchar(20),  role int);");
+                    sqlQuery("CREATE TABLE targets (id_target int PRIMARY KEY, target_name varchar(20));");
+                }
+                else sqlQuery("use OHP;");
+                
+            int role = sqlResult("SElECT role FROM user_ohp where nick like '" + user +"'");    
+            
+            window = new MainWindow(user, role);
             window.db = db;
             window.login = login;
             window.show();
@@ -191,6 +194,26 @@ public class Testowa extends Application {
         
         return error;  
     }
+    
+    public Integer sqlResult(String query){
+        
+        int numberRow=0;
+        
+        try {
+           
+            st = db.con.createStatement();
+            
+            ResultSet rs = st.executeQuery(query);
+            
+            while(rs.next()) {
+                numberRow = rs.getInt(1);
+            }
+        }    
+        catch (SQLException ex) {} 
+        
+        return numberRow;    
+    }
+    
      
     /**
      * @param args the command line arguments

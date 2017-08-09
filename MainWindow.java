@@ -45,10 +45,20 @@ public class MainWindow extends Stage {
     private Label uTextNow;
     private Label nameLogin, userText;
     public final String user;
+    public final int role;
    
-    public MainWindow(String user) {
+    public MainWindow(String user, int role) {
         this.user = user;
+        this.role = role;
         prepareScene();
+        if(role==1||user.equalsIgnoreCase("root")) {
+            buttonAdmin.setDisable(false);
+            buttonAdmin.setVisible(true);
+        }
+        else {
+            buttonAdmin.setDisable(true);
+            buttonAdmin.setVisible(false);
+        }
     }
     
     private void prepareScene(){
