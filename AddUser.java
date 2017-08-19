@@ -51,6 +51,7 @@ public class AddUser extends Stage {
     private CheckBox simplerole, adminrole; 
     private Text gridAddTitle; 
     private Label lNamePar, lLastNamePar, lNick, lPassUser, lPassUserR;
+    private EventHandler key, keyUpdate;
     int role;
     
     public AddUser(){
@@ -229,35 +230,62 @@ public class AddUser extends Stage {
                 bodyaddUserButtonAndKey();
             }
         });
-//        
-//        key = new EventHandler<KeyEvent>(){
-//            @Override
-//            public void handle(KeyEvent ke) {
-//                if (ke.getCode() == KeyCode.ENTER) {
-//                    bodyaddUserButtonAndKey();
-//                }
-//            }
-//        };        
+        
+        key = new EventHandler<KeyEvent>(){
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ENTER) {
+                    bodyaddUserButtonAndKey();
+                }
+            }
+        };        
     }
 
     private void bodyaddUserButtonAndKey() {
         
-     String addUser = "INSERT INTO user_ohp (first_name, last_name, nick, role)"
+        if( NamePar.getText().equals("") ||
+            LastNamePar.getText().equals("") ||
+            NickUser.getText().equals("") ||
+            PassUser.getText().equals("") ||
+            PassUserR.getText().equals("") ||
+            (!simplerole.isSelected() &&
+             !adminrole.isSelected())) {
+            
+            System.out.println("Cos zle jest");
+        }
+        else {
+            if(PassUser.getText().equals(PassUserR.getText())){
+            
+            String addUserGran;   
+        
+            String addUser = "INSERT INTO user_ohp (first_name, last_name, nick, role)"
                     + " Values ('" + NamePar.getText() + "','" + LastNamePar.getText() + "','"
                     +  NickUser.getText() + "'," + role + ")";
      
-     String createUser = "CREATE USER '" + NickUser.getText() + "'@'localhost'"
+            String createUser = "CREATE USER '" + NickUser.getText() + "'@'localhost'"
                        + "IDENTIFIED BY '" + PassUser.getText() + "';";
    
-    String addUserGran = "GRANT ALL ON ohp.* TO '" + NickUser.getText() + "'@'localhost'";
+            if(role==1){
+                addUserGran = "GRANT ALL PRIVILEGES ON *.* TO '" + NickUser.getText() + "'@'localhost' WITH GRANT OPTION";   
+            }
+            else addUserGran = "GRANT ALL ON OHP.* TO '" + NickUser.getText() + "'@'localhost'";  
      
-    sqlQuery(addUser);
-    sqlQuery(createUser);
-    sqlQuery(addUserGran);
-    
+            sqlQuery(addUser);
+            sqlQuery(createUser);   
+            sqlQuery(addUserGran);
+        
+            NamePar.clear();
+            LastNamePar.clear();
+            NickUser.clear();
+            PassUser.clear();
+            PassUserR.clear();
+            simplerole.setSelected(false);
+            adminrole.setSelected(false);
+            role = -1; 
+            }
+            else System.out.println("Cos zle jest");
+        }   
     }
-    
-    
     
     private void sqlQuery(String query) {
         
