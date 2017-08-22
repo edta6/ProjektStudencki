@@ -34,11 +34,11 @@ public class AdminPane extends Stage {
        
        prepareScene(); 
        
-       SceneParticipant = new Scene(vbpane, 400, 400);
+       SceneParticipant = new Scene(vbpane, 400, 210);
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);
-       setTitle("Add Participant");    
+       setTitle("Panel Administracyjny");    
            
     }
     

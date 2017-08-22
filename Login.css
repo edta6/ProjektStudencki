@@ -13,7 +13,7 @@ and open the template in the editor.
     -fx-hgap: 10px;
     -fx-vgap: 15px;
     -fx-padding: 20 0 25 0;
-    -fx-grid-lines-visible: true;
+    -fx-grid-lines-visible: false;
     -fx-background-color: #e6e6fb;
 }
 

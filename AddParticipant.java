@@ -28,6 +28,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -288,7 +289,6 @@ public class AddParticipant extends Stage {
         hbGridUpdateComBoxPar = new HBox();
         hbGridUpdateComBoxPar.setId("hbGridAddTitle");
         hbGridUpdateComBoxPar.getChildren().addAll(lParticipant, participant);
-        
         gridUpdate.add(hbGridUpdateComBoxPar, 0, 1, 2, 1);       
         gridUpdate.add(Year, 0, 2);
         Year.setText("Rok:");
@@ -300,6 +300,7 @@ public class AddParticipant extends Stage {
         stack = new StackPane();
         stack.getChildren().add(lLastNamePar);
         stack.setMinWidth(130);
+        stack.setAlignment(Pos.TOP_LEFT);
         gridUpdate.add(stack, 0, 4);
         gridUpdate.add(LastNamePar, 1, 4);        
         gridUpdate.add(active, 1, 5);
@@ -476,7 +477,8 @@ public class AddParticipant extends Stage {
             @Override
             public void handle(ActionEvent event) {
             
-                String DEST = "C:\\Users\\pawlia15\\Desktop\\hello_word.pdf";
+                String path1 = System.getProperty("user.home") + "/Desktop/Raport_uczestnikow.pdf";
+                String DEST = path1.replace("\\", "/");
                
                 try {
                     createPdf(DEST);

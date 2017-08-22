@@ -5,12 +5,16 @@
  */
 package testowa;
 
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -41,16 +45,16 @@ public class AddUser extends Stage {
     private GridPane gridAdd, gridUpdate;
     private StackPane stack;
     private HBox hbGridAddTitle, hbuttonMenu, hbGridAddParButton, hbGridUpdateComBoxPar;
-    private HBox hbGridEditParButton;
+    private HBox hbGridEditParButton, hbGridUpdatePasButton, hbGridUpdateDelParButton;
     private VBox Main;
     private RestrictiveTextField NamePar, LastNamePar, NickUser;
     private PasswordField PassUserR, PassUser;
-    private Button addParButton, editParButton, vievButton, editButton, addButton, closeButton;
-    private Button pdfButton;
-    private ComboBox participant;
+    private Button addParButton, editParButton, vievButton, editButton, addButton, closeButton, changePasButton;
+    private Button delParButton;
+    private ComboBox userCBdata;
     private CheckBox simplerole, adminrole; 
     private Text gridAddTitle; 
-    private Label lNamePar, lLastNamePar, lNick, lPassUser, lPassUserR;
+    private Label lNamePar, lLastNamePar, lNick, lPassUser, lPassUserR, lInfo, lChoice, lViev;
     private EventHandler key, keyUpdate;
     int role;
     
@@ -58,11 +62,13 @@ public class AddUser extends Stage {
        
        prepareScene();
        createItem();
+       prepareViev();
        
        borderPane = new BorderPane();
        borderPane.setTop(hbuttonMenu);
-   
-       SceneParticipant = new Scene(borderPane, 400, 400);
+       borderPane.setCenter(Main);
+       
+       SceneParticipant = new Scene(borderPane, 400, 480);
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);
@@ -94,7 +100,7 @@ public class AddUser extends Stage {
         vievButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {    
-            
+                borderPane.setCenter(Main);
             }
         });
         
@@ -109,7 +115,8 @@ public class AddUser extends Stage {
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {   
-
+                prepareGridUpdate();
+                borderPane.setCenter(gridUpdate);
             }
         });
         
@@ -157,6 +164,9 @@ public class AddUser extends Stage {
         lPassUserR.setId("lNamePar");
         PassUserR = new PasswordField();
         
+        lInfo = new Label();
+        lInfo.setId("lNamePar");
+        
         simplerole = new CheckBox();
         simplerole.setId("lNamePar");
         simplerole.setText("Zwykły");
@@ -183,11 +193,10 @@ public class AddUser extends Stage {
                 if(adminrole.isSelected()){
                     simplerole.setSelected(false);
                     role = 1;
-                }   
-            }
-        });
-        
-    }
+                 }   
+             }
+         });       
+     }
      
     private void prepareGridPaneAdd(){
         
@@ -199,31 +208,78 @@ public class AddUser extends Stage {
            
         gridAdd.add(lNamePar, 0, 1);       
         gridAdd.add(NamePar, 1, 1);
-         
+        
+        NamePar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                NamePar.setOnKeyPressed(key);
+                if( !NamePar.getText().equals("")) NamePar.setId("");
+                else NamePar.setId("error");
+                              
+             }
+        }); 
+        
         gridAdd.add(lLastNamePar, 0, 2);
         gridAdd.add(LastNamePar, 1, 2);
+      
+        LastNamePar.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                LastNamePar.setOnKeyPressed(key);
+                              
+             }
+        }); 
         
         gridAdd.add(lNick, 0, 3);
         gridAdd.add(NickUser, 1, 3);
-        
+        NickUser.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                NickUser.setOnKeyPressed(key);
+                              
+             }
+        });
+                
         gridAdd.add(lPassUser, 0, 4);
         gridAdd.add(PassUser, 1, 4);
-        
+        PassUser.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                PassUser.setOnKeyPressed(key);
+                              
+             }
+        });
+                
         gridAdd.add(lPassUserR, 0, 5);
         gridAdd.add(PassUserR, 1, 5);
-        
+        PassUserR.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                PassUserR.setOnKeyPressed(key);
+                              
+             }
+        });
+              
         gridAdd.add(simplerole, 0, 6);
         gridAdd.add(adminrole, 1, 6);
         
         addParButton = new Button("Potwierdź");
         addParButton.setMinWidth(100);
         addParButton.setId("addParButton");
+        addParButton.setOnKeyPressed(key);
         
         hbGridAddParButton = new HBox();
         hbGridAddParButton.setId("hbGridAddTitle");
         hbGridAddParButton.getChildren().add(addParButton);
         gridAdd.add(hbGridAddParButton, 0, 7, 2, 1);
-                
+        
+        gridAdd.add(lInfo, 0, 8, 2, 1);
+                 
         addParButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -249,9 +305,11 @@ public class AddUser extends Stage {
             PassUser.getText().equals("") ||
             PassUserR.getText().equals("") ||
             (!simplerole.isSelected() &&
-             !adminrole.isSelected())) {
+            !adminrole.isSelected())) {
             
-            System.out.println("Cos zle jest");
+                if( NamePar.getText().equals("")) NamePar.setId("error");
+            
+                lInfo.setText("Wypełnij wszystkie pola!");
         }
         else {
             if(PassUser.getText().equals(PassUserR.getText())){
@@ -283,8 +341,88 @@ public class AddUser extends Stage {
             adminrole.setSelected(false);
             role = -1; 
             }
-            else System.out.println("Cos zle jest");
+            else lInfo.setText("Hasła nie pasują!");
         }   
+    }
+    
+    private void prepareGridUpdate() {
+        
+        gridUpdate = new GridPane();
+        gridUpdate.setId("gridAdd");
+        
+        gridAddTitle.setText("Zmień Dane Użytkownika");
+        gridUpdate.add(hbGridAddTitle, 0, 0, 2, 1);
+        
+        userCBdata = new ComboBox();
+        userCBdata.setMinWidth(200);
+        
+        lChoice = new Label("Wybierz: ");
+        lChoice.setId("lNamePar");
+        hbGridUpdateComBoxPar = new HBox();
+        hbGridUpdateComBoxPar.setId("hbGridAddTitle");
+        hbGridUpdateComBoxPar.getChildren().addAll(lChoice, userCBdata);
+        gridUpdate.add(hbGridUpdateComBoxPar, 0, 1, 2, 1);
+        
+        stack = new StackPane();
+        stack.getChildren().add(lNamePar);
+        stack.setMinWidth(120);
+        stack.setAlignment(Pos.TOP_LEFT);
+        gridUpdate.add(stack, 0, 2);       
+        gridUpdate.add(NamePar, 1, 2);
+        
+        gridUpdate.add(lLastNamePar, 0, 3);
+        gridUpdate.add(LastNamePar, 1, 3);
+        
+        lNick.setText("Nick:       ");
+        gridUpdate.add(lNick, 0, 4, 2,1);
+        
+        gridUpdate.add(simplerole, 0, 5);
+        gridUpdate.add(adminrole, 1, 5);
+        
+        editParButton = new Button("Zmień dane Użytkownika");
+        editParButton.setId("addParButton");
+        editParButton.setDisable(true);
+        hbGridEditParButton = new HBox();
+        hbGridEditParButton.setId("hbGridAddTitle");
+        hbGridEditParButton.getChildren().add(editParButton);
+        gridUpdate.add(hbGridEditParButton, 0, 6, 2, 1);
+        
+        changePasButton = new Button("Zmień hasło Użytkownika");
+        changePasButton.setId("addParButton");
+        changePasButton.setDisable(true);        
+        hbGridUpdatePasButton = new HBox();
+        hbGridUpdatePasButton.setId("hbGridAddTitle");
+        hbGridUpdatePasButton.getChildren().add(changePasButton);
+        gridUpdate.add(hbGridUpdatePasButton, 0, 7, 2, 1);
+        
+        delParButton = new Button("Usuń Użytkownika");
+        delParButton.setId("addParButton");
+        delParButton.setDisable(true);        
+        hbGridUpdateDelParButton = new HBox();
+        hbGridUpdateDelParButton.setId("hbGridAddTitle");
+        hbGridUpdateDelParButton.getChildren().add(delParButton);
+        gridUpdate.add(hbGridUpdateDelParButton, 0, 8, 2, 1);        
+    }
+    
+     private void prepareViev() {
+       
+        Main = new VBox();
+        Main.setId("vbpane");
+
+        String description = "Panel w którym dodajemy:\n- wychowawców OHP,"
+                           + " \n- zmieniamy dane wychowawcy (imię, nazwisko) oraz jego status:"
+                           + " \n- zwykły, ma tylko możliwość wypisywania uczestników OHP"
+                           + " \n- admin ma pełne prawa.\n\n"
+                           + " Jest też możliwość zmiany hasła dla danego wychowawcy.\n"
+                           + " Nick jest unikalny i nie podlega zmianie.\n" 
+                           + " Jest też możliwość usunięcia wychowawcy.\n" ;
+         
+        lViev = new Label();
+        lViev.setText(description);
+        lViev.setWrapText(true);
+        lViev.setId("lViev");
+               
+       Main.getChildren().add(lViev);     
     }
     
     private void sqlQuery(String query) {
