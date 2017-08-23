@@ -5,13 +5,15 @@
  */
 package testowa;
 
-import java.io.FileNotFoundException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -56,7 +58,9 @@ public class AddUser extends Stage {
     private Text gridAddTitle; 
     private Label lNamePar, lLastNamePar, lNick, lPassUser, lPassUserR, lInfo, lChoice, lViev;
     private EventHandler key, keyUpdate;
+    private ObservableList<UserData> data;
     int role;
+    int ItemId;
     
     public AddUser(){
        
@@ -123,9 +127,8 @@ public class AddUser extends Stage {
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            close();
-            
-            }
+                close();
+             }
         });                       
     }
     
@@ -353,8 +356,15 @@ public class AddUser extends Stage {
         gridAddTitle.setText("Zmień Dane Użytkownika");
         gridUpdate.add(hbGridAddTitle, 0, 0, 2, 1);
         
-        userCBdata = new ComboBox();
+        userCBdata = new ComboBox(data);
         userCBdata.setMinWidth(200);
+        
+        userCBdata.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<UserData>() {           
+            @Override
+            public void changed(ObservableValue<? extends UserData> ov, UserData t, UserData t1) {
+                comboRefresh(); 
+            }
+        }); 
         
         lChoice = new Label("Wybierz: ");
         lChoice.setId("lNamePar");
@@ -422,9 +432,36 @@ public class AddUser extends Stage {
         lViev.setWrapText(true);
         lViev.setId("lViev");
                
-       Main.getChildren().add(lViev);     
+        Main.getChildren().add(lViev);     
     }
     
+    private void comboRefresh() {
+     
+        ItemId = userCBdata.getSelectionModel().getSelectedIndex();
+        
+        if(ItemId==-1){
+            NamePar.clear();
+            LastNamePar.clear();
+            lNick.setText("Nick:       ");
+            editParButton.setDisable(true); 
+        }
+        else {
+                
+            NamePar.setText(data.get(ItemId).first_name);
+            LastNamePar.setText(data.get(ItemId).last_name);
+            
+            lNick.setText("Nick:       " + data.get(ItemId).nick);
+            
+            role = data.get(ItemId).role;
+        
+            if(role==1) adminrole.setSelected(true);   
+            if(role==0) simplerole.setSelected(true);     
+              
+         }  
+    } 
+     
+    String deleteUser = "delete from user_ohp where nick like 'kate' and id_part=2";
+     
     private void sqlQuery(String query) {
         
         try {
@@ -434,5 +471,33 @@ public class AddUser extends Stage {
           
         }
     }
+    
+    public void addUserData() {                                              
+  
+        data = FXCollections.observableArrayList();
+            
+        try {
+        
+            st = db.con.createStatement();
+            
+            String query = "SELECT id_part, first_name, last_name, nick, role FROM user_ohp";
+      
+            ResultSet rs = st.executeQuery(query);
+        
+            while (rs.next()){
+                UserData unit = new UserData(
+                        rs.getInt("id_part"), 
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("nick"),
+                        rs.getInt("role")
+                );
+                data.add(unit); 
+            }
+                     
+        } catch (SQLException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }    
+    }    
     
 }

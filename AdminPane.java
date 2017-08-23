@@ -89,6 +89,7 @@ public class AdminPane extends Stage {
             public void handle(ActionEvent event) {
                 AddUser user = new AddUser();
                 user.db = db;
+                user.addUserData();
                 user.show();
                 close();
             }
