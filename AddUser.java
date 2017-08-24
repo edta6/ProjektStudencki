@@ -59,7 +59,7 @@ public class AddUser extends Stage {
     private Label lNamePar, lLastNamePar, lNick, lPassUser, lPassUserR, lInfo, lChoice, lViev;
     private EventHandler key, keyUpdate;
     private ObservableList<UserData> data;
-    int role;
+    int role ;
     int ItemId;
     
     public AddUser(){
@@ -111,6 +111,15 @@ public class AddUser extends Stage {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                NamePar.clear();
+                LastNamePar.clear();
+                NickUser.clear();
+                PassUser.clear();
+                PassUserR.clear();
+                simplerole.setSelected(false);
+                adminrole.setSelected(false);
+                role = -1;
+                lNick.setText("Nick: ");
                 prepareGridPaneAdd();
                 borderPane.setCenter(gridAdd);
             }
@@ -118,7 +127,11 @@ public class AddUser extends Stage {
        
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {   
+            public void handle(ActionEvent event) {
+                NamePar.clear();
+                LastNamePar.clear();
+                simplerole.setSelected(false);
+                adminrole.setSelected(false);
                 prepareGridUpdate();
                 borderPane.setCenter(gridUpdate);
             }
@@ -181,18 +194,19 @@ public class AddUser extends Stage {
         simplerole.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
-                        
+                
                 if(simplerole.isSelected()){
                     adminrole.setSelected(false);
                     role = 0;
-                }   
+                }
+   
             }
         });
         
         adminrole.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
-                        
+                
                 if(adminrole.isSelected()){
                     simplerole.setSelected(false);
                     role = 1;
@@ -231,7 +245,9 @@ public class AddUser extends Stage {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                
                 LastNamePar.setOnKeyPressed(key);
-                              
+                if( !LastNamePar.getText().equals("")) LastNamePar.setId("");
+                else LastNamePar.setId("error");
+                
              }
         }); 
         
@@ -242,35 +258,41 @@ public class AddUser extends Stage {
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                
                 NickUser.setOnKeyPressed(key);
-                              
+                if( !NickUser.getText().equals("")) NickUser.setId("");
+                else NickUser.setId("error");
+                
              }
         });
-                
-        gridAdd.add(lPassUser, 0, 4);
-        gridAdd.add(PassUser, 1, 4);
+        
+        gridAdd.add(simplerole, 0, 4);
+        gridAdd.add(adminrole, 1, 4);
+        
+        gridAdd.add(lPassUser, 0, 5);
+        gridAdd.add(PassUser, 1, 5);
         PassUser.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                
                 PassUser.setOnKeyPressed(key);
-                              
+                if( !PassUser.getText().equals("")) PassUser.setId("");
+                else PassUser.setId("error");
+                
              }
         });
                 
-        gridAdd.add(lPassUserR, 0, 5);
-        gridAdd.add(PassUserR, 1, 5);
+        gridAdd.add(lPassUserR, 0, 6);
+        gridAdd.add(PassUserR, 1, 6);
         PassUserR.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                
                 PassUserR.setOnKeyPressed(key);
+                if( !PassUserR.getText().equals("")) PassUserR.setId("");
+                else PassUserR.setId("error");
                               
              }
         });
               
-        gridAdd.add(simplerole, 0, 6);
-        gridAdd.add(adminrole, 1, 6);
-        
         addParButton = new Button("Potwierdź");
         addParButton.setMinWidth(100);
         addParButton.setId("addParButton");
@@ -311,6 +333,10 @@ public class AddUser extends Stage {
             !adminrole.isSelected())) {
             
                 if( NamePar.getText().equals("")) NamePar.setId("error");
+                if( LastNamePar.getText().equals("")) LastNamePar.setId("error");
+                if( NickUser.getText().equals("")) NickUser.setId("error");
+                if( PassUser.getText().equals("")) PassUser.setId("error");
+                if( PassUserR.getText().equals("")) PassUserR.setId("error");
             
                 lInfo.setText("Wypełnij wszystkie pola!");
         }
@@ -343,9 +369,12 @@ public class AddUser extends Stage {
             simplerole.setSelected(false);
             adminrole.setSelected(false);
             role = -1; 
+            lInfo.setText("Poprawnie dodano użytkownika!");
             }
             else lInfo.setText("Hasła nie pasują!");
-        }   
+        } 
+        
+        addUserData();
     }
     
     private void prepareGridUpdate() {
@@ -391,7 +420,7 @@ public class AddUser extends Stage {
         
         editParButton = new Button("Zmień dane Użytkownika");
         editParButton.setId("addParButton");
-        editParButton.setDisable(true);
+        editParButton.setMinWidth(240);
         hbGridEditParButton = new HBox();
         hbGridEditParButton.setId("hbGridAddTitle");
         hbGridEditParButton.getChildren().add(editParButton);
@@ -399,7 +428,8 @@ public class AddUser extends Stage {
         
         changePasButton = new Button("Zmień hasło Użytkownika");
         changePasButton.setId("addParButton");
-        changePasButton.setDisable(true);        
+        changePasButton.setDisable(true);
+        changePasButton.setMinWidth(240);
         hbGridUpdatePasButton = new HBox();
         hbGridUpdatePasButton.setId("hbGridAddTitle");
         hbGridUpdatePasButton.getChildren().add(changePasButton);
@@ -407,11 +437,37 @@ public class AddUser extends Stage {
         
         delParButton = new Button("Usuń Użytkownika");
         delParButton.setId("addParButton");
-        delParButton.setDisable(true);        
+        delParButton.setMinWidth(240);
         hbGridUpdateDelParButton = new HBox();
         hbGridUpdateDelParButton.setId("hbGridAddTitle");
         hbGridUpdateDelParButton.getChildren().add(delParButton);
-        gridUpdate.add(hbGridUpdateDelParButton, 0, 8, 2, 1);        
+        gridUpdate.add(hbGridUpdateDelParButton, 0, 8, 2, 1);
+        
+        delParButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                
+                String deleteRowTable = "delete from user_ohp where nick like '" + data.get(ItemId).nick  
+                                      + "' and id_part=" + data.get(ItemId).id_part + ";";   
+                
+                String deleteUser = "DROP USER '" + data.get(ItemId).nick + "'@'localhost'";
+                
+                sqlQuery(deleteUser);
+                sqlQuery(deleteRowTable);
+                
+                NamePar.clear();
+                LastNamePar.clear();
+                lNick.setText("Nick:       ");
+                role = -1;
+                
+                data.remove(ItemId);
+                userCBdata.setItems(data);
+                userCBdata.getSelectionModel().clearSelection();
+                
+                simplerole.setSelected(false);
+                adminrole.setSelected(false);
+            }
+        });
     }
     
      private void prepareViev() {
@@ -459,9 +515,7 @@ public class AddUser extends Stage {
               
          }  
     } 
-     
-    String deleteUser = "delete from user_ohp where nick like 'kate' and id_part=2";
-     
+      
     private void sqlQuery(String query) {
         
         try {
