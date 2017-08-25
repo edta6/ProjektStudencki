@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -131,7 +132,8 @@ public class MainWindow extends Stage {
         buttonClose.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            close();
+                Platform.exit();
+                close();
             }
         });
         
@@ -202,22 +204,5 @@ public class MainWindow extends Stage {
         bottomPane.add(uTextNow, 0, 1);
         
     }
-    
-    private void userRole() {
         
-         try {
-        
-            st = db.con.createStatement();
-            
-            String query = "Select role from user_ohp where nick like '" + user + "'";
-      
-            ResultSet rs = st.executeQuery(query);
-            
-            
-
-         } catch (SQLException ex) {
-            
-        }  
-    }
-    
 }

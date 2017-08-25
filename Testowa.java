@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -142,6 +143,7 @@ public class Testowa extends Application {
         primaryStage.setTitle("The book out and trips");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
     }
     
     /*
