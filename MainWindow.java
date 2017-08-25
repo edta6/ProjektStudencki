@@ -45,9 +45,11 @@ public class MainWindow extends Stage {
     private Label uTextNow;
     private Label nameLogin, userText;
     public final String user;
+    public final String nameU;
     public final int role;
    
-    public MainWindow(String user, int role) {
+    public MainWindow(String name, String user, int role) {
+        this.nameU = name;
         this.user = user;
         this.role = role;
         prepareScene();
@@ -117,7 +119,7 @@ public class MainWindow extends Stage {
         
         nameLogin = new Label();
         userText = new Label();
-        userText.setText(user);
+        userText.setText(nameU);
         userText.setId("userText");
         nameLogin.setText("Użytkownik: ");
         hbnameLogin = new HBox();

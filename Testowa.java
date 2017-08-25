@@ -170,9 +170,10 @@ public class Testowa extends Application {
                 }
                 else sqlQuery("use OHP;");
                 
-            int role = sqlResult("SElECT role FROM user_ohp where nick like '" + user +"'");    
+            int role = sqlResult("SElECT role FROM user_ohp where nick like '" + user +"'");
+            String name = sqlName("SElECT first_name, last_name FROM user_ohp where nick like '" + user +"'");
             
-            window = new MainWindow(user, role);
+            window = new MainWindow(name, user, role);
             window.db = db;
             window.login = login;
             window.show();
@@ -212,6 +213,31 @@ public class Testowa extends Application {
         catch (SQLException ex) {} 
         
         return numberRow;    
+    }
+    
+    public String sqlName(String query) {
+        
+        String fullname;
+        String first_name = null;
+        String last_name = null;
+        
+        try {
+           
+            st = db.con.createStatement();
+            
+            ResultSet rs = st.executeQuery(query);
+            
+            while(rs.next()) {
+                first_name = rs.getString("first_name");
+                last_name = rs.getString("last_name");
+            }
+        }    
+        catch (SQLException ex) {} 
+        
+        fullname = first_name + " " + last_name;
+        
+        return fullname; 
+           
     }
     
      

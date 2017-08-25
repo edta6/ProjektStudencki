@@ -57,7 +57,7 @@ public class AddUser extends Stage {
     private CheckBox simplerole, adminrole; 
     private Text gridAddTitle; 
     private Label lNamePar, lLastNamePar, lNick, lPassUser, lPassUserR, lInfo, lChoice, lViev;
-    private EventHandler key, keyUpdate;
+    private EventHandler key;
     private ObservableList<UserData> data;
     int role ;
     int ItemId;
@@ -421,23 +421,125 @@ public class AddUser extends Stage {
         editParButton = new Button("Zmień dane Użytkownika");
         editParButton.setId("addParButton");
         editParButton.setMinWidth(240);
+        editParButton.setDisable(true);
         hbGridEditParButton = new HBox();
         hbGridEditParButton.setId("hbGridAddTitle");
         hbGridEditParButton.getChildren().add(editParButton);
         gridUpdate.add(hbGridEditParButton, 0, 6, 2, 1);
         
+        editParButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            
+                String addUserGran;   
+                
+                String changeUser = "UPDATE user_ohp SET"
+                          +  " first_name = '" + NamePar.getText() + "'," 
+                          +  " last_name = '" + LastNamePar.getText() + "',"
+                          +  " role = " + role  
+                          +  " WHERE id_part = " + data.get(ItemId).id_part;
+                
+                String remove = "REVOKE ALL PRIVILEGES, GRANT OPTION FROM '" + data.get(ItemId).nick + "'@'localhost'";
+    
+                if(role==1){
+                    addUserGran = "GRANT ALL PRIVILEGES ON *.* TO '" + data.get(ItemId).nick + "'@'localhost' WITH GRANT OPTION";   
+                }
+                else addUserGran = "GRANT ALL ON OHP.* TO '" + data.get(ItemId).nick + "'@'localhost'";  
+                
+                sqlQuery(changeUser);
+                sqlQuery(remove);
+                sqlQuery(addUserGran);
+                
+                NamePar.clear();
+                LastNamePar.clear();
+                lNick.setText("Nick:       ");
+                role = -1;
+                
+                userCBdata.getSelectionModel().clearSelection();
+                
+                simplerole.setSelected(false);
+                adminrole.setSelected(false);
+                   
+            }
+        });
+        
         changePasButton = new Button("Zmień hasło Użytkownika");
         changePasButton.setId("addParButton");
-        changePasButton.setDisable(true);
         changePasButton.setMinWidth(240);
+        changePasButton.setDisable(true);
         hbGridUpdatePasButton = new HBox();
         hbGridUpdatePasButton.setId("hbGridAddTitle");
         hbGridUpdatePasButton.getChildren().add(changePasButton);
         gridUpdate.add(hbGridUpdatePasButton, 0, 7, 2, 1);
         
+        changePasButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            
+                final Stage changePas = new Stage();
+                GridPane  changePasUserPane = new GridPane();
+                changePasUserPane.setId("gridAdd");
+                gridAddTitle.setText("Zmień Hasło Użytkownika");
+                changePasUserPane.add(hbGridAddTitle, 0, 0, 2, 1);
+                
+                StackPane rozmiar = new StackPane();
+                rozmiar.getChildren().add(lPassUser);
+                rozmiar.setMinWidth(120);
+                rozmiar.setAlignment(Pos.TOP_LEFT);
+                
+                changePasUserPane.add(rozmiar, 0, 1);
+                changePasUserPane.add(PassUser, 1, 1);
+                changePasUserPane.add(lPassUserR, 0, 2);
+                changePasUserPane.add(PassUserR, 1, 2);
+                
+                Button changePassword = new Button("Potwierdź");
+                changePassword.setMinWidth(100);
+                changePassword.setId("addParButton");
+        
+                HBox hbchangePasUserPane = new HBox();
+                hbchangePasUserPane.setId("hbGridAddTitle");
+                hbchangePasUserPane.getChildren().add(changePassword);
+                changePasUserPane.add(hbchangePasUserPane, 0, 3, 2, 1);
+                changePasUserPane.add(lInfo, 0, 4, 2, 1);
+                
+                Scene changePasUser = new Scene(changePasUserPane, 400, 250);
+                changePasUser.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
+                changePas.setScene(changePasUser);
+                changePas.setTitle("Zmiana Hasła");
+                changePas.show();
+                
+            changePassword.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+                public void handle(ActionEvent event) {
+
+                    if( PassUser.getText().equals("") ||
+                        PassUserR.getText().equals("")) {
+
+                        if( PassUser.getText().equals("")) PassUser.setId("error");
+                        if( PassUserR.getText().equals("")) PassUserR.setId("error");
+
+                        lInfo.setText("Wypełnij wszystkie pola!");
+                     }
+                    else {
+                        if(PassUser.getText().equals(PassUserR.getText())){
+                            
+                            String pass_new = "SET PASSWORD FOR '" + data.get(ItemId).nick + "'@'localhost' = PASSWORD('" + PassUser.getText() +"');";
+                            sqlQuery(pass_new);
+                            changePas.close();
+                        }
+                        else lInfo.setText("Hasła nie pasują!");
+                    }
+
+                 }
+            });
+                   
+            }
+        });
+        
         delParButton = new Button("Usuń Użytkownika");
         delParButton.setId("addParButton");
         delParButton.setMinWidth(240);
+        delParButton.setDisable(true);
         hbGridUpdateDelParButton = new HBox();
         hbGridUpdateDelParButton.setId("hbGridAddTitle");
         hbGridUpdateDelParButton.getChildren().add(delParButton);
@@ -461,8 +563,8 @@ public class AddUser extends Stage {
                 role = -1;
                 
                 data.remove(ItemId);
-                userCBdata.setItems(data);
                 userCBdata.getSelectionModel().clearSelection();
+                userCBdata.setItems(data);
                 
                 simplerole.setSelected(false);
                 adminrole.setSelected(false);
@@ -492,14 +594,17 @@ public class AddUser extends Stage {
     }
     
     private void comboRefresh() {
-     
+        
+        userCBdata.setItems(data);
         ItemId = userCBdata.getSelectionModel().getSelectedIndex();
         
         if(ItemId==-1){
             NamePar.clear();
             LastNamePar.clear();
             lNick.setText("Nick:       ");
-            editParButton.setDisable(true); 
+            editParButton.setDisable(true);
+            changePasButton.setDisable(true);
+            delParButton.setDisable(true);
         }
         else {
                 
@@ -511,7 +616,10 @@ public class AddUser extends Stage {
             role = data.get(ItemId).role;
         
             if(role==1) adminrole.setSelected(true);   
-            if(role==0) simplerole.setSelected(true);     
+            if(role==0) simplerole.setSelected(true);
+            editParButton.setDisable(false);
+            changePasButton.setDisable(false);
+            delParButton.setDisable(false);
               
          }  
     } 
@@ -521,7 +629,8 @@ public class AddUser extends Stage {
         try {
             st = db.con.createStatement();
             st.executeUpdate(query);    
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) {
           
         }
     }
@@ -549,9 +658,9 @@ public class AddUser extends Stage {
                 data.add(unit); 
             }
                      
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }    
     }    
-    
 }
