@@ -51,7 +51,8 @@ public final class Subscribe extends Stage {
     private HBox hbSceneTitle, hbGridComBoxPar, hbGridComBoxTar, hbGridData;
     private HBox hbGridTime, hbGridButton;
     private ComboBox participant, target;
-    private ObservableList<ParticipantData> dataCombo;
+    private ObservableList<ParticipantData> dataComboPar;
+    private ObservableList<TargetData> dataComboTar;
     private Button exit;
     private Text scenetitle;
     private Label lParticipant, lTarget, lData, lPlace, lComment;
@@ -63,9 +64,8 @@ public final class Subscribe extends Stage {
     private String resultDate, resultDate_two, resultDate_three, resultDate_four;
     private TimeTextField timeTextField;
     private CheckBox changeTime;
-    int ItemIdPart;
+    int ItemIdPart, ItemIdTarg;
     int userId;
-    
     
     public Subscribe(){
         prepareScene();
@@ -137,8 +137,6 @@ public final class Subscribe extends Stage {
             }
         }); 
         
-        
-        
         hbGridComBoxPar = new HBox();
         hbGridComBoxPar.setId("hbGridAddTitle");
         hbGridComBoxPar.getChildren().addAll(lParticipant, participant);
@@ -152,6 +150,16 @@ public final class Subscribe extends Stage {
         rozmiar.setAlignment(Pos.TOP_LEFT);
         target = new ComboBox();
         target.setMinWidth(200);
+        
+        target.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TargetData>() {           
+            @Override
+            public void changed(ObservableValue<? extends TargetData> ov, TargetData t, TargetData t1) {
+                
+                ItemIdTarg = target.getSelectionModel().getSelectedIndex();
+                
+            }
+        });
+        
         hbGridComBoxTar = new HBox();
         hbGridComBoxTar.setId("hbGridAddTitle");
         hbGridComBoxTar.getChildren().addAll(rozmiar, target);
@@ -242,7 +250,7 @@ public final class Subscribe extends Stage {
     
     public void refreshCombo(){
        
-        dataCombo = FXCollections.observableArrayList();
+        dataComboPar = FXCollections.observableArrayList();
         
         try {
             
@@ -259,24 +267,48 @@ public final class Subscribe extends Stage {
                         rs.getString("p.last_name"),
                         2
                 );
-                dataCombo.add(unit);        
+                dataComboPar.add(unit);        
             }
             
-            participant.setItems(dataCombo);
+            participant.setItems(dataComboPar);
 
         } catch(Exception ex) {}
     }
     
+    public void refreshComboTar(){
+       
+        dataComboTar = FXCollections.observableArrayList();
+        
+        try {
+            
+            st = db.con.createStatement();
+            
+            String query = "SELECT id_target, target_name FROM targets;";
+                     
+            ResultSet rs = st.executeQuery(query);
+            
+            while(rs.next()) {
+                TargetData unit = new TargetData(
+                        rs.getInt("id_target"), 
+                        rs.getString("target_name")
+                );
+                dataComboTar.add(unit);        
+            }
+            
+            target.setItems(dataComboTar);
+
+        } catch(Exception ex) {}
+    }
     
     public void exit_participant() {
         
-        int ItemIdTarg = target.getSelectionModel().getSelectedIndex();
-        
         String query;
+        
         if(changeTime.isSelected()){
             query = "INSERT INTO main_exre (id_part, id_target, exit_date, place,"
                      + " comm, id_user_exit) Values "
-                     + "(" + dataCombo.get(ItemIdPart).id_part + ",0,"
+                     + "(" + dataComboPar.get(ItemIdPart).id_part + ","
+                     + dataComboTar.get(ItemIdTarg).id_target + ","
                      + " '" + resultDate_four + " " + timeTextField.getText() + ":00',"
                      + " '" + taPlace.getText() + "',"
                      + " '" + taComment.getText() + "',"
@@ -285,23 +317,20 @@ public final class Subscribe extends Stage {
         else {
             query = "INSERT INTO main_exre (id_part, id_target, exit_date, place,"
                      + " comm, id_user_exit) Values "
-                     + "(" + dataCombo.get(ItemIdPart).id_part + ",0,"
+                     + "(" + dataComboPar.get(ItemIdPart).id_part + ","
+                     + dataComboTar.get(ItemIdTarg).id_target + ","
                      + " '" + resultDate_three + "',"
                      + " '" + taPlace.getText() + "',"
                      + " '" + taComment.getText() + "',"
                      + userId + ");";  
         }
-          
-        System.out.println(query);
-        
-//        try {
-//            st = db.con.createStatement();
-//            st.execute(query);    
-//        } catch (SQLException ex) {
-//           
-//        }
-        
-      
+                  
+        try {
+            st = db.con.createStatement();
+            st.execute(query);    
+        } catch (SQLException ex) {
+           
+        }
      }
                                         
 }

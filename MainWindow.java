@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -41,7 +43,7 @@ public class MainWindow extends Stage {
     private StackPane stackTable;
     private GridPane bottomPane;
     private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
-    public  TableView<DataWypis> table; 
+    public  TableView<ExreData> table; 
     private Button buttonExit, buttonHome, buttonAdmin, buttonClose;
     private Label uTextNow;
     private Label nameLogin, userText;
@@ -49,6 +51,8 @@ public class MainWindow extends Stage {
     public final String nameU;
     public final int role;
     public final int id_user;
+//    private TableColumn lp;
+    private ObservableList<ExreData> data;
    
     public MainWindow(String name, String user, int role, int id_part) {
         this.nameU = name;
@@ -72,6 +76,9 @@ public class MainWindow extends Stage {
         
         prepareBorderPaneTop ();
         borderPane.setTop(hbuttonMenuLeft);
+        
+        
+        
         
         prepareBorderPaneCenter();
         borderPane.setCenter(stackTable);
@@ -97,6 +104,7 @@ public class MainWindow extends Stage {
                 wypisz.login = login;
                 wypisz.userId = id_user;
                 wypisz.refreshCombo();
+                wypisz.refreshComboTar();
                 wypisz.show();
             }
         });
@@ -106,7 +114,7 @@ public class MainWindow extends Stage {
         buttonHome.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
- 
+                table.setItems(data);
             }
         });
         
@@ -152,6 +160,37 @@ public class MainWindow extends Stage {
         hbuttonMenuLeft.getChildren().addAll(buttonExit, buttonHome, buttonAdmin, hbuttonMenuRight);
     }
     
+    public void refreshTableData(){
+       
+        data = FXCollections.observableArrayList();
+        
+        try {
+            
+            st = db.con.createStatement();
+            
+            String query = "Select m.id_exre, p.first_name, p.last_name, t.target_name, m.exit_date, m.place, m.comm, u.first_name, u.last_name from main_exre m join participants p on m.id_part=p.id_part join targets t on m.id_target=t.id_target join user_ohp u on m.id_user_exit=u.id_part where m.return_date is NULL;";
+                     
+            ResultSet rs = st.executeQuery(query);
+            
+            while(rs.next()) {
+                ExreData unit = new ExreData(
+                        rs.getInt("m.id_exre"), 
+                        rs.getString("p.first_name"),
+                        rs.getString("p.last_name"),
+                        rs.getString("t.target_name"),
+                        rs.getString("m.exit_date"),
+                        rs.getString("m.place"),
+                        rs.getString("m.comm"),
+                        rs.getString("u.first_name"),
+                        rs.getString("u.last_name")
+                );
+                data.add(unit);        
+            }
+            
+        } catch(Exception ex) {}
+    }
+    
+    
     private void prepareBorderPaneCenter(){
         
         table = new TableView<>();
@@ -159,35 +198,35 @@ public class MainWindow extends Stage {
         table.setEditable(false);
         
         TableColumn lp = new TableColumn("Lp.");
-        lp.setCellValueFactory(new PropertyValueFactory<>("userId"));
+        lp.setCellValueFactory(new PropertyValueFactory("id_exre"));
         lp.setPrefWidth(60);
         TableColumn  name = new TableColumn("Nazwisko i Imię");
-        name.setCellValueFactory(new PropertyValueFactory<>("userName"));
+        name.setCellValueFactory(new PropertyValueFactory("FullNamePar"));
         name.setPrefWidth(200);
         TableColumn target = new TableColumn("Cel wyjścia");
-        target.setCellValueFactory(new PropertyValueFactory<>("target"));
+//        target.setCellValueFactory(new PropertyValueFactory<>("target"));
         target.setPrefWidth(200);
         TableColumn exit = new TableColumn("Wyszedł");
         exit.setPrefWidth(180);
         TableColumn dataExit = new TableColumn("dnia");
-        dataExit.setCellValueFactory(new PropertyValueFactory<>("dataExit"));
+//        dataExit.setCellValueFactory(new PropertyValueFactory<>("dataExit"));
         dataExit.setPrefWidth(90);
         TableColumn timeExit = new TableColumn("godz.");
-        timeExit.setCellValueFactory(new PropertyValueFactory<>("timeExit"));
+//        timeExit.setCellValueFactory(new PropertyValueFactory<>("timeExit"));
         timeExit.setPrefWidth(90);
         TableColumn adres = new TableColumn("Przewidywane miejsce\n(adres)\nTel. kontaktowy");
-        adres.setCellValueFactory(new PropertyValueFactory<>("adress"));
+//        adres.setCellValueFactory(new PropertyValueFactory<>("adress"));
         adres.setPrefWidth(210);
         TableColumn cameBack = new TableColumn("Powrócił");
         cameBack.setPrefWidth(180);
         TableColumn datacameBack = new TableColumn("dnia");
-        datacameBack.setCellValueFactory(new PropertyValueFactory<>("datacameBack"));
+//        datacameBack.setCellValueFactory(new PropertyValueFactory<>("datacameBack"));
         datacameBack.setPrefWidth(90);
         TableColumn timecameBack = new TableColumn("godz.");
-        timecameBack.setCellValueFactory(new PropertyValueFactory<>("timecameBack"));
+//        timecameBack.setCellValueFactory(new PropertyValueFactory<>("timecameBack"));
         timecameBack.setPrefWidth(90);
         TableColumn comments = new TableColumn("Uwagi");
-        comments.setCellValueFactory(new PropertyValueFactory<>("comments"));
+//        comments.setCellValueFactory(new PropertyValueFactory<>("comments"));
         comments.setPrefWidth(170);
         
         exit.getColumns().addAll(dataExit, timeExit);

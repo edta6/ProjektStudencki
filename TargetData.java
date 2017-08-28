@@ -13,10 +13,8 @@ class TargetData {
     
     Integer id_target; 
     String target;
-     
     
-    public TargetData(Integer id_target, String target
-                    ){
+    public TargetData(Integer id_target, String target){
        this.id_target = id_target;
        this.target = target;      
     }
@@ -24,18 +22,9 @@ class TargetData {
     public Integer getIdTarget() {
         return id_target;
     }
-
-    public String getTarget() {
-        return target;
-    }
-    
-        
+       
     @Override
-    public String toString() {
-        
-        String fullName = target + " " + target;
-        
-        return fullName;
-    }
-    
+    public String toString() {     
+        return target;
+    }  
 }
