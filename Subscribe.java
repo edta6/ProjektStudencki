@@ -6,6 +6,7 @@
 package testowa;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -62,6 +63,9 @@ public final class Subscribe extends Stage {
     private String resultDate, resultDate_two, resultDate_three, resultDate_four;
     private TimeTextField timeTextField;
     private CheckBox changeTime;
+    int ItemIdPart;
+    int userId;
+    
     
     public Subscribe(){
         prepareScene();
@@ -75,8 +79,8 @@ public final class Subscribe extends Stage {
         currentLocale = Locale.getDefault();
         formatter = new SimpleDateFormat("EEEEEEEE,   dd MMMMMMMMMMMM yyyy,   HH:mm", currentLocale);
         formatter_two = new SimpleDateFormat("HH:mm", currentLocale);
-        formatter_three = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss", currentLocale);
-        formatter_four = new SimpleDateFormat("yyyy-MM-DD", currentLocale);
+        formatter_three = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", currentLocale);
+        formatter_four = new SimpleDateFormat("yyyy-MM-dd", currentLocale);
         
         data = new Date();
         resultDate = formatter.format(data);
@@ -123,6 +127,18 @@ public final class Subscribe extends Stage {
         lParticipant.setId("lNamePar");
         participant = new ComboBox();
         participant.setMinWidth(200);
+        
+        participant.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ParticipantData>() {           
+            @Override
+            public void changed(ObservableValue<? extends ParticipantData> ov, ParticipantData t, ParticipantData t1) {
+                
+                ItemIdPart = participant.getSelectionModel().getSelectedIndex();
+                
+            }
+        }); 
+        
+        
+        
         hbGridComBoxPar = new HBox();
         hbGridComBoxPar.setId("hbGridAddTitle");
         hbGridComBoxPar.getChildren().addAll(lParticipant, participant);
@@ -211,7 +227,8 @@ public final class Subscribe extends Stage {
         exit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            
+                
+                exit_participant();
                 timeline.stop();
                 close();
             }
@@ -250,5 +267,41 @@ public final class Subscribe extends Stage {
         } catch(Exception ex) {}
     }
     
-                                         
+    
+    public void exit_participant() {
+        
+        int ItemIdTarg = target.getSelectionModel().getSelectedIndex();
+        
+        String query;
+        if(changeTime.isSelected()){
+            query = "INSERT INTO main_exre (id_part, id_target, exit_date, place,"
+                     + " comm, id_user_exit) Values "
+                     + "(" + dataCombo.get(ItemIdPart).id_part + ",0,"
+                     + " '" + resultDate_four + " " + timeTextField.getText() + ":00',"
+                     + " '" + taPlace.getText() + "',"
+                     + " '" + taComment.getText() + "',"
+                     + userId + ");";
+        }
+        else {
+            query = "INSERT INTO main_exre (id_part, id_target, exit_date, place,"
+                     + " comm, id_user_exit) Values "
+                     + "(" + dataCombo.get(ItemIdPart).id_part + ",0,"
+                     + " '" + resultDate_three + "',"
+                     + " '" + taPlace.getText() + "',"
+                     + " '" + taComment.getText() + "',"
+                     + userId + ");";  
+        }
+          
+        System.out.println(query);
+        
+//        try {
+//            st = db.con.createStatement();
+//            st.execute(query);    
+//        } catch (SQLException ex) {
+//           
+//        }
+        
+      
+     }
+                                        
 }

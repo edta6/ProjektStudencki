@@ -48,11 +48,13 @@ public class MainWindow extends Stage {
     public final String user;
     public final String nameU;
     public final int role;
+    public final int id_user;
    
-    public MainWindow(String name, String user, int role) {
+    public MainWindow(String name, String user, int role, int id_part) {
         this.nameU = name;
         this.user = user;
         this.role = role;
+        this.id_user = id_part;
         prepareScene();
         if(role==1||user.equalsIgnoreCase("root")) {
             buttonAdmin.setDisable(false);
@@ -63,9 +65,9 @@ public class MainWindow extends Stage {
             buttonAdmin.setVisible(false);
         }
     }
-    
-    private void prepareScene(){
         
+    private void prepareScene(){
+         
         borderPane = new BorderPane();
         
         prepareBorderPaneTop ();
@@ -93,6 +95,7 @@ public class MainWindow extends Stage {
                 Subscribe wypisz = new Subscribe();
                 wypisz.db = db;
                 wypisz.login = login;
+                wypisz.userId = id_user;
                 wypisz.refreshCombo();
                 wypisz.show();
             }

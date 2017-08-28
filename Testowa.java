@@ -167,14 +167,16 @@ public class Testowa extends Application {
                     sqlQuery("CREATE TABLE participants (id_part int PRIMARY KEY, first_name varchar(15), last_name varchar(20), active int);");
                     sqlQuery("CREATE TABLE exitreturn (id_part int PRIMARY KEY, exit_return int);");
                     sqlQuery("CREATE TABLE user_ohp(id_part int NOT NULL AUTO_INCREMENT PRIMARY KEY, first_name varchar(15), last_name varchar(20), nick varchar(20),  role int);");
+                    sqlQuery("CREATE TABLE main_exre( id_exre int NOT NULL AUTO_INCREMENT PRIMARY KEY, id_part int, id_target int, exit_date DATETIME, return_date DATETIME, place TEXT, comm TEXT, id_user_exit int, id_user_return int, deleted int);");
                     sqlQuery("CREATE TABLE targets (id_target int PRIMARY KEY, target_name varchar(20));");
                 }
                 else sqlQuery("use OHP;");
-                
+             
+            int id_user = sqlResult("SElECT id_part FROM user_ohp where nick like '" + user +"'");   
             int role = sqlResult("SElECT role FROM user_ohp where nick like '" + user +"'");
             String name = sqlName("SElECT first_name, last_name FROM user_ohp where nick like '" + user +"'");
             
-            window = new MainWindow(name, user, role);
+            window = new MainWindow(name, user, role, id_user);
             window.db = db;
             window.login = login;
             window.show();
