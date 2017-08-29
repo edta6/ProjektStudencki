@@ -42,7 +42,6 @@ public final class Subscribe extends Stage {
     
     DB db;
     Statement st;
-    User login;
     MainWindow window;
     
     private Scene SceneSubscribe;
@@ -127,6 +126,7 @@ public final class Subscribe extends Stage {
         lParticipant.setId("lNamePar");
         participant = new ComboBox();
         participant.setMinWidth(200);
+        participant.setMaxWidth(200);
         
         participant.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ParticipantData>() {           
             @Override
@@ -238,6 +238,7 @@ public final class Subscribe extends Stage {
                 
                 exit_participant();
                 timeline.stop();
+                window.NewDataAdd();
                 close();
             }
         });

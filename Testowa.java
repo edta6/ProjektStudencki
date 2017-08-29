@@ -39,8 +39,7 @@ public class Testowa extends Application {
     private TextField userTextField;
     private PasswordField pwBox;
     private EventHandler key;
-    public User login;
-    MainWindow window;
+    public MainWindow window;
     DB db;
     Statement st;
     
@@ -154,7 +153,6 @@ public class Testowa extends Application {
     public void sendCon(String user, String pswd) {
            
         db = new DB();
-        login = new User(user);
         db.DBConect(user, pswd);
          
         if(db.isError){
@@ -168,7 +166,7 @@ public class Testowa extends Application {
                     sqlQuery("CREATE TABLE exitreturn (id_part int PRIMARY KEY, exit_return int);");
                     sqlQuery("CREATE TABLE user_ohp(id_part int NOT NULL AUTO_INCREMENT PRIMARY KEY, first_name varchar(15), last_name varchar(20), nick varchar(20),  role int);");
                     sqlQuery("CREATE TABLE main_exre( id_exre int NOT NULL AUTO_INCREMENT PRIMARY KEY, id_part int, id_target int, exit_date DATETIME, return_date DATETIME, place TEXT, comm TEXT, id_user_exit int, id_user_return int, deleted int);");
-                    sqlQuery("CREATE TABLE targets (id_target int NOT NULL AUTO_INCREMENT PRIMARY KEY, target_name varchar(20));");
+                    sqlQuery("CREATE TABLE targets (id_target int NOT NULL AUTO_INCREMENT PRIMARY KEY, target_name varchar(20), active int);");
                 }
                 else sqlQuery("use OHP;");
              
@@ -178,8 +176,9 @@ public class Testowa extends Application {
             
             window = new MainWindow(name, user, role, id_user);
             window.db = db;
-            window.login = login;
             window.refreshTableData();
+            window.table.setItems(window.data);
+            window.window = window;
             window.show();
             primaryStage.hide(); 
         }      

@@ -13,10 +13,12 @@ class TargetData {
     
     Integer id_target; 
     String target;
+    Integer active;
     
-    public TargetData(Integer id_target, String target){
+    public TargetData(Integer id_target, String target, Integer active){
        this.id_target = id_target;
-       this.target = target;      
+       this.target = target;
+       this.active = active;
     }
     
     public Integer getIdTarget() {

@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -36,23 +37,22 @@ public class MainWindow extends Stage {
 
     DB db;
     Statement st;
-    User login;
+    MainWindow window;
     
     private Scene sceneMainWindow;
     private BorderPane borderPane;
     private StackPane stackTable;
     private GridPane bottomPane;
     private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
-    public  TableView<ExreData> table; 
     private Button buttonExit, buttonHome, buttonAdmin, buttonClose;
     private Label uTextNow;
     private Label nameLogin, userText;
+    public  TableView<ExreData> table;
+    public ObservableList<ExreData> data;
     public final String user;
     public final String nameU;
     public final int role;
     public final int id_user;
-//    private TableColumn lp;
-    private ObservableList<ExreData> data;
    
     public MainWindow(String name, String user, int role, int id_part) {
         this.nameU = name;
@@ -77,9 +77,6 @@ public class MainWindow extends Stage {
         prepareBorderPaneTop ();
         borderPane.setTop(hbuttonMenuLeft);
         
-        
-        
-        
         prepareBorderPaneCenter();
         borderPane.setCenter(stackTable);
         
@@ -101,8 +98,8 @@ public class MainWindow extends Stage {
             public void handle(ActionEvent event) {
                 Subscribe wypisz = new Subscribe();
                 wypisz.db = db;
-                wypisz.login = login;
                 wypisz.userId = id_user;
+                wypisz.window = window;
                 wypisz.refreshCombo();
                 wypisz.refreshComboTar();
                 wypisz.show();
@@ -114,6 +111,7 @@ public class MainWindow extends Stage {
         buttonHome.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                refreshTableData();
                 table.setItems(data);
             }
         });
@@ -179,6 +177,7 @@ public class MainWindow extends Stage {
                         rs.getString("p.last_name"),
                         rs.getString("t.target_name"),
                         rs.getString("m.exit_date"),
+                        (""),
                         rs.getString("m.place"),
                         rs.getString("m.comm"),
                         rs.getString("u.first_name"),
@@ -190,6 +189,10 @@ public class MainWindow extends Stage {
         } catch(Exception ex) {}
     }
     
+    public void NewDataAdd() {
+        refreshTableData();
+        table.setItems(data);    
+    }
     
     private void prepareBorderPaneCenter(){
         
@@ -197,43 +200,84 @@ public class MainWindow extends Stage {
         table.setId("table");
         table.setEditable(false);
         
-        TableColumn lp = new TableColumn("Lp.");
+        final TableColumn lp = new TableColumn("Lp.");
         lp.setCellValueFactory(new PropertyValueFactory("id_exre"));
-        lp.setPrefWidth(60);
-        TableColumn  name = new TableColumn("Nazwisko i Imię");
+        lp.setPrefWidth(58);
+        final TableColumn  name = new TableColumn("Nazwisko i Imię");
         name.setCellValueFactory(new PropertyValueFactory("FullNamePar"));
         name.setPrefWidth(200);
-        TableColumn target = new TableColumn("Cel wyjścia");
-//        target.setCellValueFactory(new PropertyValueFactory<>("target"));
+        final TableColumn target = new TableColumn("Cel wyjścia");
+        target.setCellValueFactory(new PropertyValueFactory("Target"));
         target.setPrefWidth(200);
-        TableColumn exit = new TableColumn("Wyszedł");
-        exit.setPrefWidth(180);
-        TableColumn dataExit = new TableColumn("dnia");
-//        dataExit.setCellValueFactory(new PropertyValueFactory<>("dataExit"));
-        dataExit.setPrefWidth(90);
-        TableColumn timeExit = new TableColumn("godz.");
-//        timeExit.setCellValueFactory(new PropertyValueFactory<>("timeExit"));
-        timeExit.setPrefWidth(90);
-        TableColumn adres = new TableColumn("Przewidywane miejsce\n(adres)\nTel. kontaktowy");
-//        adres.setCellValueFactory(new PropertyValueFactory<>("adress"));
+        final TableColumn exit = new TableColumn("Wyszedł");
+        exit.setPrefWidth(173);
+        final TableColumn dataExit = new TableColumn("dnia");
+        dataExit.setCellValueFactory(new PropertyValueFactory("DateEx"));
+        dataExit.setPrefWidth(88);
+        final TableColumn timeExit = new TableColumn("godz.");
+        timeExit.setCellValueFactory(new PropertyValueFactory("HourEx"));
+        timeExit.setPrefWidth(85);
+        final TableColumn adres = new TableColumn("Przewidywane miejsce\n(adres)\nTel. kontaktowy");
+        adres.setCellValueFactory(new PropertyValueFactory("Place"));
         adres.setPrefWidth(210);
-        TableColumn cameBack = new TableColumn("Powrócił");
-        cameBack.setPrefWidth(180);
-        TableColumn datacameBack = new TableColumn("dnia");
-//        datacameBack.setCellValueFactory(new PropertyValueFactory<>("datacameBack"));
-        datacameBack.setPrefWidth(90);
-        TableColumn timecameBack = new TableColumn("godz.");
-//        timecameBack.setCellValueFactory(new PropertyValueFactory<>("timecameBack"));
-        timecameBack.setPrefWidth(90);
-        TableColumn comments = new TableColumn("Uwagi");
-//        comments.setCellValueFactory(new PropertyValueFactory<>("comments"));
+        final TableColumn cameBack = new TableColumn("Powrócił");
+        cameBack.setPrefWidth(173);
+        final TableColumn datacameBack = new TableColumn("dnia");
+        datacameBack.setCellValueFactory(new PropertyValueFactory("DateRe"));
+        datacameBack.setPrefWidth(88);
+        final TableColumn timecameBack = new TableColumn("godz.");
+        timecameBack.setCellValueFactory(new PropertyValueFactory("HourRe"));
+        timecameBack.setPrefWidth(85);
+        final TableColumn comments = new TableColumn("Uwagi");
+        comments.setCellValueFactory(new PropertyValueFactory("Comm"));
         comments.setPrefWidth(170);
         
         exit.getColumns().addAll(dataExit, timeExit);
+        
+        exit.getColumns().addListener(new ListChangeListener() {
+        public boolean suspended;
+        @Override
+        public void onChanged(ListChangeListener.Change change) {
+            change.next();
+            if (change.wasReplaced() && !suspended) {
+                this.suspended = true;
+                exit.getColumns().setAll(dataExit, timeExit);
+                this.suspended = false;
+            }
+           }
+        });
+        
         cameBack.getColumns().addAll(datacameBack, timecameBack);
+        
+        cameBack.getColumns().addListener(new ListChangeListener() {
+        public boolean suspended;
+        @Override
+        public void onChanged(ListChangeListener.Change change) {
+            change.next();
+            if (change.wasReplaced() && !suspended) {
+                this.suspended = true;
+                cameBack.getColumns().setAll(datacameBack, timecameBack);
+                this.suspended = false;
+            }
+           }
+        });
         
         table.getColumns().addAll(lp, name, target, exit, adres, cameBack, comments);
         
+        table.getColumns().addListener(new ListChangeListener() {
+        public boolean suspended;
+
+        @Override
+        public void onChanged(Change change) {
+            change.next();
+            if (change.wasReplaced() && !suspended) {
+                this.suspended = true;
+                table.getColumns().setAll(lp, name, target, exit, adres, cameBack, comments);
+                this.suspended = false;
+            }
+           }
+        });
+
         stackTable = new StackPane();
         stackTable.getChildren().add(table);
     }
@@ -246,5 +290,5 @@ public class MainWindow extends Stage {
         bottomPane.add(uTextNow, 0, 1);
         
     }
-        
+
 }

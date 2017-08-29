@@ -60,14 +60,12 @@ public class AddTarget extends Stage{
     private VBox Main;
     private RestrictiveTextField NameTar, LastNamePar;
     private Button addParButton, editParButton, vievButton, editButton, addButton, closeButton;
-    private Button pdfButton;
     private ComboBox target;
     private CheckBox active; 
     private Text gridAddTitle; 
-    private Label Year, UserNumber, lNamePar, lLastNamePar, lParticipant, lViev;
+    private Label lLastNamePar, lParticipant, lViev;
     private EventHandler key, keyUpdate;
-    private ObservableList<ParticipantData> data;
-    int targetID;
+    private ObservableList<TargetData> data;
     int IdPart;
     int ItemId;
     int activeStatus;
@@ -87,13 +85,13 @@ public class AddTarget extends Stage{
        borderPane.setTop(hbuttonMenu);
        borderPane.setCenter(Main);
         
-       SceneTarget = new Scene(borderPane, 400, 400);
+       SceneTarget = new Scene(borderPane, 400, 300);
        
        SceneTarget.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneTarget);
        setTitle("Add Target");    
     }
-    /*DO DODAWANIA UCZESTNIKA*/
+  
     private void createItem() {
         
         gridAddTitle = new Text();
@@ -101,30 +99,18 @@ public class AddTarget extends Stage{
         hbGridAddTitle = new HBox();
         hbGridAddTitle.setId("hbGridAddTitle");
         hbGridAddTitle.getChildren().add(gridAddTitle);
-         
-        Year = new Label();
-        Year.setId("YearUserNumber");
-        UserNumber = new Label();
-        UserNumber.setId("YearUserNumber");
-        
-        lNamePar = new Label("Imię: ");
-        lNamePar.setId("lNamePar");
-        
-        NameTar = new RestrictiveTextField();
-        NameTar.setMaxLength(15);
-        NameTar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
-        
-        lLastNamePar = new Label("Nazwisko: ");
+                         
+        lLastNamePar = new Label("Cel wyjścia: ");
         lLastNamePar.setId("lNamePar");
         
         LastNamePar = new RestrictiveTextField();
         LastNamePar.setMaxLength(20);
-        LastNamePar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
+        LastNamePar.setRestrict("[ a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
         
         active = new CheckBox();
         active.setId("lNamePar");
         
-    /*       active.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        active.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
                         
@@ -137,7 +123,7 @@ public class AddTarget extends Stage{
                     activeStatus = 1;
                 }        
             } 
-        });        */
+        });        
     }
     
     /**
@@ -157,39 +143,28 @@ public class AddTarget extends Stage{
         gridAdd = new GridPane();
         gridAdd.setId("gridAdd");
         
-        gridAddTitle.setText("Dodaj miejsce");
+        gridAddTitle.setText("Dodaj Cel Wyjścia");
         gridAdd.add(hbGridAddTitle, 0, 0, 2, 1); 
-        
-        //gridAdd.add(Year, 0, 1);
-        gridAdd.add(UserNumber, 1, 1);
-           
-        gridAdd.add(lNamePar, 0, 2);       
-        //gridAdd.add(NameTar, 1, 2);
-         
-        NameTar.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                
-                bodyListenerTextField(t1, LastNamePar.getText());
-                              
-             }
-        }); 
-       
-        gridAdd.add(lLastNamePar, 0, 3);
-        gridAdd.add(LastNamePar, 1, 3);
+        gridAdd.add(lLastNamePar, 0, 1);
+        gridAdd.add(LastNamePar, 1, 1);
         
         LastNamePar.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                
-                bodyListenerTextField(t1, NameTar.getText());
-                   
+                        if(t1.equals("")) 
+                            addParButton.setDisable(true);
+                        else {
+                            addParButton.setDisable(false);
+                            LastNamePar.setOnKeyPressed(key);
+                        }           
              }
         }); 
         
         active.setText("Aktywny");
         active.setSelected(true);
-        gridAdd.add(active, 1, 4);
+        gridAdd.add(active, 1, 2);
         
         addParButton = new Button("Potwierdź");
         addParButton.setMinWidth(100);
@@ -199,7 +174,7 @@ public class AddTarget extends Stage{
         hbGridAddParButton = new HBox();
         hbGridAddParButton.setId("hbGridAddTitle");
         hbGridAddParButton.getChildren().add(addParButton);
-        gridAdd.add(hbGridAddParButton, 0, 5, 2, 1);
+        gridAdd.add(hbGridAddParButton, 0, 3, 2, 1);
                 
         addParButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -220,64 +195,41 @@ public class AddTarget extends Stage{
     
     private void bodyaddParButtonAndKey() {
         
-        String addTarget = "Insert Into targets (id_target, target)"
-                          + " Values (" + targetID + ",'" + NameTar.getText()+"')";
-        
-        String addExitReturn = "Insert Into exitreturn (id_target, exit_return)"
-                             + " Values (" + targetID + ",0)";
+        String addTarget = "Insert Into targets (target_name, active)"
+                          + " Values ('" + LastNamePar.getText() + "'," + activeStatus+ ");";
         
         sqlQuery(addTarget);
-        sqlQuery(addExitReturn);
-        addTargetData();
-        targetID = getTargetId();
-        refresh(targetID);
-        NameTar.clear();
+//        addTargetData();
+//        targetID = getTargetId();
         LastNamePar.clear();                
     }
-    
-    private void bodyListenerTextField(String t1, String ex){
-        if(t1.equals("") || ex.equals("")) 
-            addParButton.setDisable(true);
-        else {
-            addParButton.setDisable(false);
-            LastNamePar.setOnKeyPressed(key);
-            NameTar.setOnKeyPressed(key);
-        }         
-    }
-    
+        
     private void prepareGridPaneUpdate() {
                 
         gridUpdate = new GridPane();
         gridUpdate.setId("gridAdd");
         
-        gridAddTitle.setText("Zmień Dane Uczestnika");
+        gridAddTitle.setText("Zmień Cel Wyjścia");
         gridUpdate.add(hbGridAddTitle, 0, 0, 2, 1);
         
         target = new ComboBox(data);
         target.setMinWidth(200);
+        target.setMaxWidth(200);
         
         comboItemRefresh();
         
-        target.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ParticipantData>() {           
+        target.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TargetData>() {           
             @Override
-            public void changed(ObservableValue<? extends ParticipantData> ov, ParticipantData t, ParticipantData t1) {
+            public void changed(ObservableValue<? extends TargetData> ov, TargetData t, TargetData t1) {
                 comboRefresh(); 
             }
         }); 
-        
-        NameTar.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-               
-                bodyListenerEditParButtonandKey(t1, LastNamePar.getText());                  
-            }
-        }); 
-        
+                
         LastNamePar.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 
-                bodyListenerEditParButtonandKey(t1, NameTar.getText());
+                
             }
         });
         
@@ -288,27 +240,21 @@ public class AddTarget extends Stage{
         hbGridUpdateComBoxPar.getChildren().addAll(lParticipant, target);
         
         gridUpdate.add(hbGridUpdateComBoxPar, 0, 1, 2, 1);       
-        gridUpdate.add(Year, 0, 2);
-        Year.setText("Rok:");
-        gridUpdate.add(UserNumber, 1, 2);   
-        UserNumber.setText("Numer:");
-        gridUpdate.add(lNamePar, 0, 3);        
-        gridUpdate.add(NameTar, 1, 3);
         
         stack = new StackPane();
         stack.getChildren().add(lLastNamePar);
         stack.setMinWidth(130);
-        gridUpdate.add(stack, 0, 4);
-        gridUpdate.add(LastNamePar, 1, 4);        
-        gridUpdate.add(active, 1, 5);
+        gridUpdate.add(stack, 0, 2);
+        gridUpdate.add(LastNamePar, 1, 2);        
+        gridUpdate.add(active, 1, 3);
         
-        editParButton = new Button("Zmień dane Uczestnika");
+        editParButton = new Button("Zmień dane");
         editParButton.setId("addParButton");
         editParButton.setDisable(true);
         hbGridEditParButton = new HBox();
         hbGridEditParButton.setId("hbGridAddTitle");
         hbGridEditParButton.getChildren().add(editParButton);
-        gridUpdate.add(hbGridEditParButton, 0, 6, 2, 1);
+        gridUpdate.add(hbGridEditParButton, 0, 4, 2, 1);
         
         editParButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -353,7 +299,7 @@ public class AddTarget extends Stage{
       
         addTargetData();
 
-        for (ParticipantData data1 : data) {
+        for (TargetData data1 : data) {
             target.setItems(data);
         }  
     }
@@ -363,21 +309,15 @@ public class AddTarget extends Stage{
         ItemId = target.getSelectionModel().getSelectedIndex();
         
         if(ItemId==-1){
-            NameTar.clear();
+
             LastNamePar.clear();
             editParButton.setDisable(true);
-            Year.setText("Rok:");
-            UserNumber.setText("Numer:");  
+
         }
         else {
         
-            IdPart = data.get(ItemId).id_part;
-        
-            refresh(IdPart);
-        
-            NameTar.setText(data.get(ItemId).first_name);
-            LastNamePar.setText(data.get(ItemId).last_name);
-        
+            IdPart = data.get(ItemId).id_target;      
+            LastNamePar.setText(data.get(ItemId).target);
             activeStatus = data.get(ItemId).active;
         
             if(activeStatus==0){
@@ -423,9 +363,7 @@ public class AddTarget extends Stage{
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            targetID = getTargetId();
-            refresh(targetID);
-            NameTar.clear();
+            
             LastNamePar.clear();
             prepareGridPaneAdd();    
             borderPane.setCenter(gridAdd);
@@ -453,89 +391,19 @@ public class AddTarget extends Stage{
        
         Main = new VBox();
         Main.setId("vbpane");
-        pdfButton = new Button("Generuj raport uczestników");
-        pdfButton.setId("windows7-default");
-        pdfButton.setMinWidth(320);
         
-        String description = "Panel w którym dodajemy:\n- uczestników OHP,"
-                           + " \n- zmieniamy dane uczestnika (imię, nazwisko) oraz jego status:"
-                           + " \n- aktywny oznacza, iż uczestnik jest zaewidencjonowany,"
-                           + " \n- nieaktywny oznacza, iż uczestnik odszedł z OHP.\n\n"
-                           + " Jest też możliwość wygenerowania raportu w postaci pliku PDF,"
-                           + " który zostanie zapisany na Pulpicie.";
-         
+        String description = "Panel w którym dodajemy:\n\n- cel wyjścia uczestników OHP,"
+                           + " \n\n- aktywny oznacza, iż cel wyjścia jest widoczny dla zwykłych użytkowników,"
+                           + " \n\n- nieaktywny oznacza, iż cel wyjścia jest nie widoczny dla zwykłych użytkowników.\n\n";
+
         lViev = new Label();
         lViev.setText(description);
         lViev.setWrapText(true);
         lViev.setId("lViev");
         
-        pdfButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-            
-                String DEST = "C:\\Users\\pawlia15\\Desktop\\hello_word.pdf";
-               
-                try {
-                    createPdf(DEST);
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
-                }  
-            }
-        });
-       
-       Main.getChildren().addAll(lViev, pdfButton);     
+        Main.getChildren().addAll(lViev);     
     }
     
-    private void createPdf(String dest) throws FileNotFoundException  {
-        
-        PdfWriter writer = new PdfWriter(dest);
-        PdfDocument pdf = new PdfDocument(writer);
-        try (Document document = new Document(pdf)) {
-            
-            PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN, "CP1250", true);
-
-            document.setFont(font);
-            document.add(new Paragraph("Wykaz uczestników dodanych do bazy"));
-            Table table = new Table(4);
-            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Numer"));
-            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Imię"));
-            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Nazwisko"));
-            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add("Aktywny"));
-            for (ParticipantData data1 : data) {
-                int numer = data1.id_part;
-                int yearUserID1 = numer/10000;
-                int numberUserID2=(numer/10)-(yearUserID1*1000);
-                table.addCell(Integer.toString(numberUserID2));
-                table.addCell(data1.first_name);
-                table.addCell(data1.last_name);
-                if(data1.active==0)  table.addCell("TAK");
-                else table.addCell("NIE");
-        }
-            document.add(table);
-    }   catch (IOException ex) {
-            Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }    
-    
-    public void refresh(int userId) {
-         
-        int yearUserID = userId/10000;
-        int numberUserID=(userId/10)-(yearUserID*1000); 
-          
-        Year.setText("Rok: " + Integer.toString(yearUserID));
-        UserNumber.setText("Numer: " + Integer.toString(numberUserID));        
-    }
-    
-    public int getTargetId() {
-        
-        int result;
-        
-        if(data.size()== 0) result = 0; 
-        else  result = data.get(data.size()-1).id_part;
-        GeneratorUserId targetId = new GeneratorUserId(result);
-        return targetId.getUserId();        
-    }
-
     private void sqlQuery(String query) {
         
         try {
@@ -554,15 +422,14 @@ public class AddTarget extends Stage{
         
             st = db.con.createStatement();
             
-            String query = "SELECT id_part, first_name, last_name, active FROM participants";
+            String query = "SELECT id_target, target_name, active FROM targets";
       
             ResultSet rs = st.executeQuery(query);
         
             while (rs.next()){
-                ParticipantData unit = new ParticipantData(
-                        rs.getInt("id_part"), 
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
+                TargetData unit = new TargetData(
+                        rs.getInt("id_target"), 
+                        rs.getString("target_name"),
                         rs.getInt("active")
                 );
                 data.add(unit); 
@@ -571,6 +438,5 @@ public class AddTarget extends Stage{
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }    
-    }
-    
+    }  
 }
