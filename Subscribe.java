@@ -284,14 +284,15 @@ public final class Subscribe extends Stage {
             
             st = db.con.createStatement();
             
-            String query = "SELECT id_target, target_name FROM targets;";
+            String query = "SELECT id_target, target_name FROM targets where active = 0 ;";
                      
             ResultSet rs = st.executeQuery(query);
             
             while(rs.next()) {
                 TargetData unit = new TargetData(
                         rs.getInt("id_target"), 
-                        rs.getString("target_name")
+                        rs.getString("target_name"),
+                        0
                 );
                 dataComboTar.add(unit);        
             }
@@ -325,12 +326,27 @@ public final class Subscribe extends Stage {
                      + " '" + taComment.getText() + "',"
                      + userId + ");";  
         }
-                  
+          
         try {
+            st = db.con.createStatement();
+            st.execute(query);  
+        } catch (SQLException ex) {
+           
+        }
+        
+        changeStatus();
+     }
+    
+    private void changeStatus() {
+        
+        String query = "UPDATE exitreturn SET exit_return = 1 where id_part = " + dataComboPar.get(ItemIdPart).id_part;
+    
+        try {
+            
             st = db.con.createStatement();
             st.execute(query);    
         } catch (SQLException ex) {
-           
+            
         }
      }
                                         

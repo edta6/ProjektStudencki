@@ -549,8 +549,8 @@ public class AddUser extends Stage {
             @Override
             public void handle(ActionEvent event) {
                 
-                String deleteRowTable = "delete from user_ohp where nick like '" + data.get(ItemId).nick  
-                                      + "' and id_part=" + data.get(ItemId).id_part + ";";   
+                String deleteRowTable = "UPDATE user_ohp set nick=Null where "   
+                                      + " id_part=" + data.get(ItemId).id_part;   
                 
                 String deleteUser = "DROP USER '" + data.get(ItemId).nick + "'@'localhost'";
                 

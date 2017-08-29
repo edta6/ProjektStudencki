@@ -438,7 +438,9 @@ public class AddParticipant extends Stage {
        
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {   
+            public void handle(ActionEvent event) {  
+            NamePar.clear();
+            LastNamePar.clear();    
             prepareGridPaneUpdate();    
             borderPane.setCenter(gridUpdate);
             }
@@ -448,7 +450,6 @@ public class AddParticipant extends Stage {
             @Override
             public void handle(ActionEvent event) {
             close();
-            
             }
         });                       
     }

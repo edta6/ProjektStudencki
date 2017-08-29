@@ -63,6 +63,14 @@ public class MainWindow extends Stage {
         if(role==1||user.equalsIgnoreCase("root")) {
             buttonAdmin.setDisable(false);
             buttonAdmin.setVisible(true);
+            if(user.equalsIgnoreCase("root")){
+                buttonExit.setDisable(true);
+                buttonHome.setDisable(true);    
+            } 
+            else {
+                buttonExit.setDisable(false);
+                buttonHome.setDisable(false); 
+            }    
         }
         else {
             buttonAdmin.setDisable(true);
@@ -111,8 +119,12 @@ public class MainWindow extends Stage {
         buttonHome.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                refreshTableData();
-                table.setItems(data);
+                DeSubscribe odpisz = new DeSubscribe();
+                odpisz.db = db;
+                odpisz.userId = id_user;
+                odpisz.window = window;
+                odpisz.refreshCombo();
+                odpisz.show();
             }
         });
         
@@ -185,6 +197,7 @@ public class MainWindow extends Stage {
                 );
                 data.add(unit);        
             }
+            st.close();
             
         } catch(Exception ex) {}
     }

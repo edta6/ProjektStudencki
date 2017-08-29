@@ -191,11 +191,11 @@ public class Testowa extends Application {
         try {
             error=false;
             st = db.con.createStatement();
-            st.execute(query);    
+            st.execute(query);
+            st.close();
         } catch (SQLException ex) {
             error = true;
         }
-        
         return error;  
     }
     
@@ -212,6 +212,7 @@ public class Testowa extends Application {
             while(rs.next()) {
                 numberRow = rs.getInt(1);
             }
+            st.close();
         }    
         catch (SQLException ex) {} 
         
@@ -234,6 +235,7 @@ public class Testowa extends Application {
                 first_name = rs.getString("first_name");
                 last_name = rs.getString("last_name");
             }
+            st.close();
         }    
         catch (SQLException ex) {} 
         

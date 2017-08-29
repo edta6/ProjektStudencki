@@ -5,18 +5,6 @@
  */
 package testowa;
 
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.property.TextAlignment;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -58,7 +46,7 @@ public class AddTarget extends Stage{
     private HBox hbGridAddTitle, hbuttonMenu, hbGridAddParButton, hbGridUpdateComBoxPar;
     private HBox hbGridEditParButton;
     private VBox Main;
-    private RestrictiveTextField NameTar, LastNamePar;
+    private RestrictiveTextField LastNamePar;
     private Button addParButton, editParButton, vievButton, editButton, addButton, closeButton;
     private ComboBox target;
     private CheckBox active; 
@@ -70,11 +58,6 @@ public class AddTarget extends Stage{
     int ItemId;
     int activeStatus;
     
-    /**
-     * Konstruktor bezargumentowy, tworzący okienko.
-     * Dwie funkcje preprareScene() oraz createItem() zawierają wszystkie elemety.
-     * 
-     */
     public AddTarget() {
         
        prepareScene();
@@ -126,18 +109,6 @@ public class AddTarget extends Stage{
         });        
     }
     
-    /**
-     *  Funkcja prepareGridPaneAdd przygotowuje okno, które 
-     *  pozwala dodać osobę do bazy danych, ma w sobie
-     *  Listener, który blokuje dodanie samego nazwiska lub imienia,
-     *  można dodać osobę za pomocą przycisku addParButton lub poprzez 
-     *  naciśnięcie ENTER.
-     * 
-     *  Głównym zarządcą jest GridPane, w którym są umieszczone wszystkie 
-     *  elementy. 
-     *  GridPane jest dzieckiem BorderPane umieszczonym 
-     *  w Centrum BorderPane.
-     */
     private void prepareGridPaneAdd(){
         
         gridAdd = new GridPane();
@@ -199,8 +170,7 @@ public class AddTarget extends Stage{
                           + " Values ('" + LastNamePar.getText() + "'," + activeStatus+ ");";
         
         sqlQuery(addTarget);
-//        addTargetData();
-//        targetID = getTargetId();
+        addTargetData();
         LastNamePar.clear();                
     }
         
@@ -229,9 +199,14 @@ public class AddTarget extends Stage{
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 
-                
-            }
-        });
+                if(t1.equals("")) 
+                    editParButton.setDisable(true);
+                else {
+                    editParButton.setDisable(false);
+                    LastNamePar.setOnKeyPressed(keyUpdate);
+                }      
+             }
+         });
         
         lParticipant = new Label("Wybierz: ");
         lParticipant.setId("lNamePar");
@@ -276,25 +251,15 @@ public class AddTarget extends Stage{
     private void bodyEditParButtonandKey() {
             
         String changeParticipant = "UPDATE targets SET"
-                          +  " first_name = '" + NameTar.getText() + "'," 
-                          +  " last_name = '" + LastNamePar.getText() + "',"
-                          +  " WHERE id_part = " + IdPart;
+                          +  " target_name = '" + LastNamePar.getText() + "',"
+                          +  " active = " + activeStatus
+                          +  " WHERE id_target = " + IdPart;
         
         sqlQuery(changeParticipant);
         target.getSelectionModel().clearSelection();
         comboItemRefresh();
     } 
-    
-    private void bodyListenerEditParButtonandKey (String t1, String ex){
-        if(t1.equals("") || ex.equals("")) 
-            editParButton.setDisable(true);
-        else {
-            editParButton.setDisable(false);
-            LastNamePar.setOnKeyPressed(keyUpdate);
-            NameTar.setOnKeyPressed(keyUpdate);
-            }         
-    }
-    
+        
     private void comboItemRefresh() {
       
         addTargetData();
@@ -313,7 +278,7 @@ public class AddTarget extends Stage{
             LastNamePar.clear();
             editParButton.setDisable(true);
 
-        }
+         }
         else {
         
             IdPart = data.get(ItemId).id_target;      
@@ -372,7 +337,8 @@ public class AddTarget extends Stage{
        
         editButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {   
+            public void handle(ActionEvent event) {
+            LastNamePar.clear();    
             prepareGridPaneUpdate();    
             borderPane.setCenter(gridUpdate);
             }
