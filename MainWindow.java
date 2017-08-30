@@ -97,7 +97,7 @@ public class MainWindow extends Stage {
         setTitle("The book out and trips");
     }
     
-    private void prepareBorderPaneTop () {
+    private void prepareBorderPaneTop () { //pierwszy wiersz w oknie, definicja guzikow i ich zachowan
     
         buttonExit = new Button("Wypisz");
         buttonExit.setId("windows7");
