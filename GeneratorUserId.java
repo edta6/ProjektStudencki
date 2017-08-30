@@ -12,7 +12,7 @@ import java.util.GregorianCalendar;
  *
  * @author Andrzej Pawlik
  */
-public class GeneratorUserId {
+public class GeneratorUserId { //generowanie ID dla uzytkownikow 
     
     private int userId;
     private int[] tabUserId = new int[8];
