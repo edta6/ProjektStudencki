@@ -29,6 +29,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -370,32 +371,58 @@ public final class Subscribe extends Stage {
         
         final Stage changePas = new Stage();
         GridPane  changePasUserPane = new GridPane();
-        changePasUserPane.setId("gridAdd");
+        changePasUserPane.setId("gridMsgBox1");
         scenetitle.setText("Potwierdzenie");
         changePasUserPane.add(hbSceneTitle, 0, 0, 2, 1);
         
-        Label opis;
+        VBox opisPane = new VBox();
+        opisPane.setId("vboxMsgBox1");
+        
+        Label one = new Label("Czy chcesz wypisać:");
+        one.setId("lOpisMsgBox1-Black");
+        Label two = new Label(dataComboPar.get(ItemIdPart).toString());
+        two.setId("lOpisMsgBox1-Red2");
+        Label three = new Label("w dniu:");
+        three.setId("lOpisMsgBox1-Black");
+        Label four = new Label(resultDate_four);
+        four.setId("lOpisMsgBox1-Red");
+        HBox three_four = new HBox();
+        three_four.setId("hboxMsgBox1");
+        three_four.getChildren().addAll(three, four);
+        Label five = new Label("o godzinie:");
+        five.setId("lOpisMsgBox1-Black");
+        Label six = null;
         if(changeTime.isSelected()){
-        opis = new Label("Czy chcesz wypisać:\n" + dataComboPar.get(ItemIdPart).toString() 
-                       + "\n w dniu: " + resultDate_four 
-                       + "\n o godzinie: " + timeTextField.getText()
-                       + "\n do: " + taPlace.getText()
-                       + "\n w celu: " + dataComboTar.get(ItemIdTarg).target
-                      );
+            six = new Label(timeTextField.getText());
         }
         else {
-        opis = new Label("Czy chcesz wypisać:\n" + dataComboPar.get(ItemIdPart).toString() 
-               + "\n w dniu: " + resultDate_four 
-               + "\n o godzinie: " + resultDate_two
-               + "\n do: " + taPlace.getText()
-               + "\n w celu: " + dataComboTar.get(ItemIdTarg).target
-              );    
+           six = new Label(resultDate_two); 
         }
+        six.setId("lOpisMsgBox1-Red");
+        HBox five_six = new HBox();
+        five_six.setId("hboxMsgBox1");
+        five_six.getChildren().addAll(five, six);
+        Label seven = new Label("do:");
+        seven.setId("lOpisMsgBox1-Black");
+        Label eight = new Label(taPlace.getText());
+        eight.setId("lOpisMsgBox1-Red");
+        HBox seven_eight = new HBox();
+        seven_eight.setId("hboxMsgBox1");
+        seven_eight.getChildren().addAll(seven, eight);
+        Label nine = new Label("w celu:");
+        nine.setId("lOpisMsgBox1-Black");
+        Label ten = new Label(dataComboTar.get(ItemIdTarg).target);
+        ten.setId("lOpisMsgBox1-Red");
+        HBox nine_ten = new HBox();
+        nine_ten.setId("hboxMsgBox1");
+        nine_ten.getChildren().addAll(nine, ten);
         
-        opis.setId("lNamePar");
-        changePasUserPane.add(opis, 0, 1, 2, 1);
+        opisPane.getChildren().addAll(one, two, three_four, five_six, seven_eight, nine_ten);        
+        changePasUserPane.add(opisPane, 0, 1, 2, 1);
         
         Button yes = new Button("TAK");
+        yes.setId("windows7-default");
+        yes.setMinWidth(80);
         yes.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -409,6 +436,8 @@ public final class Subscribe extends Stage {
         changePasUserPane.add(yes, 0, 2);
         
         Button no = new Button("NIE");
+        no.setId("windows7-default");
+        no.setMinWidth(80);
         no.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -424,11 +453,11 @@ public final class Subscribe extends Stage {
         
         changePasUserPane.add(no, 1, 2);
         
-        Scene changePasUser = new Scene(changePasUserPane, 300, 250);
-        changePasUser.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
+        Scene changePasUser = new Scene(changePasUserPane);
+        changePasUser.getStylesheets().add(Testowa.class.getResource("Subscribe.css").toExternalForm());
         changePas.setScene(changePasUser);
         changePas.setTitle("Potwierdzenie wypisu");
-        changePas.show();    
+        changePas.show();
     }
     
     public void msgBo2() {
@@ -437,13 +466,19 @@ public final class Subscribe extends Stage {
         GridPane  changePasUserPane = new GridPane();
         changePasUserPane.setId("gridAdd");
         
-        Label opis = new Label("Jeżeli chcesz jeszcze kogoś wypisać kliknij TAK\n"
-                              + "jeżeli chcesz zakończyć kliknij NIe ");
+        Label opis = new Label("Jeżeli chcesz:\nkogoś wypisać\tkliknij TAK\n"
+                              + "zakończyć\t\tkliknij NIE");
 
-        opis.setId("lNamePar");
-        changePasUserPane.add(opis, 0, 0, 2, 1);
+        opis.setId("lOpisMsgBox1-Black");
+        
+        HBox opisBox = new HBox();
+        opisBox.getChildren().add(opis);
+        
+        changePasUserPane.add(opisBox, 0, 0, 2, 1);
         
         Button yes = new Button("TAK");
+        yes.setId("windows7-default");
+        yes.setMinWidth(120);
         yes.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -460,6 +495,8 @@ public final class Subscribe extends Stage {
         changePasUserPane.add(yes, 0, 1);
         
         Button no = new Button("NIE");
+        no.setId("windows7-default");
+        no.setMinWidth(120);
         no.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -470,11 +507,12 @@ public final class Subscribe extends Stage {
         
         changePasUserPane.add(no, 1, 1);
         
-        Scene changePasUser = new Scene(changePasUserPane, 300, 250);
-        changePasUser.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
+        Scene changePasUser = new Scene(changePasUserPane);
+        changePasUser.getStylesheets().add(Testowa.class.getResource("Subscribe.css").toExternalForm());
         changePas.setScene(changePasUser);
         changePas.setTitle("Wiadomość");
-        changePas.show();    
+        changePas.show();
+        System.out.println(changePas.getWidth());
     }
                                         
 }

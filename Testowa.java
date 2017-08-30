@@ -245,7 +245,6 @@ public class Testowa extends Application {
            
     }
     
-     
     /**
      * @param args the command line arguments
      */

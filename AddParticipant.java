@@ -548,7 +548,8 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
         
         try {
             st = db.con.createStatement();
-            st.executeUpdate(query);    
+            st.executeUpdate(query);
+            st.close();
         } catch (SQLException ex) {
           
         }
@@ -573,8 +574,10 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
                         rs.getString("last_name"),
                         rs.getInt("active")
                 );
-                data.add(unit); 
+                data.add(unit);    
             }
+            
+            st.close();  
                      
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);

@@ -234,7 +234,7 @@ public class AddTarget extends Stage{
         editParButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                    bodyEditParButtonandKey();
+                bodyEditParButtonandKey();
             }
         }); 
         
@@ -374,7 +374,8 @@ public class AddTarget extends Stage{
         
         try {
             st = db.con.createStatement();
-            st.executeUpdate(query);    
+            st.executeUpdate(query);
+            st.close();
         } catch (SQLException ex) {
           
         }
@@ -400,6 +401,8 @@ public class AddTarget extends Stage{
                 );
                 data.add(unit); 
             }
+            
+            st.close();
                      
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);

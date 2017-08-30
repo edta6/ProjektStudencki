@@ -628,7 +628,8 @@ public class AddUser extends Stage {
         
         try {
             st = db.con.createStatement();
-            st.executeUpdate(query);    
+            st.executeUpdate(query);
+            st.close();
         } 
         catch (SQLException ex) {
           
@@ -657,6 +658,8 @@ public class AddUser extends Stage {
                 );
                 data.add(unit); 
             }
+            
+            st.close();
                      
         } 
         catch (SQLException ex) {
