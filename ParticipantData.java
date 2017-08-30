@@ -9,7 +9,7 @@ package testowa;
  *
  * @author xxx
  */
-class ParticipantData {
+class ParticipantData { //takie same pola jak tabela w MySql
     
     Integer id_part; 
     String first_name;
