@@ -1,2 +1,2 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Auto detect text files and perform LF normalization  //ustala jak git ma podchodzić do znaku końca linii (CRLF na Windows kontra LF an Linux).
+* text=auto  //jesli plik jest plikiem tektowym to przy commicie zamienia CRLF na LF a przy pobraniu zamienia na CRLF
