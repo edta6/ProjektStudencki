@@ -159,8 +159,8 @@ public class Testowa extends Application {
             actiontarget.setText("Zły login lub hasło"); 
         }
         else {
-                if(sqlQuery("USE OHP;")) {
-                    sqlQuery("CREATE DATABASE OHP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;");
+                if(sqlQuery("USE OHP;")) {  //sprawdza czy jest baza OHP
+                    sqlQuery("CREATE DATABASE OHP DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;"); //tworzy, jesli nie byla stworzona
                     sqlQuery("USE OHP;");
                     sqlQuery("CREATE TABLE participants (id_part int PRIMARY KEY, first_name varchar(15), last_name varchar(20), active int);");
                     sqlQuery("CREATE TABLE exitreturn (id_part int PRIMARY KEY, exit_return int);");
@@ -184,7 +184,7 @@ public class Testowa extends Application {
         }      
     }
     
-    private boolean sqlQuery(String query) {
+    private boolean sqlQuery(String query) { //funkcja do if(sqlQuery("USE OHP;")) linia  162
         
         boolean error;
         
