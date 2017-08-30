@@ -44,3 +44,16 @@ and open the template in the editor.
     -fx-border-color: black;
     -fx-font-weight: bold;
 }
+
+#stackbottomPane {
+    -fx-background-color: green;
+}
+
+#stackbottomPaneLR {
+    -fx-background-color: blue;
+}
+
+#bottomPane {
+   -fx-border-color: black; 
+    -fx-border-width: 2 2 2 2;
+}

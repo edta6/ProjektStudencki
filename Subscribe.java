@@ -43,6 +43,7 @@ public final class Subscribe extends Stage {
     DB db;
     Statement st;
     MainWindow window;
+    Subscribe wypisz;
     
     private Scene SceneSubscribe;
     private GridPane gridSubscribe;
@@ -63,7 +64,7 @@ public final class Subscribe extends Stage {
     private String resultDate, resultDate_two, resultDate_three, resultDate_four;
     private TimeTextField timeTextField;
     private CheckBox changeTime;
-    int ItemIdPart, ItemIdTarg;
+    int ItemIdPart=-1, ItemIdTarg=-1;
     int userId;
     
     public Subscribe(){
@@ -134,6 +135,9 @@ public final class Subscribe extends Stage {
                 
                 ItemIdPart = participant.getSelectionModel().getSelectedIndex();
                 
+                if(ItemIdPart==-1 || ItemIdTarg ==-1 || taPlace.getText().equals("")) exit.setDisable(true);
+                else exit.setDisable(false); 
+                
             }
         }); 
         
@@ -157,6 +161,9 @@ public final class Subscribe extends Stage {
                 
                 ItemIdTarg = target.getSelectionModel().getSelectedIndex();
                 
+                if(ItemIdPart==-1 || ItemIdTarg ==-1 || taPlace.getText().equals("")) exit.setDisable(true);
+                else exit.setDisable(false); 
+                
             }
         });
         
@@ -175,6 +182,17 @@ public final class Subscribe extends Stage {
         taPlace.setWrapText(true);
         taPlace.setPrefWidth(200);
         taPlace.setPromptText("Wpisz przewidywane miejsce pobytu");
+        
+        taPlace.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+            
+                if(ItemIdPart==-1 || ItemIdTarg ==-1 || taPlace.getText().equals("")) exit.setDisable(true);
+                else exit.setDisable(false); 
+                
+            }
+        });
+            
         spPlace = new StackPane();
         spPlace.setMinHeight(50);
         spPlace.getChildren().add(taPlace);
@@ -228,6 +246,7 @@ public final class Subscribe extends Stage {
         exit = new Button("Wypisz");
         exit.setId("windows7-default");
         exit.setMinWidth(320);
+        exit.setDisable(true);
         hbGridButton = new HBox();
         hbGridButton.setId("hbGridAddTitle");
         hbGridButton.getChildren().addAll(exit);
@@ -235,11 +254,8 @@ public final class Subscribe extends Stage {
         exit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                
-                exit_participant();
-                timeline.stop();
-                window.NewDataAdd();
-                close();
+                msgBox1();
+                wypisz.hide();
             }
         });
         
@@ -349,5 +365,116 @@ public final class Subscribe extends Stage {
             
         }
      }
+    
+    public void msgBox1() {
+        
+        final Stage changePas = new Stage();
+        GridPane  changePasUserPane = new GridPane();
+        changePasUserPane.setId("gridAdd");
+        scenetitle.setText("Potwierdzenie");
+        changePasUserPane.add(hbSceneTitle, 0, 0, 2, 1);
+        
+        Label opis;
+        if(changeTime.isSelected()){
+        opis = new Label("Czy chcesz wypisać:\n" + dataComboPar.get(ItemIdPart).toString() 
+                       + "\n w dniu: " + resultDate_four 
+                       + "\n o godzinie: " + timeTextField.getText()
+                       + "\n do: " + taPlace.getText()
+                       + "\n w celu: " + dataComboTar.get(ItemIdTarg).target
+                      );
+        }
+        else {
+        opis = new Label("Czy chcesz wypisać:\n" + dataComboPar.get(ItemIdPart).toString() 
+               + "\n w dniu: " + resultDate_four 
+               + "\n o godzinie: " + resultDate_two
+               + "\n do: " + taPlace.getText()
+               + "\n w celu: " + dataComboTar.get(ItemIdTarg).target
+              );    
+        }
+        
+        opis.setId("lNamePar");
+        changePasUserPane.add(opis, 0, 1, 2, 1);
+        
+        Button yes = new Button("TAK");
+        yes.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                exit_participant();
+                timeline.stop();
+                window.NewDataAdd();
+                changePas.close();
+                msgBo2();
+            }
+        });
+        changePasUserPane.add(yes, 0, 2);
+        
+        Button no = new Button("NIE");
+        no.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changePas.close();
+                participant.getSelectionModel().clearSelection();
+                target.getSelectionModel().clearSelection();
+                taPlace.clear();
+                taComment.clear();
+                changeTime.setSelected(false);
+                wypisz.show();
+            }
+        });
+        
+        changePasUserPane.add(no, 1, 2);
+        
+        Scene changePasUser = new Scene(changePasUserPane, 300, 250);
+        changePasUser.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
+        changePas.setScene(changePasUser);
+        changePas.setTitle("Potwierdzenie wypisu");
+        changePas.show();    
+    }
+    
+    public void msgBo2() {
+        
+        final Stage changePas = new Stage();
+        GridPane  changePasUserPane = new GridPane();
+        changePasUserPane.setId("gridAdd");
+        
+        Label opis = new Label("Jeżeli chcesz jeszcze kogoś wypisać kliknij TAK\n"
+                              + "jeżeli chcesz zakończyć kliknij NIe ");
+
+        opis.setId("lNamePar");
+        changePasUserPane.add(opis, 0, 0, 2, 1);
+        
+        Button yes = new Button("TAK");
+        yes.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changePas.close();
+                refreshCombo();
+                participant.getSelectionModel().clearSelection();
+                target.getSelectionModel().clearSelection();
+                taPlace.clear();
+                taComment.clear();
+                changeTime.setSelected(false);
+                wypisz.show();
+            }
+        });
+        changePasUserPane.add(yes, 0, 1);
+        
+        Button no = new Button("NIE");
+        no.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changePas.close();
+                wypisz.close();
+            }
+        });
+        
+        changePasUserPane.add(no, 1, 1);
+        
+        Scene changePasUser = new Scene(changePasUserPane, 300, 250);
+        changePasUser.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
+        changePas.setScene(changePasUser);
+        changePas.setTitle("Wiadomość");
+        changePas.show();    
+    }
                                         
 }

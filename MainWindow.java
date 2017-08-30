@@ -40,9 +40,9 @@ public class MainWindow extends Stage {
     MainWindow window;
     
     private Scene sceneMainWindow;
-    private BorderPane borderPane;
-    private StackPane stackTable;
-    private GridPane bottomPane;
+    private BorderPane borderPane, bottomPane;
+    private StackPane stackTable, mainStack;
+//    private GridPane bottomPane;
     private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
     private Button buttonExit, buttonHome, buttonAdmin, buttonClose;
     private Label uTextNow;
@@ -89,7 +89,7 @@ public class MainWindow extends Stage {
         borderPane.setCenter(stackTable);
         
         prepareBorderPaneBottom();
-        borderPane.setBottom(bottomPane);
+        borderPane.setBottom(mainStack);
         
         sceneMainWindow = new Scene(borderPane, 1200, 650);
         sceneMainWindow.getStylesheets().add(Testowa.class.getResource("MainWindow.css").toExternalForm());
@@ -108,6 +108,7 @@ public class MainWindow extends Stage {
                 wypisz.db = db;
                 wypisz.userId = id_user;
                 wypisz.window = window;
+                wypisz.wypisz = wypisz;
                 wypisz.refreshCombo();
                 wypisz.refreshComboTar();
                 wypisz.show();
@@ -292,15 +293,72 @@ public class MainWindow extends Stage {
         });
 
         stackTable = new StackPane();
+//        stackTable.setMinSize(1200, 350);
+//        stackTable.setMaxSize(1200, 350);
         stackTable.getChildren().add(table);
     }
     
     private void prepareBorderPaneBottom(){
         
-        bottomPane = new GridPane();
-        bottomPane.setPrefHeight(200.0);
+        bottomPane = new BorderPane();
+        bottomPane.setId("bottomPane");
+        
+        mainStack = new StackPane();
+        mainStack.setMaxSize(1200, 250);
+        mainStack.setMinSize(1200, 250);
+        mainStack.getChildren().add(bottomPane);
+
         uTextNow = new Label("Dół do zrobienia!");
-        bottomPane.add(uTextNow, 0, 1);
+        Label uTextNow1 = new Label("Dół do zrobienia!");
+        Label uTextNow2 = new Label("Dół do zrobienia!");
+        Label uTextNow3 = new Label("Dół do zrobienia!");
+        
+        StackPane stackbottomPane = new StackPane();
+        stackbottomPane.setId("stackbottomPane");
+        stackbottomPane.setMaxSize(1200, 45);
+        stackbottomPane.setMinSize(1200, 45);
+        stackbottomPane.setAlignment(Pos.CENTER_LEFT);
+        
+        HBox test = new HBox();
+        test.setMinSize(1200, 45);
+        test.getChildren().add(uTextNow);
+        stackbottomPane.getChildren().add(test);
+        
+        bottomPane.setTop(stackbottomPane);
+        
+        StackPane stackbottomPaneL = new StackPane();
+        stackbottomPaneL.setId("stackbottomPaneLR");
+        stackbottomPaneL.setMaxSize(300, 200);
+        stackbottomPaneL.setMinSize(300, 200);
+        stackbottomPaneL.setAlignment(Pos.CENTER);
+        stackbottomPaneL.getChildren().add(uTextNow1);
+        
+        bottomPane.setLeft(stackbottomPaneL);
+        
+        StackPane stackbottomPaneC = new StackPane();
+        stackbottomPaneC.setMaxSize(599, 200);
+        stackbottomPaneC.setMinSize(599, 200);
+        stackbottomPaneC.setAlignment(Pos.CENTER);
+        stackbottomPaneC.getChildren().add(uTextNow2);
+        
+        bottomPane.setCenter(stackbottomPaneC);
+                
+        StackPane stackbottomPaneR = new StackPane();
+        stackbottomPaneR.setId("stackbottomPaneLR");
+        stackbottomPaneR.setMaxSize(300, 200);
+        stackbottomPaneR.setMinSize(300, 200);
+        stackbottomPaneR.setAlignment(Pos.CENTER);
+        stackbottomPaneR.getChildren().add(uTextNow3);
+        
+        bottomPane.setRight(stackbottomPaneR);
+        
+//        StackPane stackbottomPaneB = new StackPane();
+//        stackbottomPaneB.setId("stackbottomPane");
+//        stackbottomPaneB.setMaxSize(1200, 45);
+//        stackbottomPaneB.setMinSize(1200, 45);
+//        stackbottomPaneB.setAlignment(Pos.CENTER);
+//      
+//        bottomPane.setBottom(stackbottomPaneB);
         
     }
 
