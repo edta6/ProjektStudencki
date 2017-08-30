@@ -48,7 +48,7 @@ import javafx.stage.Stage;
  *
  * @author Andrzej Pawlik 
  */
-public class AddParticipant extends Stage {
+public class AddParticipant extends Stage { //klasa okienka dodawania uczestnikow
     
     DB db;
     Statement st;
@@ -95,7 +95,9 @@ public class AddParticipant extends Stage {
        setScene(SceneParticipant);
        setTitle("Add Participant");    
     }
-    
+    /*
+    * klasa tworzaca wszystkie polskie znaki
+    */
     private void createItem() {
         
         gridAddTitle = new Text();
@@ -119,7 +121,7 @@ public class AddParticipant extends Stage {
         lLastNamePar = new Label("Nazwisko: ");
         lLastNamePar.setId("lNamePar");
         
-        LastNamePar = new RestrictiveTextField();
+        LastNamePar = new RestrictiveTextField(); //klasa tworzaca polskie znaki bez liczb
         LastNamePar.setMaxLength(20);
         LastNamePar.setRestrict("[a-zA-ZąćęłńóśźżĄĘŁŃÓŚŹŻ]");
         
