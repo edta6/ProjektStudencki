@@ -8,6 +8,10 @@ package testowa;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -27,6 +31,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -38,6 +43,7 @@ public class MainWindow extends Stage {
     DB db;
     Statement st;
     MainWindow window;
+    MainWindowSQL windowSQL;
     
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
@@ -45,7 +51,8 @@ public class MainWindow extends Stage {
 //    private GridPane bottomPane;
     private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
     private Button buttonExit, buttonHome, buttonAdmin, buttonClose;
-    private Label uTextNow;
+    private Button buttonExitBig, buttonHomeBig;
+    private Label uTextNow, Zdarzenie;
     private Label nameLogin, userText;
     public  TableView<ExreData> table;
     public ObservableList<ExreData> data;
@@ -53,7 +60,7 @@ public class MainWindow extends Stage {
     public final String nameU;
     public final int role;
     public final int id_user;
-   
+       
     public MainWindow(String name, String user, int role, int id_part) {
         this.nameU = name;
         this.user = user;
@@ -99,7 +106,7 @@ public class MainWindow extends Stage {
     
     private void prepareBorderPaneTop () { //pierwszy wiersz w oknie, definicja guzikow i ich zachowan
     
-        buttonExit = new Button("Wypisz");
+        buttonExit = new Button("Wypisy");
         buttonExit.setId("windows7");
         buttonExit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -180,7 +187,10 @@ public class MainWindow extends Stage {
             
             st = db.con.createStatement();
             
-            String query = "Select m.id_exre, p.first_name, p.last_name, t.target_name, m.exit_date, m.place, m.comm, u.first_name, u.last_name from main_exre m join participants p on m.id_part=p.id_part join targets t on m.id_target=t.id_target join user_ohp u on m.id_user_exit=u.id_part where m.return_date is NULL;";
+            String query = "Select m.id_exre, p.first_name, p.last_name, t.target_name, m.exit_date, "
+                    + "m.place, m.comm, u.first_name, u.last_name from main_exre m join participants p "
+                    + "on m.id_part=p.id_part join targets t on m.id_target=t.id_target join user_ohp u "
+                    + "on m.id_user_exit=u.id_part where m.return_date is NULL;";
                      
             ResultSet rs = st.executeQuery(query);
             
@@ -309,30 +319,64 @@ public class MainWindow extends Stage {
         mainStack.setMinSize(1200, 250);
         mainStack.getChildren().add(bottomPane);
 
-        uTextNow = new Label("Dół do zrobienia!");
-        Label uTextNow1 = new Label("Dół do zrobienia!");
+        Zdarzenie = new Label();
+        Zdarzenie.setId("lOpisMsgBox1-Black2");
+        
+        uTextNow = new Label("Ostatnie zdarzenie:");
+        uTextNow.setId("lOpisMsgBox1-Black");
+         
+        HBox topBox = new HBox();
+        topBox.setId("hboxMsgBox2");
+        topBox.setAlignment(Pos.CENTER);
+        topBox.setMinSize(1200, 45);
+        topBox.setMaxSize(1200, 45);
+        topBox.getChildren().addAll(uTextNow, Zdarzenie);
+       
+        bottomPane.setTop(topBox);
+        
         Label uTextNow2 = new Label("Dół do zrobienia!");
         Label uTextNow3 = new Label("Dół do zrobienia!");
         
-        StackPane stackbottomPane = new StackPane();
-        stackbottomPane.setId("stackbottomPane");
-        stackbottomPane.setMaxSize(1200, 45);
-        stackbottomPane.setMinSize(1200, 45);
-        stackbottomPane.setAlignment(Pos.CENTER_LEFT);
+        buttonExitBig = new Button("Wypisy");
+        buttonExitBig.setId("windows7");
+        buttonExitBig.setMaxSize(180, 80);
+        buttonExitBig.setMinSize(180, 80);
+        buttonExitBig.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Subscribe wypisz = new Subscribe();
+                wypisz.db = db;
+                wypisz.userId = id_user;
+                wypisz.window = window;
+                wypisz.wypisz = wypisz;
+                wypisz.refreshCombo();
+                wypisz.refreshComboTar();
+                wypisz.show();
+            }
+        });
         
-        HBox test = new HBox();
-        test.setMinSize(1200, 45);
-        test.getChildren().add(uTextNow);
-        stackbottomPane.getChildren().add(test);
+        buttonHomeBig = new Button("Powroty");
+        buttonHomeBig.setId("windows7");
+        buttonHomeBig.setMaxSize(180, 80);
+        buttonHomeBig.setMinSize(180, 80);
+        buttonHomeBig.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DeSubscribe odpisz = new DeSubscribe();
+                odpisz.db = db;
+                odpisz.userId = id_user;
+                odpisz.window = window;
+                odpisz.odpisz = odpisz;
+                odpisz.refreshCombo();
+                odpisz.show();
+            }
+        });
         
-        bottomPane.setTop(stackbottomPane);
-        
-        StackPane stackbottomPaneL = new StackPane();
-        stackbottomPaneL.setId("stackbottomPaneLR");
+        VBox stackbottomPaneL = new VBox();
+        stackbottomPaneL.setId("stackbottomPaneL");
         stackbottomPaneL.setMaxSize(300, 200);
         stackbottomPaneL.setMinSize(300, 200);
-        stackbottomPaneL.setAlignment(Pos.CENTER);
-        stackbottomPaneL.getChildren().add(uTextNow1);
+        stackbottomPaneL.getChildren().addAll(buttonExitBig, buttonHomeBig);
         
         bottomPane.setLeft(stackbottomPaneL);
         
@@ -362,5 +406,10 @@ public class MainWindow extends Stage {
 //        bottomPane.setBottom(stackbottomPaneB);
         
     }
-
+    
+    public void setZdarzenie(String a) {
+        Zdarzenie.setText(a);
+        
+    }
+    
 }

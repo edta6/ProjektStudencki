@@ -24,10 +24,7 @@ and open the template in the editor.
 }
 
 #hbuttonMenu {
-    -fx-background-color: 
-        #3c7fb1;
-/*        linear-gradient(#fafdfe, #e8f5fc),
-        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);*/
+    -fx-background-color: #3c7fb1;
     -fx-padding: 1 0 1 0;
 }
 
@@ -46,14 +43,34 @@ and open the template in the editor.
 }
 
 #stackbottomPane {
-    -fx-background-color: green;
+    
 }
 
-#stackbottomPaneLR {
-    -fx-background-color: blue;
+#stackbottomPaneL {
+    -fx-spacing: 20;
+    -fx-padding: 20 0 20 40;
+    
 }
 
 #bottomPane {
-   -fx-border-color: black; 
-    -fx-border-width: 2 2 2 2;
+    -fx-background-color: #3c7fb1;
+}
+
+#lOpisMsgBox1-Black {
+    -fx-font-size:   14px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill:   #000000;
+}
+
+#hboxMsgBox2 {
+    -fx-spacing: 10;
+    -fx-padding: 5 0 5 0;
+}
+
+#lOpisMsgBox1-Black2 {
+    -fx-font-size:   14px;
+    -fx-font-family: "Arial";
+    -fx-text-fill:   #000000;
+    -fx-background-color: white;
+    -fx-padding: 5 5 5 5;
 }

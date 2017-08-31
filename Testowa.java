@@ -42,6 +42,7 @@ public class Testowa extends Application {
     public MainWindow window;
     DB db;
     Statement st;
+    MainWindowSQL windowSQL;
     
     /* 
     Funkcja, która przygotuje okienko logowania wraz z dodanymi dwoma zdarzeniami
@@ -174,11 +175,17 @@ public class Testowa extends Application {
             int role = sqlResult("SElECT role FROM user_ohp where nick like '" + user +"'");
             String name = sqlName("SElECT first_name, last_name FROM user_ohp where nick like '" + user +"'");
             
+            windowSQL = new MainWindowSQL();
+            windowSQL.db = db;
+            windowSQL.Zdarzenie();
+            
             window = new MainWindow(name, user, role, id_user);
             window.db = db;
             window.refreshTableData();
             window.table.setItems(window.data);
             window.window = window;
+            window.windowSQL = windowSQL;
+            window.setZdarzenie(windowSQL.opisZda());
             window.show();
             primaryStage.hide(); 
         }      
