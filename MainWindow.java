@@ -124,6 +124,7 @@ public class MainWindow extends Stage {
                 odpisz.db = db;
                 odpisz.userId = id_user;
                 odpisz.window = window;
+                odpisz.odpisz = odpisz;
                 odpisz.refreshCombo();
                 odpisz.show();
             }

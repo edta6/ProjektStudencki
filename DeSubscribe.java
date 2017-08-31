@@ -32,6 +32,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -46,6 +47,7 @@ public final class DeSubscribe extends Stage {
     DB db;
     Statement st;
     MainWindow window;
+    DeSubscribe odpisz;
     
     private Scene SceneSubscribe;
     private GridPane gridSubscribe;
@@ -68,11 +70,10 @@ public final class DeSubscribe extends Stage {
     int ItemIdPart;
     int userId;
     int id_exre;
-    int date_error = 0;
+    int flag = 0;
     String Comm;
-    String DateExit;
+    String DateExit = null;
    
-    
     public DeSubscribe(){
         prepareScene();
     }
@@ -96,6 +97,9 @@ public final class DeSubscribe extends Stage {
         
         lData = new Label(resultDate);
         lData.setId("lNamePar");
+        
+        lInfo = new Label();
+        lInfo.setId("lOpisMsgBox1-Black");
          
         timeline = new Timeline(
             new KeyFrame(
@@ -109,6 +113,7 @@ public final class DeSubscribe extends Stage {
                         resultDate_three = formatter_three.format(data);
                         resultDate_four = formatter_four.format(data); 
                         lData.setText(resultDate);
+                        lInfo.setText("");
                     }
                 }                 
             )
@@ -116,7 +121,12 @@ public final class DeSubscribe extends Stage {
         
         timeline.setCycleCount(1440);
         timeline.play();
-   
+        
+        try {
+            date_return = formatter_three.parse(resultDate_three);
+            } catch (ParseException ex) {
+        }
+           
         hbGridData = new HBox();
         hbGridData.setId("hbGridAddTitle");
         hbGridData.getChildren().add(lData);
@@ -140,7 +150,12 @@ public final class DeSubscribe extends Stage {
             public void changed(ObservableValue<? extends ParticipantData> ov, ParticipantData t, ParticipantData t1) {
                 
                 ItemIdPart = participant.getSelectionModel().getSelectedIndex();
-                getData();
+                
+                if(ItemIdPart==-1) exit.setDisable(true);
+                else {
+                    exit.setDisable(false);
+                    getData();
+                } 
                 
             }
         }); 
@@ -186,39 +201,77 @@ public final class DeSubscribe extends Stage {
             @Override
             public void changed(ObservableValue ov,Boolean old_val, Boolean new_val) {
                 
+                flag = 0;
+                exit.setDisable(false);
+                
                 if(changeTime.isSelected()){
                     timeTextField.setText(resultDate_two);
                     hbGridTime.setVisible(true);
+                    
                 }
-                else hbGridTime.setVisible(false);
+                else {
+                    hbGridTime.setVisible(false);
+                    try {
+                        date_return = formatter_three.parse(resultDate_three);
+                    } catch (ParseException ex) {
+
+                    }
+                }
    
             }
         });
         
+        timeTextField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+               
+                flag = 0;
+                exit.setDisable(false);
+                
+                try {
+                    date_return = formatter_three.parse(resultDate_four + " " + timeTextField.getText() + ":00");
+                } catch (ParseException ex) {
+
+                }   
+                              
+             }
+        }); 
+        
         exit = new Button("Powrót");
         exit.setId("windows7-default");
         exit.setMinWidth(320);
+        exit.setDisable(true);
         hbGridButton = new HBox();
         hbGridButton.setId("hbGridAddTitle");
         hbGridButton.getChildren().addAll(exit);
         gridSubscribe.add(hbGridButton, 0, 5, 2, 1);  
         exit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {             
-                ReturnPar();
-                if(date_error==0) {
-                    timeline.stop();
-                    window.NewDataAdd();
-                    close();
+            public void handle(ActionEvent event) { 
+
+                if(flag==0) {
+                    if(date_exit.before(date_return)) {
+                        msgBox1();
+                        odpisz.hide();
+                        lInfo.setText("");
+                    }
+                    else {
+                        lInfo.setText("Godzina powrótu jest wcześniejsza\nniż godzina wyjścia!");
+                        flag = 1;
+                        exit.setDisable(true);
+                    }
                 }
             }
         });
         
-        lInfo = new Label();
-        lInfo.setId("lNamePar");
-        gridSubscribe.add(lInfo, 0, 6, 2, 1); 
+        HBox lInfoBox = new HBox();
+        lInfoBox.setMinHeight(50);
+        lInfoBox.setAlignment(Pos.CENTER);
+        lInfoBox.getChildren().add(lInfo);
         
-        SceneSubscribe = new Scene(gridSubscribe, 500, 500);
+        gridSubscribe.add(lInfoBox, 0, 6, 2, 1); 
+                
+        SceneSubscribe = new Scene(gridSubscribe);
         SceneSubscribe.getStylesheets().add(Testowa.class.getResource("Subscribe.css").toExternalForm());
         setScene(SceneSubscribe);
         setTitle("Formularz powrotu uczestnika");
@@ -245,6 +298,7 @@ public final class DeSubscribe extends Stage {
                 );
                 dataComboPar.add(unit);        
             }
+            st.close();
             
             participant.setItems(dataComboPar);
 
@@ -274,28 +328,15 @@ public final class DeSubscribe extends Stage {
     
     public void ReturnPar() {
         
-        try {
-            date_return = formatter_three.parse(resultDate_four + " " + timeTextField.getText() + ":00");
-        } catch (ParseException ex) {
-          
-        }
-        
-        String query = null;
+        String query;
         
         if(changeTime.isSelected()){
-            if(date_exit.before(date_return)) {
                 query = "Update main_exre set "
                          + " return_date =" 
                          + " '" + resultDate_four + " " + timeTextField.getText() + ":00',"
                          + " comm = '" + taComment.getText() + "',"
                          + " id_user_return =" + userId 
                          + " where id_exre = " + id_exre;
-                date_error = 0;
-            }
-            else {
-                lInfo.setText("Godzina powrótu jest wcześniejsza\n niż godzina wyjścia!");
-                date_error = 1;
-            }
         }
         else {
             query = "Update main_exre set "
@@ -304,34 +345,33 @@ public final class DeSubscribe extends Stage {
                      + " comm = '" + taComment.getText() + "',"
                      + " id_user_return =" + userId 
                      + " where id_exre = " + id_exre;
-            date_error = 0;
         }
          
         try {
             st = db.con.createStatement();
-            st.execute(query);  
+            st.execute(query);
+            st.close();
         } catch (SQLException ex) {
            
         }          
         
-        if(date_error==0) changeStatus();
+        changeStatus();
 
         }
         
-    
-    private void changeStatus() {
+    public void changeStatus() {
         
         String query = "UPDATE exitreturn SET exit_return = 0 where id_part = " + dataComboPar.get(ItemIdPart).id_part;
     
         try {
             
             st = db.con.createStatement();
-            st.execute(query);    
+            st.execute(query);
+            st.close();
         } catch (SQLException ex) {
             
         }
      }
-    
     
     private Integer sqlResult(String query){
         
@@ -346,6 +386,8 @@ public final class DeSubscribe extends Stage {
             while(rs.next()) {
                 numberRow = rs.getInt(1);
             }
+            st.close();
+            
         }    
         catch (SQLException ex) {} 
         
@@ -364,10 +406,155 @@ public final class DeSubscribe extends Stage {
                 Comm = rs.getString("comm");
                 DateExit = rs.getString("exit_date");
             }
+            st.close();
         }    
         catch (SQLException ex) {} 
                            
      }
     
+    public void msgBox1() {
+
+        final Stage changePas = new Stage();
+        GridPane changePasUserPane = new GridPane();
+        changePasUserPane.setId("gridMsgBox1");
+        scenetitle.setText("Potwierdzenie");
+        changePasUserPane.add(hbSceneTitle, 0, 0, 2, 1);
+
+        VBox opisPane = new VBox();
+        opisPane.setId("vboxMsgBox1");
+
+        Label one = new Label("Wypisany w dniu:");
+        one.setId("lOpisMsgBox1-Black");
+        Label two = new Label(DateExit.substring(0, 11));
+        two.setId("lOpisMsgBox1-Red");
+        HBox one_two = new HBox();
+        one_two.setId("hboxMsgBox1");
+        one_two.getChildren().addAll(one, two);
+        Label three = new Label("o godzinie:");
+        three.setId("lOpisMsgBox1-Black");
+        Label four = new Label(DateExit.substring(11, 16));
+        four.setId("lOpisMsgBox1-Red");
+        HBox three_four = new HBox();
+        three_four.setId("hboxMsgBox1");
+        three_four.getChildren().addAll(three, four);
+        Label five = new Label(dataComboPar.get(ItemIdPart).toString());
+        five.setId("lOpisMsgBox1-Red2");
+        HBox l_five = new HBox();
+        l_five.setAlignment(Pos.CENTER);
+        l_five.setId("hboxMsgBox2");
+        l_five.getChildren().addAll(five);
+        Label seven = new Label("powrócił w dniu:");
+        seven.setId("lOpisMsgBox1-Black");
+        Label eight = new Label(resultDate_four);
+        eight.setId("lOpisMsgBox1-Red");
+        HBox seven_eight = new HBox();
+        seven_eight.setId("hboxMsgBox1");
+        seven_eight.getChildren().addAll(seven, eight);
+        Label nine = new Label("o godzinie:");
+        nine.setId("lOpisMsgBox1-Black");
+        Label ten = new Label();
+        if(changeTime.isSelected()){
+            ten.setText(timeTextField.getText());
+        }
+        else {
+           ten.setText(resultDate_two); 
+        }
+        ten.setId("lOpisMsgBox1-Red");
+        HBox nine_ten = new HBox();
+        nine_ten.setId("hboxMsgBox1");
+        nine_ten.getChildren().addAll(nine, ten);
+
+    opisPane.getChildren().addAll(one_two, three_four, l_five, seven_eight, nine_ten);        
+    changePasUserPane.add(opisPane, 0, 1, 2, 1);
+
+    Button yes = new Button("TAK");
+    yes.setId("windows7-default");
+    yes.setMinWidth(100);
+    yes.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            ReturnPar();
+            timeline.stop();
+            window.NewDataAdd();
+            changePas.close();
+            msgBo2();
+        }
+    });
+    changePasUserPane.add(yes, 0, 2);
+
+    Button no = new Button("NIE");
+    no.setId("windows7-default");
+    no.setMinWidth(100);
+    no.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            changePas.close();
+            participant.getSelectionModel().clearSelection();
+            taComment.clear();
+            changeTime.setSelected(false);
+            odpisz.show();
+        }
+    });
+
+    changePasUserPane.add(no, 1, 2);
+
+    Scene changePasUser = new Scene(changePasUserPane);
+    changePasUser.getStylesheets().add(Testowa.class.getResource("Subscribe.css").toExternalForm());
+    changePas.setScene(changePasUser);
+    changePas.setTitle("Potwierdzenie powrotu");
+    changePas.show();
+}
     
+    public void msgBo2() {
+        
+        final Stage changePas = new Stage();
+        GridPane  changePasUserPane = new GridPane();
+        changePasUserPane.setId("gridAdd");
+        
+        Label opis = new Label("Wybierz działanie:");
+
+        opis.setId("lOpisMsgBox1-Black");
+        
+        HBox opisBox = new HBox();
+        opisBox.setAlignment(Pos.CENTER);
+        opisBox.getChildren().add(opis);
+        
+        changePasUserPane.add(opisBox, 0, 0, 2, 1);
+        
+        Button yes = new Button("Kolejny powrót");
+        yes.setId("windows7-default");
+        yes.setMinWidth(120);
+        yes.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changePas.close();
+                refreshCombo();
+                participant.getSelectionModel().clearSelection();
+                taComment.clear();
+                changeTime.setSelected(false);
+                odpisz.show();
+            }
+        });
+        changePasUserPane.add(yes, 0, 1);
+        
+        Button no = new Button("Zakończ");
+        no.setId("windows7-default");
+        no.setMinWidth(120);
+        no.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                changePas.close();
+                odpisz.close();
+            }
+        });
+        
+        changePasUserPane.add(no, 1, 1);
+        
+        Scene changePasUser = new Scene(changePasUserPane);
+        changePasUser.getStylesheets().add(Testowa.class.getResource("Subscribe.css").toExternalForm());
+        changePas.setScene(changePasUser);
+        changePas.setTitle("Wiadomość");
+        changePas.show();
+    }
+
 }

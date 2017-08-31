@@ -382,6 +382,10 @@ public final class Subscribe extends Stage {
         one.setId("lOpisMsgBox1-Black");
         Label two = new Label(dataComboPar.get(ItemIdPart).toString());
         two.setId("lOpisMsgBox1-Red2");
+        HBox l_two = new HBox();
+        l_two.setAlignment(Pos.CENTER);
+        l_two.setId("hboxMsgBox2");
+        l_two.getChildren().addAll(two);
         Label three = new Label("w dniu:");
         three.setId("lOpisMsgBox1-Black");
         Label four = new Label(resultDate_four);
@@ -391,12 +395,12 @@ public final class Subscribe extends Stage {
         three_four.getChildren().addAll(three, four);
         Label five = new Label("o godzinie:");
         five.setId("lOpisMsgBox1-Black");
-        Label six = null;
+        Label six = new Label();
         if(changeTime.isSelected()){
-            six = new Label(timeTextField.getText());
+            six.setText(timeTextField.getText());
         }
         else {
-           six = new Label(resultDate_two); 
+           six.setText(resultDate_two); 
         }
         six.setId("lOpisMsgBox1-Red");
         HBox five_six = new HBox();
@@ -417,7 +421,7 @@ public final class Subscribe extends Stage {
         nine_ten.setId("hboxMsgBox1");
         nine_ten.getChildren().addAll(nine, ten);
         
-        opisPane.getChildren().addAll(one, two, three_four, five_six, seven_eight, nine_ten);        
+        opisPane.getChildren().addAll(one, l_two, three_four, five_six, seven_eight, nine_ten);        
         changePasUserPane.add(opisPane, 0, 1, 2, 1);
         
         Button yes = new Button("TAK");
@@ -466,17 +470,16 @@ public final class Subscribe extends Stage {
         GridPane  changePasUserPane = new GridPane();
         changePasUserPane.setId("gridAdd");
         
-        Label opis = new Label("Jeżeli chcesz:\nkogoś wypisać\tkliknij TAK\n"
-                              + "zakończyć\t\tkliknij NIE");
-
+        Label opis = new Label("Wybierz działanie:");
         opis.setId("lOpisMsgBox1-Black");
         
         HBox opisBox = new HBox();
+        opisBox.setAlignment(Pos.CENTER);
         opisBox.getChildren().add(opis);
         
         changePasUserPane.add(opisBox, 0, 0, 2, 1);
         
-        Button yes = new Button("TAK");
+        Button yes = new Button("Kolejny wypis");
         yes.setId("windows7-default");
         yes.setMinWidth(120);
         yes.setOnAction(new EventHandler<ActionEvent>() {
@@ -494,7 +497,7 @@ public final class Subscribe extends Stage {
         });
         changePasUserPane.add(yes, 0, 1);
         
-        Button no = new Button("NIE");
+        Button no = new Button("Zakończ");
         no.setId("windows7-default");
         no.setMinWidth(120);
         no.setOnAction(new EventHandler<ActionEvent>() {
