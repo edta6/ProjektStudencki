@@ -66,7 +66,7 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
     private ComboBox participant;
     private CheckBox active; 
     private Text gridAddTitle; 
-    private Label Year, UserNumber, lNamePar, lLastNamePar, lParticipant, lViev;
+    private Label Year, UserNumber, lNamePar, lLastNamePar, lParticipant, lViev, lTextAction;
     private EventHandler key, keyUpdate;
     private ObservableList<ParticipantData> data;
     int userID;
@@ -476,22 +476,38 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
         lViev.setWrapText(true);
         lViev.setId("lViev");
         
+        lTextAction = new Label();
+        lTextAction.setWrapText(true);
+        lTextAction.setId("lViev");
+        
         pdfButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
             
                 String path1 = System.getProperty("user.home") + "/Desktop/Raport_uczestnikow.pdf";
                 String DEST = path1.replace("\\", "/");
+                String text = "Raport został zapisany na Pulpicie plik Raport_uczestnikow.pdf";
+                int flaga=1;
                
                 try {
                     createPdf(DEST);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
-                }  
+                    flaga = 0;
+                    text = ex.getMessage();  
+                }
+                
+                if(flaga==0) {
+                   lTextAction.setText(text); 
+                }
+                else {
+                    lTextAction.setText(text); 
+                }
+                
             }
         });
        
-       Main.getChildren().addAll(lViev, pdfButton);     
+       Main.getChildren().addAll(lViev, pdfButton, lTextAction);     
     }
     
     private void createPdf(String dest) throws FileNotFoundException  {

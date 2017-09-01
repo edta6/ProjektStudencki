@@ -53,6 +53,9 @@ public class MainWindowSQL {
         Date exit = new Date();
         Date powrot = new Date();
         
+        if(exit_date == null ) exit_date = "";
+        if(return_date == null ) return_date = "";
+        
         if(exit_date != null || return_date != null ) {
         try {
             exit = formatter_three.parse(exit_date);

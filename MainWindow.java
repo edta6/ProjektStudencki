@@ -72,11 +72,15 @@ public class MainWindow extends Stage {
             buttonAdmin.setVisible(true);
             if(user.equalsIgnoreCase("root")){
                 buttonExit.setDisable(true);
-                buttonHome.setDisable(true);    
+                buttonHome.setDisable(true);
+                buttonExitBig.setDisable(true);
+                buttonHomeBig.setDisable(true);  
             } 
             else {
                 buttonExit.setDisable(false);
-                buttonHome.setDisable(false); 
+                buttonHome.setDisable(false);
+                buttonExitBig.setDisable(false);
+                buttonHomeBig.setDisable(false); 
             }    
         }
         else {
@@ -304,8 +308,6 @@ public class MainWindow extends Stage {
         });
 
         stackTable = new StackPane();
-//        stackTable.setMinSize(1200, 350);
-//        stackTable.setMaxSize(1200, 350);
         stackTable.getChildren().add(table);
     }
     
@@ -333,9 +335,6 @@ public class MainWindow extends Stage {
         topBox.getChildren().addAll(uTextNow, Zdarzenie);
        
         bottomPane.setTop(topBox);
-        
-        Label uTextNow2 = new Label("Dół do zrobienia!");
-        Label uTextNow3 = new Label("Dół do zrobienia!");
         
         buttonExitBig = new Button("Wypisy");
         buttonExitBig.setId("windows7");
@@ -380,6 +379,22 @@ public class MainWindow extends Stage {
         
         bottomPane.setLeft(stackbottomPaneL);
         
+        
+        
+        
+        
+        VBox stackbottomPaneR = new VBox();
+        stackbottomPaneR.setId("stackbottomPaneR");
+        stackbottomPaneR.setMaxSize(300, 200);
+        stackbottomPaneR.setMinSize(300, 200);
+        stackbottomPaneR.getChildren().addAll();
+        
+        bottomPane.setRight(stackbottomPaneR);
+        
+      
+        
+        Label uTextNow2 = new Label("Dół do zrobienia!");
+
         StackPane stackbottomPaneC = new StackPane();
         stackbottomPaneC.setMaxSize(599, 200);
         stackbottomPaneC.setMinSize(599, 200);
@@ -387,29 +402,11 @@ public class MainWindow extends Stage {
         stackbottomPaneC.getChildren().add(uTextNow2);
         
         bottomPane.setCenter(stackbottomPaneC);
-                
-        StackPane stackbottomPaneR = new StackPane();
-        stackbottomPaneR.setId("stackbottomPaneLR");
-        stackbottomPaneR.setMaxSize(300, 200);
-        stackbottomPaneR.setMinSize(300, 200);
-        stackbottomPaneR.setAlignment(Pos.CENTER);
-        stackbottomPaneR.getChildren().add(uTextNow3);
-        
-        bottomPane.setRight(stackbottomPaneR);
-        
-//        StackPane stackbottomPaneB = new StackPane();
-//        stackbottomPaneB.setId("stackbottomPane");
-//        stackbottomPaneB.setMaxSize(1200, 45);
-//        stackbottomPaneB.setMinSize(1200, 45);
-//        stackbottomPaneB.setAlignment(Pos.CENTER);
-//      
-//        bottomPane.setBottom(stackbottomPaneB);
-        
+                           
     }
     
     public void setZdarzenie(String a) {
-        Zdarzenie.setText(a);
-        
+        Zdarzenie.setText(a);    
     }
     
 }
