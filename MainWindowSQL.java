@@ -23,15 +23,15 @@ public class MainWindowSQL {
     
     public MainWindowSQL() {}
     
-    String exit_date   = null;
-    String return_date = null;
+    String exit_date   = "";
+    String return_date = "";
     String date;
     int flaga;
     
     public String sqlName() {
         
         flaga = -1;
-        
+        String blad = "1900-01-01";
         String query = "select max(exit_date), max(return_date) from main_exre;";
         
         try {
@@ -53,11 +53,12 @@ public class MainWindowSQL {
         Date exit = new Date();
         Date powrot = new Date();
         
+        if(exit_date != null || return_date != null ) {
         try {
             exit = formatter_three.parse(exit_date);
             powrot = formatter_three.parse(return_date);
         } catch (ParseException ex) {}
-
+         
         if(exit.before(powrot)) {
             flaga = 1;
             return return_date;
@@ -65,7 +66,12 @@ public class MainWindowSQL {
         else {
             flaga = 0;
             return exit_date;
-        }               
+        }  
+        }
+        else{
+            flaga = 0;
+            return blad;
+        }        
     }
     
     String p_first_name;
@@ -128,23 +134,33 @@ public class MainWindowSQL {
     
     public String getDate() {
         
-        if(flaga==1) {
-            return return_date.substring(0, 11);
+        String blad = "null ";
+        
+        if(m_exit_date != null || m_return_date != null ) {
+            if(flaga==1) {
+                return m_return_date.substring(0, 11);
+            }
+            else {
+                return m_exit_date.substring(0, 11);
+            }
         }
-        else {
-           return exit_date.substring(0, 11);
-        }
+        else return blad;
 
     }
     
     public String getTime() {
         
-        if(flaga==1) {
-            return return_date.substring(11, 16);
+        String blad = "null";
+        
+        if(m_exit_date != null || m_return_date != null ) {
+            if(flaga==1) {
+                return m_return_date.substring(11, 16);
+            }
+            else {
+                return m_exit_date.substring(11, 16);
+            }
         }
-        else {
-           return exit_date.substring(11, 16);
-        }
+        else return blad;
 
     }
     
