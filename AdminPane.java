@@ -62,6 +62,7 @@ public class AdminPane extends Stage {
                 AddParticipant participant = new AddParticipant();
                 participant.db = db;
                 participant.addParticipantData();
+                participant.resizableProperty().setValue(Boolean.FALSE);
                 participant.show();
                 close();
             }
@@ -76,6 +77,7 @@ public class AdminPane extends Stage {
                 AddTarget target = new AddTarget(); 
                 target.db = db;
                 target.addTargetData();
+                target.resizableProperty().setValue(Boolean.FALSE);
                 target.show();
                 close();
             }
@@ -90,6 +92,7 @@ public class AdminPane extends Stage {
                 AddUser user = new AddUser();
                 user.db = db;
                 user.addUserData();
+                user.resizableProperty().setValue(Boolean.FALSE);
                 user.show();
                 close();
             }

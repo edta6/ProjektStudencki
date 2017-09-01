@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -22,6 +23,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -184,8 +186,16 @@ public class Testowa extends Application {
             window.refreshTableData();
             window.table.setItems(window.data);
             window.window = window;
+            window.resizableProperty().setValue(Boolean.FALSE);
             window.windowSQL = windowSQL;
             window.setZdarzenie(windowSQL.opisZda());
+            window.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(final WindowEvent event) {
+                        Platform.exit();
+                        window.close();
+                    }
+                });
             window.show();
             primaryStage.hide(); 
         }      

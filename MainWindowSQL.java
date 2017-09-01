@@ -54,7 +54,7 @@ public class MainWindowSQL {
         Date powrot = new Date();
         
         if(exit_date == null ) exit_date = "";
-        if(return_date == null ) return_date = "";
+        if(return_date == null ) return_date = "1000-12-12 20:20:22";
         
         if(exit_date != null || return_date != null ) {
         try {
@@ -172,12 +172,12 @@ public class MainWindowSQL {
         String opis;
         
         if(flaga==1) {
-            opis = "Wypis " + getFullNamePar () + " w dniu " + getDate()
+            opis = "Powrót " + getFullNamePar () + " w dniu " + getDate()
                    + "o godzinie " + getTime() + " potwierdzony przez " + getFullNameUsr ();
             return opis;
         }
         else {
-            opis = "Powrót " + getFullNamePar () + " w dniu " + getDate()
+            opis = "Wypis " + getFullNamePar () + " w dniu " + getDate()
                    + "o godzinie " + getTime() + " potwierdzony przez " + getFullNameUsr ();
             return opis;  
         }

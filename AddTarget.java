@@ -68,7 +68,7 @@ public class AddTarget extends Stage{
        borderPane.setTop(hbuttonMenu);
        borderPane.setCenter(Main);
         
-       SceneTarget = new Scene(borderPane, 400, 300);
+       SceneTarget = new Scene(borderPane, 390, 300);
        
        SceneTarget.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneTarget);

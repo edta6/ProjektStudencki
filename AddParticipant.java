@@ -89,7 +89,7 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
        borderPane.setTop(hbuttonMenu);
        borderPane.setCenter(Main);
         
-       SceneParticipant = new Scene(borderPane, 400, 400);
+       SceneParticipant = new Scene(borderPane, 390, 400);
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);

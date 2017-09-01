@@ -32,7 +32,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -48,10 +50,9 @@ public class MainWindow extends Stage {
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
     private StackPane stackTable, mainStack;
-//    private GridPane bottomPane;
     private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
-    private Button buttonExit, buttonHome, buttonAdmin, buttonClose;
-    private Button buttonExitBig, buttonHomeBig;
+    public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig; 
+    private Button buttonAdmin, buttonClose;
     private Label uTextNow, Zdarzenie;
     private Label nameLogin, userText;
     public  TableView<ExreData> table;
@@ -102,7 +103,7 @@ public class MainWindow extends Stage {
         prepareBorderPaneBottom();
         borderPane.setBottom(mainStack);
         
-        sceneMainWindow = new Scene(borderPane, 1200, 650);
+        sceneMainWindow = new Scene(borderPane, 1190, 640);
         sceneMainWindow.getStylesheets().add(Testowa.class.getResource("MainWindow.css").toExternalForm());
         setScene(sceneMainWindow);
         setTitle("The book out and trips");
@@ -115,14 +116,7 @@ public class MainWindow extends Stage {
         buttonExit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Subscribe wypisz = new Subscribe();
-                wypisz.db = db;
-                wypisz.userId = id_user;
-                wypisz.window = window;
-                wypisz.wypisz = wypisz;
-                wypisz.refreshCombo();
-                wypisz.refreshComboTar();
-                wypisz.show();
+                wypisAction();
             }
         });
         
@@ -131,13 +125,7 @@ public class MainWindow extends Stage {
         buttonHome.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DeSubscribe odpisz = new DeSubscribe();
-                odpisz.db = db;
-                odpisz.userId = id_user;
-                odpisz.window = window;
-                odpisz.odpisz = odpisz;
-                odpisz.refreshCombo();
-                odpisz.show();
+                odpiszAction();
             }
         });
         
@@ -148,6 +136,7 @@ public class MainWindow extends Stage {
             public void handle(ActionEvent event) {
                 AdminPane panelAdmin = new AdminPane();
                 panelAdmin.db = db;
+                panelAdmin.resizableProperty().setValue(Boolean.FALSE);
                 panelAdmin.showAndWait();
             }
         });
@@ -180,6 +169,7 @@ public class MainWindow extends Stage {
         hbuttonMenuLeft.setId("hbuttonMenu");
         hbuttonMenuLeft.setAlignment(Pos.CENTER_LEFT);
         hbuttonMenuLeft.setMinWidth(1200);
+        hbuttonMenuLeft.setMaxWidth(1200);
         hbuttonMenuLeft.getChildren().addAll(buttonExit, buttonHome, buttonAdmin, hbuttonMenuRight);
     }
     
@@ -228,7 +218,8 @@ public class MainWindow extends Stage {
         table = new TableView<>();
         table.setId("table");
         table.setEditable(false);
-        
+//        table.setMaxSize(1198, 300);
+//        table.setMinSize(1198, 300);
         final TableColumn lp = new TableColumn("Lp.");
         lp.setCellValueFactory(new PropertyValueFactory("id_exre"));
         lp.setPrefWidth(58);
@@ -308,6 +299,8 @@ public class MainWindow extends Stage {
         });
 
         stackTable = new StackPane();
+        stackTable.setMinWidth(1198);
+        stackTable.setMaxWidth(1198);
         stackTable.getChildren().add(table);
     }
     
@@ -317,8 +310,8 @@ public class MainWindow extends Stage {
         bottomPane.setId("bottomPane");
         
         mainStack = new StackPane();
-        mainStack.setMaxSize(1200, 250);
-        mainStack.setMinSize(1200, 250);
+//        mainStack.setMaxSize(1200, 250);
+//        mainStack.setMinSize(1200, 250);
         mainStack.getChildren().add(bottomPane);
 
         Zdarzenie = new Label();
@@ -328,66 +321,82 @@ public class MainWindow extends Stage {
         uTextNow.setId("lOpisMsgBox1-Black");
          
         HBox topBox = new HBox();
-        topBox.setId("hboxMsgBox2");
+        topBox.setId("hboxMsgBox3");
         topBox.setAlignment(Pos.CENTER);
-        topBox.setMinSize(1200, 45);
-        topBox.setMaxSize(1200, 45);
+        topBox.setMinSize(1200, 43);
+        topBox.setMaxSize(1200, 43);
         topBox.getChildren().addAll(uTextNow, Zdarzenie);
        
         bottomPane.setTop(topBox);
         
         buttonExitBig = new Button("Wypisy");
         buttonExitBig.setId("windows7");
-        buttonExitBig.setMaxSize(180, 80);
-        buttonExitBig.setMinSize(180, 80);
+        buttonExitBig.setMaxSize(180, 75);
+        buttonExitBig.setMinSize(180, 75);
         buttonExitBig.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Subscribe wypisz = new Subscribe();
-                wypisz.db = db;
-                wypisz.userId = id_user;
-                wypisz.window = window;
-                wypisz.wypisz = wypisz;
-                wypisz.refreshCombo();
-                wypisz.refreshComboTar();
-                wypisz.show();
+                wypisAction();
             }
         });
         
         buttonHomeBig = new Button("Powroty");
         buttonHomeBig.setId("windows7");
-        buttonHomeBig.setMaxSize(180, 80);
-        buttonHomeBig.setMinSize(180, 80);
+        buttonHomeBig.setMaxSize(180, 75);
+        buttonHomeBig.setMinSize(180, 75);
         buttonHomeBig.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DeSubscribe odpisz = new DeSubscribe();
-                odpisz.db = db;
-                odpisz.userId = id_user;
-                odpisz.window = window;
-                odpisz.odpisz = odpisz;
-                odpisz.refreshCombo();
-                odpisz.show();
+                odpiszAction();
             }
         });
         
         VBox stackbottomPaneL = new VBox();
         stackbottomPaneL.setId("stackbottomPaneL");
-        stackbottomPaneL.setMaxSize(300, 200);
-        stackbottomPaneL.setMinSize(300, 200);
+        stackbottomPaneL.setMaxSize(260, 210);
+        stackbottomPaneL.setMinSize(260, 210);
         stackbottomPaneL.getChildren().addAll(buttonExitBig, buttonHomeBig);
         
         bottomPane.setLeft(stackbottomPaneL);
         
+        Text scenetitle = new Text("Statystyki");
+        scenetitle.setId("gridAddTitle");
+        HBox hbSceneTitle = new HBox();
+        hbSceneTitle.setId("hbGridAddTitle");
+        hbSceneTitle.getChildren().add(scenetitle);
         
+        Label one = new Label("Stan osobowy:");
+        one.setId("lOpisMsgBox1-Black");
+        Label two = new Label("0");
+        two.setId("lOpisMsgBox1-Red");
+        HBox one_two = new HBox();
+        one_two.setAlignment(Pos.CENTER_RIGHT);
+        one_two.setId("hboxMsgBox2");
+        one_two.getChildren().addAll(one, two);
         
+        Label three = new Label("Wypisanych: ");
+        three.setId("lOpisMsgBox1-Black");
+        Label four = new Label("0");
+        four.setId("lOpisMsgBox1-Red");
+        HBox three_four = new HBox();
+        three_four.setAlignment(Pos.CENTER_RIGHT);
+        three_four.setId("hboxMsgBox2");
+        three_four.getChildren().addAll(three, four);
         
+        Label five = new Label("Obecnych:");
+        five.setId("lOpisMsgBox1-Black");
+        Label six = new Label("0");
+        six.setId("lOpisMsgBox1-Red");
+        HBox five_six = new HBox();
+        five_six.setAlignment(Pos.CENTER_RIGHT);
+        five_six.setId("hboxMsgBox2");
+        five_six.getChildren().addAll(five, six);
         
         VBox stackbottomPaneR = new VBox();
         stackbottomPaneR.setId("stackbottomPaneR");
-        stackbottomPaneR.setMaxSize(300, 200);
-        stackbottomPaneR.setMinSize(300, 200);
-        stackbottomPaneR.getChildren().addAll();
+        stackbottomPaneR.setMaxSize(260, 210);
+        stackbottomPaneR.setMinSize(260, 210);
+        stackbottomPaneR.getChildren().addAll(hbSceneTitle, one_two, three_four, five_six);
         
         bottomPane.setRight(stackbottomPaneR);
         
@@ -403,6 +412,47 @@ public class MainWindow extends Stage {
         
         bottomPane.setCenter(stackbottomPaneC);
                            
+    }
+    
+    public void wypisAction() {
+        buttonExit.setDisable(true);
+        buttonExitBig.setDisable(true);
+        Subscribe wypisz = new Subscribe();
+        wypisz.db = db;
+        wypisz.userId = id_user;
+        wypisz.window = window;
+        wypisz.wypisz = wypisz;
+        wypisz.resizableProperty().setValue(Boolean.FALSE);
+        wypisz.refreshCombo();
+        wypisz.refreshComboTar();
+        wypisz.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(final WindowEvent event) {
+                buttonExit.setDisable(false);
+                buttonExitBig.setDisable(false); 
+            }
+        });
+        wypisz.show();    
+    }
+    
+    public void odpiszAction() {
+        buttonHome.setDisable(true);
+        buttonHomeBig.setDisable(true);
+        DeSubscribe odpisz = new DeSubscribe();
+        odpisz.db = db;
+        odpisz.userId = id_user;
+        odpisz.window = window;
+        odpisz.odpisz = odpisz;
+        odpisz.refreshCombo();
+        odpisz.resizableProperty().setValue(Boolean.FALSE);
+        odpisz.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(final WindowEvent event) {
+                buttonHome.setDisable(false);
+                buttonHomeBig.setDisable(false); 
+            }
+        });
+        odpisz.show();    
     }
     
     public void setZdarzenie(String a) {

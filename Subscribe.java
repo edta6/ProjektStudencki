@@ -32,6 +32,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import testowa.TimeTextFieldTest.TimeTextField;
 
@@ -505,6 +506,8 @@ public final class Subscribe extends Stage {
             public void handle(ActionEvent event) {
                 changePas.close();
                 wypisz.close();
+                window.buttonExit.setDisable(false);
+                window.buttonExitBig.setDisable(false);
             }
         });
         
@@ -516,6 +519,10 @@ public final class Subscribe extends Stage {
         changePas.setTitle("Wiadomość");
         changePas.show();
         System.out.println(changePas.getWidth());
+    }
+
+    void getOnCloseRequest(EventHandler<WindowEvent> eventHandler) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
                                         
 }

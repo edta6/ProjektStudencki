@@ -72,7 +72,7 @@ public class AddUser extends Stage {
        borderPane.setTop(hbuttonMenu);
        borderPane.setCenter(Main);
        
-       SceneParticipant = new Scene(borderPane, 400, 480);
+       SceneParticipant = new Scene(borderPane, 390, 470);
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);

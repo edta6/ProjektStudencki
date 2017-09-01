@@ -541,6 +541,8 @@ public final class DeSubscribe extends Stage {
         no.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                window.buttonHome.setDisable(false);
+                window.buttonHomeBig.setDisable(false);
                 changePas.close();
                 odpisz.close();
             }
