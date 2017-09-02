@@ -23,6 +23,7 @@ public class AdminPane extends Stage {
     
     DB db;
     Statement st;
+    MainWindow window;
     
     private final Scene SceneParticipant;
     private VBox vbpane;
@@ -61,6 +62,7 @@ public class AdminPane extends Stage {
             public void handle(ActionEvent event) {
                 AddParticipant participant = new AddParticipant();
                 participant.db = db;
+                participant.window = window;
                 participant.addParticipantData();
                 participant.resizableProperty().setValue(Boolean.FALSE);
                 participant.show();

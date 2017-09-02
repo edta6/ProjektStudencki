@@ -6,14 +6,7 @@
 package testowa;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -28,7 +21,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -50,12 +42,13 @@ public class MainWindow extends Stage {
     
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
-    private StackPane stackTable, mainStack;
-    public HBox hbuttonMenu, hbnameLogin;
-    public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig; 
+    private HBox hbuttonMenu, hbnameLogin; 
     private Button buttonAdmin, buttonClose;
     private Label uTextNow, Zdarzenie;
     private Label nameLogin, userText;
+    public Label two, four, six;
+    public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig; 
+    public  TableColumn lp;
     public  TableView<ExreData> table;
     public ObservableList<ExreData> data;
     public final String user;
@@ -99,10 +92,10 @@ public class MainWindow extends Stage {
         borderPane.setTop(hbuttonMenu);
         
         prepareBorderPaneCenter();
-        borderPane.setCenter(stackTable);
+        borderPane.setCenter(table);
         
         prepareBorderPaneBottom();
-        borderPane.setBottom(mainStack);
+        borderPane.setBottom(bottomPane);
         
         sceneMainWindow = new Scene(borderPane, 1190, 640);
         sceneMainWindow.getStylesheets().add(Testowa.class.getResource("MainWindow.css").toExternalForm());
@@ -137,6 +130,7 @@ public class MainWindow extends Stage {
             public void handle(ActionEvent event) {
                 AdminPane panelAdmin = new AdminPane();
                 panelAdmin.db = db;
+                panelAdmin.window = window;
                 panelAdmin.resizableProperty().setValue(Boolean.FALSE);
                 panelAdmin.showAndWait();
             }
@@ -167,7 +161,7 @@ public class MainWindow extends Stage {
         enterMenuStack.setAlignment(Pos.CENTER_RIGHT);
         
         hbuttonMenu = new HBox();
-        hbuttonMenu.setId("hbuttonMenu");
+        hbuttonMenu.setId("rich-blue");
         hbuttonMenu.setAlignment(Pos.CENTER_LEFT);
         hbuttonMenu.setMinWidth(1200);
         hbuttonMenu.setMaxWidth(1200);
@@ -186,7 +180,7 @@ public class MainWindow extends Stage {
             String query = "Select m.id_exre, p.first_name, p.last_name, t.target_name, m.exit_date, "
                     + "m.place, m.comm, u.first_name, u.last_name from main_exre m join participants p "
                     + "on m.id_part=p.id_part join targets t on m.id_target=t.id_target join user_ohp u "
-                    + "on m.id_user_exit=u.id_part where m.return_date is NULL;";
+                    + "on m.id_user_exit=u.id_part where m.return_date is NULL and p.active=0;";
                      
             ResultSet rs = st.executeQuery(query);
             
@@ -220,9 +214,8 @@ public class MainWindow extends Stage {
         table = new TableView<>();
         table.setId("table");
         table.setEditable(false);
-//        table.setMaxSize(1198, 300);
-//        table.setMinSize(1198, 300);
-        final TableColumn lp = new TableColumn("Lp.");
+
+        lp = new TableColumn("Lp.");
         lp.setCellValueFactory(new PropertyValueFactory("id_exre"));
         lp.setPrefWidth(58);
         final TableColumn  name = new TableColumn("Nazwisko i Imię");
@@ -300,10 +293,6 @@ public class MainWindow extends Stage {
            }
         });
 
-        stackTable = new StackPane();
-        stackTable.setMinWidth(1198);
-        stackTable.setMaxWidth(1198);
-        stackTable.getChildren().add(table);
     }
     
     private void prepareBorderPaneBottom(){
@@ -311,22 +300,17 @@ public class MainWindow extends Stage {
         bottomPane = new BorderPane();
         bottomPane.setId("bottomPane");
         
-        mainStack = new StackPane();
-//        mainStack.setMaxSize(1200, 250);
-//        mainStack.setMinSize(1200, 250);
-        mainStack.getChildren().add(bottomPane);
-
         Zdarzenie = new Label();
-        Zdarzenie.setId("lOpisMsgBox1-Black2");
+        Zdarzenie.setId("windows7Zda");
         
         uTextNow = new Label("Ostatnie zdarzenie:");
         uTextNow.setId("lOpisMsgBox1-Black");
          
         HBox topBox = new HBox();
-        topBox.setId("hboxMsgBox3");
+        topBox.setId("rich-blue");
         topBox.setAlignment(Pos.CENTER);
-        topBox.setMinSize(1200, 43);
-        topBox.setMaxSize(1200, 43);
+        topBox.setMinWidth(1200);
+        topBox.setMaxWidth(1200);
         topBox.getChildren().addAll(uTextNow, Zdarzenie);
        
         bottomPane.setTop(topBox);
@@ -361,37 +345,37 @@ public class MainWindow extends Stage {
         
         bottomPane.setLeft(stackbottomPaneL);
         
-        Text scenetitle = new Text("Statystyki");
+        Label scenetitle = new Label("Statystyki");
         scenetitle.setId("gridAddTitle");
         HBox hbSceneTitle = new HBox();
         hbSceneTitle.setId("hbGridAddTitle");
         hbSceneTitle.getChildren().add(scenetitle);
         
         Label one = new Label("Stan osobowy:");
-        one.setId("lOpisMsgBox1-Black");
-        Label two = new Label("0");
+        one.setId("lOpisMsgBox1-Black1");
+        two = new Label();
         two.setId("lOpisMsgBox1-Red");
         HBox one_two = new HBox();
         one_two.setAlignment(Pos.CENTER_RIGHT);
-        one_two.setId("hboxMsgBox2");
+        one_two.setId("windows7Stat");
         one_two.getChildren().addAll(one, two);
         
-        Label three = new Label("Wypisanych: ");
-        three.setId("lOpisMsgBox1-Black");
-        Label four = new Label("0");
+        Label three = new Label("Wypisanych:");
+        three.setId("lOpisMsgBox1-Black1");
+        four = new Label();
         four.setId("lOpisMsgBox1-Red");
         HBox three_four = new HBox();
         three_four.setAlignment(Pos.CENTER_RIGHT);
-        three_four.setId("hboxMsgBox2");
+        three_four.setId("windows7Stat");
         three_four.getChildren().addAll(three, four);
         
         Label five = new Label("Obecnych:");
-        five.setId("lOpisMsgBox1-Black");
-        Label six = new Label("0");
+        five.setId("lOpisMsgBox1-Black1");
+        six = new Label();
         six.setId("lOpisMsgBox1-Red");
         HBox five_six = new HBox();
         five_six.setAlignment(Pos.CENTER_RIGHT);
-        five_six.setId("hboxMsgBox2");
+        five_six.setId("windows7Stat");
         five_six.getChildren().addAll(five, six);
         
         VBox stackbottomPaneR = new VBox();
@@ -423,6 +407,7 @@ public class MainWindow extends Stage {
         wypisz.db = db;
         wypisz.userId = id_user;
         wypisz.window = window;
+        wypisz.windowSQL = windowSQL;
         wypisz.wypisz = wypisz;
         wypisz.resizableProperty().setValue(Boolean.FALSE);
         wypisz.refreshCombo();
@@ -444,6 +429,7 @@ public class MainWindow extends Stage {
         odpisz.db = db;
         odpisz.userId = id_user;
         odpisz.window = window;
+        odpisz.windowSQL = windowSQL;
         odpisz.odpisz = odpisz;
         odpisz.refreshCombo();
         odpisz.resizableProperty().setValue(Boolean.FALSE);
@@ -459,6 +445,18 @@ public class MainWindow extends Stage {
     
     public void setZdarzenie(String a) {
         Zdarzenie.setText(a);    
+    }
+    
+    public void setStan(String a) {
+        two.setText(a);    
+    }
+    
+    public void setWyp(String a) {
+        four.setText(a);    
+    }
+    
+    public void setObc(String a) {
+        six.setText(a);    
     }
     
 }

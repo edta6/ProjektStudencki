@@ -25,7 +25,7 @@ and open the template in the editor.
 
 #hbuttonMenu {
     -fx-background-color: #3c7fb1;
-    -fx-padding: 1 0 1 0;
+    -fx-padding: 5 0 5 0;
 }
 
 #userText {
@@ -49,18 +49,38 @@ and open the template in the editor.
 #stackbottomPaneL {
     -fx-spacing: 20;
     -fx-padding: 20 0 20 40;
-    -fx-border-color: #330033;
+    -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-border-color: black;
     -fx-border-width: 0 2 2 2;
     -fx-border-style: solid;
     
 }
 
 #bottomPane {
-    -fx-background-color: #3c7fb1;
+    -fx-background-color: 
+    #000000,
+    linear-gradient(#7ebcea, #2f4b8f),
+    linear-gradient(#426ab7, #263e75),
+    linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
 }
 
 #lOpisMsgBox1-Black {
-    -fx-font-size:   14px;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill:   white;
+    -fx-padding: 5 20 5 0;
+}
+
+#lOpisMsgBox1-Black1 {
+    -fx-font-size: 14px;
     -fx-font-family: "Arial Black";
     -fx-text-fill:   #000000;
 }
@@ -93,20 +113,27 @@ and open the template in the editor.
 #stackbottomPaneR {
     -fx-spacing: 15;
     -fx-padding: 15 0 15 0;
-    -fx-border-color: #330033;
+    -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-border-color: black;
     -fx-border-width: 0 2 2 2;
-    -fx-border-style: solid;
-    
+    -fx-border-style: solid;    
 }
 
 #gridAddTitle {
        -fx-font-size: 20px;
        -fx-font-family: "Arial Black";
+       -fx-text-fill: white;
 }
 
 #hbGridAddTitle {
     -fx-alignment: center;
-    -fx-border-color: #330033;
+    -fx-border-color: black;
     -fx-border-width: 0 0 2 0;
     -fx-padding: 0 0 10 0;
     -fx-border-style: solid;
@@ -118,7 +145,38 @@ and open the template in the editor.
 }
 
 #lOpisMsgBox1-Red {
-    -fx-font-size:   14px;
+    -fx-font-size: 14px;
     -fx-font-family: "Arial Black";
-    -fx-text-fill:   red;
+    -fx-text-fill:   white;
+}
+
+#windows7Stat {
+    -fx-background-color: linear-gradient(#ff5400, #be1d00);
+    -fx-background-radius: 30;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-spacing: 15;
+    -fx-padding: 5 60 5 0;
+}
+
+#windows7Zda {
+    -fx-background-color: linear-gradient(#ff5400, #be1d00);
+    -fx-background-radius: 30;
+    -fx-background-insets: 0;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial Black";
+    -fx-padding: 5 20 5 20;
+}
+
+#rich-blue {
+    -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-padding: 10 0 10 0;
+
 }

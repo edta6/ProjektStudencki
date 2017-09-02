@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -177,6 +178,15 @@ public class Testowa extends Application {
             int role = sqlResult("SElECT role FROM user_ohp where nick like '" + user +"'");
             String name = sqlName("SElECT first_name, last_name FROM user_ohp where nick like '" + user +"'");
             
+            
+            Statistic staty = new Statistic();
+            staty.db = db;
+            staty.getDataSta();
+            
+//            int stanosobowy = sqlResult("select count(id_part) from participants where active=0;");
+//            int obecnych = sqlResult("select count(p.id_part) from participants p join exitreturn w on p.id_part=w.id_part where p.active=0 and w.exit_return=0;");
+//            int wypisanych = sqlResult("select count(p.id_part) from participants p join exitreturn w on p.id_part=w.id_part where p.active=0 and w.exit_return=1;");
+            
             windowSQL = new MainWindowSQL();
             windowSQL.db = db;
             windowSQL.Zdarzenie();
@@ -185,10 +195,15 @@ public class Testowa extends Application {
             window.db = db;
             window.refreshTableData();
             window.table.setItems(window.data);
+            window.lp.setSortType(TableColumn.SortType.ASCENDING);
+            window.table.getSortOrder().add(window.lp);
             window.window = window;
             window.resizableProperty().setValue(Boolean.FALSE);
             window.windowSQL = windowSQL;
             window.setZdarzenie(windowSQL.opisZda());
+            window.setStan(staty.getStanOsobowy());
+            window.setWyp(staty.getWypisanych());
+            window.setObc(staty.getObecnych());
             window.setOnCloseRequest(new EventHandler<WindowEvent>() {
                     @Override
                     public void handle(final WindowEvent event) {
@@ -197,8 +212,6 @@ public class Testowa extends Application {
                     }
                 });
             window.show();
-            System.out.println(window.hbuttonMenuRight.getWidth());
-            System.out.println(window.hbuttonMenuLeft.getWidth());
             primaryStage.hide(); 
         }      
     }

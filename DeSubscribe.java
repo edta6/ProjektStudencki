@@ -26,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -45,6 +46,7 @@ public final class DeSubscribe extends Stage {
     DB db;
     Statement st;
     MainWindow window;
+    MainWindowSQL windowSQL;
     DeSubscribe odpisz;
     
     private Scene SceneSubscribe;
@@ -474,6 +476,8 @@ public final class DeSubscribe extends Stage {
             ReturnPar();
             timeline.stop();
             window.NewDataAdd();
+            window.lp.setSortType(TableColumn.SortType.ASCENDING);
+            window.table.getSortOrder().add(window.lp);
             changePas.close();
             msgBo2();
         }
@@ -541,10 +545,18 @@ public final class DeSubscribe extends Stage {
         no.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                Statistic wypisStat = new Statistic();
+                wypisStat.db = db;
+                wypisStat.getDataSta();
+                window.setStan(wypisStat.getStanOsobowy());
+                window.setWyp(wypisStat.getWypisanych());
+                window.setObc(wypisStat.getObecnych());
                 window.buttonHome.setDisable(false);
                 window.buttonHomeBig.setDisable(false);
                 changePas.close();
                 odpisz.close();
+                windowSQL.Zdarzenie();
+                window.setZdarzenie(windowSQL.opisZda());
             }
         });
         
