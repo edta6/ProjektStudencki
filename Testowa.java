@@ -197,6 +197,8 @@ public class Testowa extends Application {
                     }
                 });
             window.show();
+            System.out.println(window.hbuttonMenuRight.getWidth());
+            System.out.println(window.hbuttonMenuLeft.getWidth());
             primaryStage.hide(); 
         }      
     }

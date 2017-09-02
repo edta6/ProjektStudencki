@@ -30,6 +30,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -50,7 +51,7 @@ public class MainWindow extends Stage {
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
     private StackPane stackTable, mainStack;
-    private HBox hbuttonMenuLeft,  hbuttonMenuRight, hbnameLogin;
+    public HBox hbuttonMenu, hbnameLogin;
     public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig; 
     private Button buttonAdmin, buttonClose;
     private Label uTextNow, Zdarzenie;
@@ -95,7 +96,7 @@ public class MainWindow extends Stage {
         borderPane = new BorderPane();
         
         prepareBorderPaneTop ();
-        borderPane.setTop(hbuttonMenuLeft);
+        borderPane.setTop(hbuttonMenu);
         
         prepareBorderPaneCenter();
         borderPane.setCenter(stackTable);
@@ -160,17 +161,18 @@ public class MainWindow extends Stage {
             }
         });
         
-        hbuttonMenuLeft = new HBox();
-        hbuttonMenuRight = new HBox();
-        hbuttonMenuRight.setAlignment(Pos.CENTER_RIGHT);
-        hbuttonMenuRight.setMinWidth(760);
-        hbuttonMenuRight.getChildren().addAll(hbnameLogin, buttonClose);
-        hbuttonMenuRight.setId("hbuttonMenu");
-        hbuttonMenuLeft.setId("hbuttonMenu");
-        hbuttonMenuLeft.setAlignment(Pos.CENTER_LEFT);
-        hbuttonMenuLeft.setMinWidth(1200);
-        hbuttonMenuLeft.setMaxWidth(1200);
-        hbuttonMenuLeft.getChildren().addAll(buttonExit, buttonHome, buttonAdmin, hbuttonMenuRight);
+        Label pomoc = new Label(" ");
+        StackPane enterMenuStack = new StackPane();
+        enterMenuStack.getChildren().add(pomoc);
+        enterMenuStack.setAlignment(Pos.CENTER_RIGHT);
+        
+        hbuttonMenu = new HBox();
+        hbuttonMenu.setId("hbuttonMenu");
+        hbuttonMenu.setAlignment(Pos.CENTER_LEFT);
+        hbuttonMenu.setMinWidth(1200);
+        hbuttonMenu.setMaxWidth(1200);
+        hbuttonMenu.getChildren().addAll(buttonExit, buttonHome, buttonAdmin, enterMenuStack, hbnameLogin, buttonClose);
+        HBox.setHgrow(enterMenuStack, Priority.ALWAYS); 
     }
     
     public void refreshTableData(){
