@@ -8,6 +8,8 @@ package testowa;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -16,6 +18,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -25,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -43,11 +45,13 @@ public class MainWindow extends Stage {
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
     private HBox hbuttonMenu, hbnameLogin; 
-    private Button buttonAdmin, buttonClose;
+    private Button buttonAdmin, buttonClose, confirm;
     private Label uTextNow, Zdarzenie;
     private Label nameLogin, userText;
+    public ComboBox participant;
     public Label two, four, six;
-    public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig; 
+    public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig;
+    private ObservableList<ParticipantData> dataComboPar;
     public  TableColumn lp;
     public  TableView<ExreData> table;
     public ObservableList<ExreData> data;
@@ -55,6 +59,7 @@ public class MainWindow extends Stage {
     public final String nameU;
     public final int role;
     public final int id_user;
+    int ItemIdPart=-1;
        
     public MainWindow(String name, String user, int role, int id_part) {
         this.nameU = name;
@@ -217,35 +222,46 @@ public class MainWindow extends Stage {
 
         lp = new TableColumn("Lp.");
         lp.setCellValueFactory(new PropertyValueFactory("id_exre"));
-        lp.setPrefWidth(58);
+        lp.setMinWidth(58);
+        lp.setMaxWidth(58);
         final TableColumn  name = new TableColumn("Nazwisko i Imię");
         name.setCellValueFactory(new PropertyValueFactory("FullNamePar"));
-        name.setPrefWidth(200);
+        name.setMinWidth(200);
+        name.setMaxWidth(200);
         final TableColumn target = new TableColumn("Cel wyjścia");
         target.setCellValueFactory(new PropertyValueFactory("Target"));
-        target.setPrefWidth(200);
+        target.setMinWidth(200);
+        target.setMaxWidth(200);
         final TableColumn exit = new TableColumn("Wyszedł");
-        exit.setPrefWidth(173);
+        exit.setMinWidth(173);
+        exit.setMaxWidth(173);
         final TableColumn dataExit = new TableColumn("dnia");
         dataExit.setCellValueFactory(new PropertyValueFactory("DateEx"));
-        dataExit.setPrefWidth(88);
+        dataExit.setMinWidth(88);
+        dataExit.setMaxWidth(88);
         final TableColumn timeExit = new TableColumn("godz.");
         timeExit.setCellValueFactory(new PropertyValueFactory("HourEx"));
-        timeExit.setPrefWidth(85);
-        final TableColumn adres = new TableColumn("Przewidywane miejsce\n(adres)\nTel. kontaktowy");
+        timeExit.setMinWidth(85);
+        timeExit.setMaxWidth(85);
+        final TableColumn adres = new TableColumn("Przewidywane miejsce\nTel. kontaktowy");
         adres.setCellValueFactory(new PropertyValueFactory("Place"));
-        adres.setPrefWidth(210);
+        adres.setMinWidth(210);
+        adres.setMaxWidth(210);
         final TableColumn cameBack = new TableColumn("Powrócił");
-        cameBack.setPrefWidth(173);
+        cameBack.setMinWidth(173);
+        cameBack.setMaxWidth(173);
         final TableColumn datacameBack = new TableColumn("dnia");
         datacameBack.setCellValueFactory(new PropertyValueFactory("DateRe"));
-        datacameBack.setPrefWidth(88);
+        datacameBack.setMinWidth(88);
+        datacameBack.setMaxWidth(88);
         final TableColumn timecameBack = new TableColumn("godz.");
         timecameBack.setCellValueFactory(new PropertyValueFactory("HourRe"));
-        timecameBack.setPrefWidth(85);
+        timecameBack.setMinWidth(85);
+        timecameBack.setMaxWidth(85);
         final TableColumn comments = new TableColumn("Uwagi");
         comments.setCellValueFactory(new PropertyValueFactory("Comm"));
-        comments.setPrefWidth(170);
+        comments.setMinWidth(170);
+        comments.setMaxWidth(170);
         
         exit.getColumns().addAll(dataExit, timeExit);
         
@@ -339,8 +355,6 @@ public class MainWindow extends Stage {
         
         VBox stackbottomPaneL = new VBox();
         stackbottomPaneL.setId("stackbottomPaneL");
-        stackbottomPaneL.setMaxSize(260, 210);
-        stackbottomPaneL.setMinSize(260, 210);
         stackbottomPaneL.getChildren().addAll(buttonExitBig, buttonHomeBig);
         
         bottomPane.setLeft(stackbottomPaneL);
@@ -380,24 +394,79 @@ public class MainWindow extends Stage {
         
         VBox stackbottomPaneR = new VBox();
         stackbottomPaneR.setId("stackbottomPaneR");
-        stackbottomPaneR.setMaxSize(260, 210);
-        stackbottomPaneR.setMinSize(260, 210);
         stackbottomPaneR.getChildren().addAll(hbSceneTitle, one_two, three_four, five_six);
         
         bottomPane.setRight(stackbottomPaneR);
         
-      
+        Label lParticipant = new Label("Wybierz uczestnika, aby zobaczyć wypisy:");
+        lParticipant.setId("lOpisMsgBox1-Black");
+        participant = new ComboBox();
+        participant.setMinWidth(200);
+        participant.setMaxWidth(200);
         
-        Label uTextNow2 = new Label("Dół do zrobienia!");
-
-        StackPane stackbottomPaneC = new StackPane();
-        stackbottomPaneC.setMaxSize(599, 200);
-        stackbottomPaneC.setMinSize(599, 200);
-        stackbottomPaneC.setAlignment(Pos.CENTER);
-        stackbottomPaneC.getChildren().add(uTextNow2);
+        confirm = new Button("Potwierdź");
+        confirm.setId("windows7");
+        confirm.setDisable(true);
+        
+        participant.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ParticipantData>() {           
+            @Override
+            public void changed(ObservableValue<? extends ParticipantData> ov, ParticipantData t, ParticipantData t1) {
+                
+                ItemIdPart = participant.getSelectionModel().getSelectedIndex();
+                
+                if(ItemIdPart==-1) confirm.setDisable(true);
+                else confirm.setDisable(false); 
+                
+            }
+        });
+        
+        confirm.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+               participant.getSelectionModel().clearSelection();
+               refreshTableDataConfirm();
+               table.setItems(data);
+            }
+        });
+        
+        HBox hbGridComBoxPar = new HBox();
+        hbGridComBoxPar.setId("rich-blue");
+        hbGridComBoxPar.setAlignment(Pos.CENTER);
+        hbGridComBoxPar.getChildren().addAll(lParticipant, participant, confirm);
+        
+        VBox stackbottomPaneC = new VBox();
+        stackbottomPaneC.setId("stackbottomPaneC");
+        stackbottomPaneC.getChildren().add(hbGridComBoxPar);
         
         bottomPane.setCenter(stackbottomPaneC);
                            
+    }
+    
+    public void refreshCombo(){
+       
+        dataComboPar = FXCollections.observableArrayList();
+        
+        try {
+            
+            st = db.con.createStatement();
+            
+            String sql2 = "select id_part, first_name, last_name from participants where active=0 ;";
+                     
+            ResultSet rs = st.executeQuery(sql2);
+            
+            while(rs.next()) {
+                ParticipantData unit = new ParticipantData(
+                        rs.getInt("id_part"), 
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        2
+                );
+                dataComboPar.add(unit);        
+            }
+            
+            participant.setItems(dataComboPar);
+
+        } catch(Exception ex) {}
     }
     
     public void wypisAction() {
@@ -459,4 +528,42 @@ public class MainWindow extends Stage {
         six.setText(a);    
     }
     
+    public void refreshTableDataConfirm(){
+        
+        data.clear();
+       
+//        data = FXCollections.observableArrayList();
+        
+        try {
+            
+            st = db.con.createStatement();
+            
+            String query = "Select m.id_exre, p.first_name, p.last_name, t.target_name, m.exit_date, m.return_date, "
+                    + "m.place, m.comm from main_exre m join participants p "
+                    + "on m.id_part=p.id_part join targets t on m.id_target=t.id_target "
+                    + " where p.id_part=" + dataComboPar.get(ItemIdPart).id_part + ";";
+                     
+            ResultSet rs = st.executeQuery(query);
+            
+            while(rs.next()) {
+                ExreData unit = new ExreData(
+                        rs.getInt("m.id_exre"), 
+                        rs.getString("p.first_name"),
+                        rs.getString("p.last_name"),
+                        rs.getString("t.target_name"),
+                        rs.getString("m.exit_date"),
+                        rs.getString("m.return_date"),
+                        rs.getString("m.place"),
+                        rs.getString("m.comm"),
+                        " ",
+                        " "
+                );
+                data.add(unit);        
+            }
+            st.close();
+            
+        } catch(Exception ex) {}
+    }
+    
 }
+

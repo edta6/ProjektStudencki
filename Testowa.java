@@ -204,6 +204,7 @@ public class Testowa extends Application {
             window.setStan(staty.getStanOsobowy());
             window.setWyp(staty.getWypisanych());
             window.setObc(staty.getObecnych());
+            window.refreshCombo();
             window.setOnCloseRequest(new EventHandler<WindowEvent>() {
                     @Override
                     public void handle(final WindowEvent event) {
