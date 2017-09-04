@@ -61,6 +61,7 @@ public class AddUser extends Stage {
     private ObservableList<UserData> data;
     int role ;
     int ItemId;
+    boolean isError=false;
     
     public AddUser(){
        
@@ -260,7 +261,7 @@ public class AddUser extends Stage {
                 NickUser.setOnKeyPressed(key);
                 if( !NickUser.getText().equals("")) NickUser.setId("");
                 else NickUser.setId("error");
-                
+                isError=false;
              }
         });
         
@@ -344,11 +345,15 @@ public class AddUser extends Stage {
             if(PassUser.getText().equals(PassUserR.getText())){
             
             String addUserGran;   
-        
+            
             String addUser = "INSERT INTO user_ohp (first_name, last_name, nick, role)"
                     + " Values ('" + NamePar.getText() + "','" + LastNamePar.getText() + "','"
                     +  NickUser.getText() + "'," + role + ")";
-     
+            
+            sqlQuery(addUser);
+            
+            if(!isError) {
+            
             String createUser = "CREATE USER '" + NickUser.getText() + "'@'localhost'"
                        + "IDENTIFIED BY '" + PassUser.getText() + "';";
    
@@ -357,7 +362,6 @@ public class AddUser extends Stage {
             }
             else addUserGran = "GRANT ALL ON OHP.* TO '" + NickUser.getText() + "'@'localhost'";  
      
-            sqlQuery(addUser);
             sqlQuery(createUser);   
             sqlQuery(addUserGran);
         
@@ -370,6 +374,9 @@ public class AddUser extends Stage {
             adminrole.setSelected(false);
             role = -1; 
             lInfo.setText("Poprawnie dodano użytkownika!");
+            }
+            else lInfo.setText("Użytkownik o takim nick istnieje!");
+            NickUser.clear();
             }
             else lInfo.setText("Hasła nie pasują!");
         } 
@@ -632,7 +639,7 @@ public class AddUser extends Stage {
             st.close();
         } 
         catch (SQLException ex) {
-          
+            isError=true;
         }
     }
     
@@ -644,7 +651,7 @@ public class AddUser extends Stage {
         
             st = db.con.createStatement();
             
-            String query = "SELECT id_part, first_name, last_name, nick, role FROM user_ohp";
+            String query = "SELECT id_part, first_name, last_name, nick, role FROM user_ohp where nick IS NOT NULL";
       
             ResultSet rs = st.executeQuery(query);
         

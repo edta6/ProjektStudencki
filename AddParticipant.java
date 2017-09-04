@@ -238,7 +238,8 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
         userID = getUserId();
         refresh(userID);
         NamePar.clear();
-        LastNamePar.clear();                
+        LastNamePar.clear();
+        Sadistic(); 
     }
     
     private void bodyListenerTextField(String t1, String ex){
@@ -344,14 +345,16 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
         sqlQuery(changeParticipant);
         participant.getSelectionModel().clearSelection();
         comboItemRefresh();
-        
+        Sadistic();      
+    }
+    
+    public void Sadistic() {
         Statistic wypisStat = new Statistic();
         wypisStat.db = db;
         wypisStat.getDataSta();
         window.setStan(wypisStat.getStanOsobowy());
         window.setWyp(wypisStat.getWypisanych());
-        window.setObc(wypisStat.getObecnych());
-        
+        window.setObc(wypisStat.getObecnych());     
     }
     
     private void bodyListenerEditParButtonandKey (String t1, String ex){

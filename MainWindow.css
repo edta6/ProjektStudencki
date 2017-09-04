@@ -5,9 +5,10 @@ and open the template in the editor.
 */
 /* 
     Created on : 2017-01-24, 20:09:24
-    Author     : andrzej
+    Author     : Andrzej Pawlik
 */
 
+/*Styl, który odpowiada za wygląd wszystkich przycisków (Button) w oknie głównym.*/
 #windows7 {
     -fx-background-color: 
         #3c7fb1,
@@ -23,17 +24,24 @@ and open the template in the editor.
     -fx-font-weight: bold;
 }
 
-#hbuttonMenu {
-    -fx-background-color: #3c7fb1;
-    -fx-padding: 5 0 5 0;
-}
-
+/*Styl odpowiada za wyświetlanie w kolorze czerwonym imienia i nazwiska użytkownika*/
 #userText {
-    -fx-font-size: 1.5em;
-    -fx-font-weight: bold;
     -fx-text-fill: red;
 }
 
+/*Styl odpowiada za zarządcę rozkładu menu w oknie głównym na samej górze*/
+#hbMenu {
+    -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+    -fx-padding: 10 5 10 5;
+}
+
+/* Style odpowiedające za wygląd Tabeli w oknie głównym */
 .table-view{
     -fx-background-color: 
         #000000,
@@ -58,10 +66,15 @@ and open the template in the editor.
     -fx-text-fill: white;    
 }
 
-
-#stackbottomPaneC {
-    -fx-spacing: 20;
-/*    -fx-padding: 0 0 20 0;*/
+/*Styl odpowiada tylko za tło zarządcy rozkałdu, w którym umieszczone są poszczególne elementy:
+    w MainWindow.java:
+        bottomPane.setTop(HBoxBottomPaneTop);
+        bottomPane.setLeft(VBoxBottomPaneLeft);
+        bottomPane.setRight(VBoxBottomPaneRight);
+        bottomPane.setCenter(VboxBottomPaneCenter);
+        */
+    
+#BottomPane {
     -fx-background-color: 
         #000000,
         linear-gradient(#7ebcea, #2f4b8f),
@@ -69,141 +82,114 @@ and open the template in the editor.
         linear-gradient(#395cab, #223768);
     -fx-background-insets: 0,1,2,3;
     -fx-background-radius: 3,2,2,2;
-    -fx-border-color: black;
-    -fx-border-width: 0 0 2 0;
-    -fx-border-style: solid;    
+    -fx-padding: 0 0 0 0;
 }
 
-#stackbottomPaneL {
+/*Styl odpowiada za zarządcę rozkładu HBox, któr jest umieszczony na górze Bottom Pane. */
+#HBoxBottomPaneTop {
+    -fx-padding: 10 5 10 5;
+    -fx-spacing: 10;
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 1.15em;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 2 0;
+}
+
+/*Style odpowidaja za itemy w HBox:
+    HBoxBottomPaneTop_Item_uTextNow - skrócona nazwa HBPTItem_uTextNow
+*/
+#HBPTItem_uTextNow {
+    -fx-text-fill: white;
+    -fx-padding: 5 20 5 0;
+}
+
+#HBPTItem_Zdarzenie {
+    -fx-background-color: linear-gradient(#ff5400, #be1d00);
+    -fx-background-radius: 30;
+    -fx-background-insets: 0;
+    -fx-padding: 5 20 5 20;
+    -fx-text-fill: white;
+}
+
+/*Styl odpowiada za zarządcę rozkładu VBox, któr jest umieszczony po lewej stronie Bottom Pane. 
+    tutaj są umieszczone dwa duże przyciski. Jeżeli chcesz zmienić je skopiuj styl windows7 i nadaj 
+    nazwę zgodnie z podanym wzorem wyżej i dodaj pod spodem.
+*/
+#VBoxBottomPaneLeft {
     -fx-spacing: 20;
     -fx-padding: 20 40 20 40;
-    -fx-background-color: 
-        #000000,
-        linear-gradient(#7ebcea, #2f4b8f),
-        linear-gradient(#426ab7, #263e75),
-        linear-gradient(#395cab, #223768);
-    -fx-background-insets: 0,1,2,3;
-    -fx-background-radius: 3,2,2,2;
     -fx-border-color: black;
     -fx-border-width: 0 2 2 2;
     -fx-border-style: solid;   
 }
 
-#bottomPane {
-    -fx-background-color: 
-    #000000,
-    linear-gradient(#7ebcea, #2f4b8f),
-    linear-gradient(#426ab7, #263e75),
-    linear-gradient(#395cab, #223768);
-    -fx-background-insets: 0,1,2,3;
-    -fx-background-radius: 3,2,2,2;
-}
-
-#lOpisMsgBox1-Black {
-    -fx-font-size: 14px;
-    -fx-font-family: "Arial Black";
-    -fx-text-fill:   white;
-    -fx-padding: 5 20 5 0;
-}
-
-#lOpisMsgBox1-Black1 {
-    -fx-font-size: 14px;
-    -fx-font-family: "Arial Black";
-    -fx-text-fill:   #000000;
-}
-
-#hboxMsgBox2 {
-    -fx-spacing: 10;
-    -fx-padding: 5 60 5 0;
-}
-
-#hboxMsgBox3 {
-    -fx-spacing: 10;
-    -fx-padding: 5 70 5 0;
-    -fx-border-color: #330033;
-    -fx-border-width: 2 2 2 2;
-    -fx-border-style: solid;
-}
-
-#lOpisMsgBox1-Black2 {
-    -fx-font-size:   14px;
-    -fx-font-family: "Arial";
-    -fx-text-fill:   #000000;
-    -fx-background-color: white;
-    -fx-padding: 5 5 5 5;
-}
-
-#borderPane {
-    -fx-padding: 0 0 0 0;
-}
-
-#stackbottomPaneR {
+/*Styl odpowiada za zarządcę rozkładu VBox, któr jest umieszczony po prawej stronie Bottom Pane. */
+#VBoxBottomPaneRight {
     -fx-spacing: 15;
     -fx-padding: 15 0 15 0;
-    -fx-background-color: 
-        #000000,
-        linear-gradient(#7ebcea, #2f4b8f),
-        linear-gradient(#426ab7, #263e75),
-        linear-gradient(#395cab, #223768);
-    -fx-background-insets: 0,1,2,3;
-    -fx-background-radius: 3,2,2,2;
     -fx-border-color: black;
     -fx-border-width: 0 2 2 2;
     -fx-border-style: solid;    
 }
 
-#gridAddTitle {
-       -fx-font-size: 20px;
-       -fx-font-family: "Arial Black";
-       -fx-text-fill: white;
-}
-
-#hbGridAddTitle {
+/*Style odpowiadają za nagłówek - napis "Statystyki" w prawym dolnym rogu */
+#VBPR_hbTitle {
     -fx-alignment: center;
     -fx-border-color: black;
     -fx-border-width: 0 0 2 0;
-    -fx-padding: 0 0 10 0;
-    -fx-border-style: solid;
-    -fx-spacing: 10;
+    -fx-border-style: solid; 
+    -fx-padding: 0 0 10 0; 
 }
 
-#hboxMsgBox1 {
-    -fx-spacing: 10;
+#VBPR_hbTitle_Item_title {
+       -fx-font-size: 1.5em;
+       -fx-font-family: "Arial";
+       -fx-text-fill: white;   
 }
 
-#lOpisMsgBox1-Red {
-    -fx-font-size: 14px;
-    -fx-font-family: "Arial Black";
-    -fx-text-fill:   white;
-}
-
-#windows7Stat {
+/* Style odpowiadają za statystyki i elementy w nich umieszczone:
+        (Item_text) : (Item_number)
+        Stan osobowy: Liczba
+        Wypisanych:   Liczba  
+        Obecnych:     Liczba
+*/
+#VBPR_hbOpis {
     -fx-background-color: linear-gradient(#ff5400, #be1d00);
     -fx-background-radius: 30;
     -fx-background-insets: 0;
     -fx-text-fill: white;
     -fx-spacing: 15;
     -fx-padding: 5 40 5 40;
-}
-
-#windows7Zda {
-    -fx-background-color: linear-gradient(#ff5400, #be1d00);
-    -fx-background-radius: 30;
-    -fx-background-insets: 0;
-    -fx-text-fill: black;
-    -fx-font-size: 14px;
+    /* Odpowiadaja za wielkość i styl czcionki Item_text i Item_number */
+    -fx-font-size: 1.10em;
     -fx-font-family: "Arial Black";
-    -fx-padding: 5 20 5 20;
 }
 
-#rich-blue {
-    -fx-background-color: 
-        #000000,
-        linear-gradient(#7ebcea, #2f4b8f),
-        linear-gradient(#426ab7, #263e75),
-        linear-gradient(#395cab, #223768);
-    -fx-background-insets: 0,1,2,3;
-    -fx-background-radius: 3,2,2,2;
-    -fx-padding: 10 5 10 5;
+#VBPR_hbOpis_Item_text {
+    -fx-text-fill: black;   
+}
+
+#VBPR_hbOpis_Item_number {
+    -fx-text-fill:  white;
+}
+
+/*Styl odpowida za zarządcę rozkładu VBox, któr jest umieszczony w centrum Bottom Pane. */
+#VboxBottomPaneCenter {
+    -fx-padding: 10 0 15 0;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-style: solid;    
+}
+
+#VBPC_hbFirst {
+    -fx-padding: 0 5 5 5;
     -fx-spacing: 10;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 2 0;      
+}
+
+#VBPC_hbFirst_Item_lParticipant {
+    -fx-text-fill: black;
+    -fx-font-family: "Arial";
+    -fx-font-size: 1.5em;
 }

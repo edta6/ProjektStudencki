@@ -166,7 +166,7 @@ public class MainWindow extends Stage {
         enterMenuStack.setAlignment(Pos.CENTER_RIGHT);
         
         hbuttonMenu = new HBox();
-        hbuttonMenu.setId("rich-blue");
+        hbuttonMenu.setId("hbMenu");
         hbuttonMenu.setAlignment(Pos.CENTER_LEFT);
         hbuttonMenu.setMinWidth(1200);
         hbuttonMenu.setMaxWidth(1200);
@@ -314,22 +314,22 @@ public class MainWindow extends Stage {
     private void prepareBorderPaneBottom(){
         
         bottomPane = new BorderPane();
-        bottomPane.setId("bottomPane");
-        
-        Zdarzenie = new Label();
-        Zdarzenie.setId("windows7Zda");
+        bottomPane.setId("BottomPane");
         
         uTextNow = new Label("Ostatnie zdarzenie:");
-        uTextNow.setId("lOpisMsgBox1-Black");
-         
-        HBox topBox = new HBox();
-        topBox.setId("rich-blue");
-        topBox.setAlignment(Pos.CENTER);
-        topBox.setMinWidth(1200);
-        topBox.setMaxWidth(1200);
-        topBox.getChildren().addAll(uTextNow, Zdarzenie);
+        uTextNow.setId("HBPTItem_uTextNow");
+        
+        Zdarzenie = new Label();
+        Zdarzenie.setId("HBPTItem_Zdarzenie");
+        
+        HBox HBoxBottomPaneTop = new HBox();
+        HBoxBottomPaneTop.setId("HBoxBottomPaneTop");
+        HBoxBottomPaneTop.setAlignment(Pos.CENTER);
+        HBoxBottomPaneTop.setMinWidth(1200);
+        HBoxBottomPaneTop.setMaxWidth(1200);
+        HBoxBottomPaneTop.getChildren().addAll(uTextNow, Zdarzenie);
        
-        bottomPane.setTop(topBox);
+        bottomPane.setTop(HBoxBottomPaneTop);
         
         buttonExitBig = new Button("Wypisy");
         buttonExitBig.setId("windows7");
@@ -353,53 +353,53 @@ public class MainWindow extends Stage {
             }
         });
         
-        VBox stackbottomPaneL = new VBox();
-        stackbottomPaneL.setId("stackbottomPaneL");
-        stackbottomPaneL.getChildren().addAll(buttonExitBig, buttonHomeBig);
+        VBox VBoxBottomPaneLeft = new VBox();
+        VBoxBottomPaneLeft.setId("VBoxBottomPaneLeft");
+        VBoxBottomPaneLeft.getChildren().addAll(buttonExitBig, buttonHomeBig);
         
-        bottomPane.setLeft(stackbottomPaneL);
+        bottomPane.setLeft(VBoxBottomPaneLeft);
         
-        Label scenetitle = new Label("Statystyki");
-        scenetitle.setId("gridAddTitle");
-        HBox hbSceneTitle = new HBox();
-        hbSceneTitle.setId("hbGridAddTitle");
-        hbSceneTitle.getChildren().add(scenetitle);
+        Label title = new Label("Statystyki");
+        title.setId("VBPR_hbTitle_Item_title");
+        HBox hbTitle = new HBox();
+        hbTitle.setId("VBPR_hbTitle");
+        hbTitle.getChildren().add(title);
         
         Label one = new Label("Stan osobowy:");
-        one.setId("lOpisMsgBox1-Black1");
+        one.setId("VBPR_hbOpis_Item_text");
         two = new Label();
-        two.setId("lOpisMsgBox1-Red");
+        two.setId("VBPR_hbOpis_Item_number");
         HBox one_two = new HBox();
         one_two.setAlignment(Pos.CENTER_RIGHT);
-        one_two.setId("windows7Stat");
+        one_two.setId("VBPR_hbOpis");
         one_two.getChildren().addAll(one, two);
         
         Label three = new Label("Wypisanych:");
-        three.setId("lOpisMsgBox1-Black1");
+        three.setId("VBPR_hbOpis_Item_text");
         four = new Label();
-        four.setId("lOpisMsgBox1-Red");
+        four.setId("VBPR_hbOpis_Item_number");
         HBox three_four = new HBox();
         three_four.setAlignment(Pos.CENTER_RIGHT);
-        three_four.setId("windows7Stat");
+        three_four.setId("VBPR_hbOpis");
         three_four.getChildren().addAll(three, four);
         
         Label five = new Label("Obecnych:");
-        five.setId("lOpisMsgBox1-Black1");
+        five.setId("VBPR_hbOpis_Item_text");
         six = new Label();
-        six.setId("lOpisMsgBox1-Red");
+        six.setId("VBPR_hbOpis_Item_number");
         HBox five_six = new HBox();
         five_six.setAlignment(Pos.CENTER_RIGHT);
-        five_six.setId("windows7Stat");
+        five_six.setId("VBPR_hbOpis");
         five_six.getChildren().addAll(five, six);
         
-        VBox stackbottomPaneR = new VBox();
-        stackbottomPaneR.setId("stackbottomPaneR");
-        stackbottomPaneR.getChildren().addAll(hbSceneTitle, one_two, three_four, five_six);
+        VBox VBoxBottomPaneRight = new VBox();
+        VBoxBottomPaneRight.setId("VBoxBottomPaneRight");
+        VBoxBottomPaneRight.getChildren().addAll(hbTitle, one_two, three_four, five_six);
         
-        bottomPane.setRight(stackbottomPaneR);
+        bottomPane.setRight(VBoxBottomPaneRight);
         
         Label lParticipant = new Label("Wybierz uczestnika, aby zobaczyć wypisy:");
-        lParticipant.setId("lOpisMsgBox1-Black");
+        lParticipant.setId("VBPC_hbFirst_Item_lParticipant");
         participant = new ComboBox();
         participant.setMinWidth(200);
         participant.setMaxWidth(200);
@@ -423,22 +423,24 @@ public class MainWindow extends Stage {
         confirm.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-               participant.getSelectionModel().clearSelection();
                refreshTableDataConfirm();
                table.setItems(data);
+               lp.setSortType(TableColumn.SortType.ASCENDING);
+               table.getSortOrder().add(lp);
+               participant.getSelectionModel().clearSelection();
             }
         });
         
         HBox hbGridComBoxPar = new HBox();
-        hbGridComBoxPar.setId("rich-blue");
+        hbGridComBoxPar.setId("VBPC_hbFirst");
         hbGridComBoxPar.setAlignment(Pos.CENTER);
         hbGridComBoxPar.getChildren().addAll(lParticipant, participant, confirm);
         
-        VBox stackbottomPaneC = new VBox();
-        stackbottomPaneC.setId("stackbottomPaneC");
-        stackbottomPaneC.getChildren().add(hbGridComBoxPar);
+        VBox VboxBottomPaneCenter = new VBox();
+        VboxBottomPaneCenter.setId("VboxBottomPaneCenter");
+        VboxBottomPaneCenter.getChildren().add(hbGridComBoxPar);
         
-        bottomPane.setCenter(stackbottomPaneC);
+        bottomPane.setCenter(VboxBottomPaneCenter);
                            
     }
     
@@ -532,13 +534,14 @@ public class MainWindow extends Stage {
         
         data.clear();
        
-//        data = FXCollections.observableArrayList();
+        data = FXCollections.observableArrayList();
         
         try {
             
             st = db.con.createStatement();
             
-            String query = "Select m.id_exre, p.first_name, p.last_name, t.target_name, m.exit_date, m.return_date, "
+            String query = "Select m.id_exre, p.first_name, p.last_name, t.target_name, m.exit_date, "
+                    + "IFNULL(m.return_date,'') as return_date, "
                     + "m.place, m.comm from main_exre m join participants p "
                     + "on m.id_part=p.id_part join targets t on m.id_target=t.id_target "
                     + " where p.id_part=" + dataComboPar.get(ItemIdPart).id_part + ";";
@@ -552,7 +555,7 @@ public class MainWindow extends Stage {
                         rs.getString("p.last_name"),
                         rs.getString("t.target_name"),
                         rs.getString("m.exit_date"),
-                        rs.getString("m.return_date"),
+                        rs.getString("return_date"),
                         rs.getString("m.place"),
                         rs.getString("m.comm"),
                         " ",
@@ -566,4 +569,3 @@ public class MainWindow extends Stage {
     }
     
 }
-
