@@ -77,7 +77,7 @@ public class AddUser extends Stage {
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);
-       setTitle("Add User");      
+       setTitle("Dodaj wychowawce");      
     }
     
     private void prepareScene(){
@@ -106,6 +106,7 @@ public class AddUser extends Stage {
             @Override
             public void handle(ActionEvent event) {    
                 borderPane.setCenter(Main);
+                setTitle("Opis"); 
             }
         });
         
@@ -123,6 +124,7 @@ public class AddUser extends Stage {
                 lNick.setText("Nick: ");
                 prepareGridPaneAdd();
                 borderPane.setCenter(gridAdd);
+                setTitle("Dodaj wychowawce"); 
             }
         });
        
@@ -135,6 +137,7 @@ public class AddUser extends Stage {
                 adminrole.setSelected(false);
                 prepareGridUpdate();
                 borderPane.setCenter(gridUpdate);
+                setTitle("Zmień dane wychowawcy"); 
             }
         });
         
@@ -514,6 +517,7 @@ public class AddUser extends Stage {
                 changePas.setScene(changePasUser);
                 changePas.setTitle("Zmiana Hasła");
                 changePas.show();
+                changePasButton.setDisable(true);
                 
             changePassword.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -533,6 +537,7 @@ public class AddUser extends Stage {
                             String pass_new = "SET PASSWORD FOR '" + data.get(ItemId).nick + "'@'localhost' = PASSWORD('" + PassUser.getText() +"');";
                             sqlQuery(pass_new);
                             changePas.close();
+                            changePasButton.setDisable(false);
                         }
                         else lInfo.setText("Hasła nie pasują!");
                     }

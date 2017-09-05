@@ -94,7 +94,7 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);
-       setTitle("Add Participant");    
+       setTitle("Dodaj uczestnika OHP");    
     }
     /*
     * klasa tworzaca wszystkie polskie znaki
@@ -435,6 +435,7 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
             @Override
             public void handle(ActionEvent event) {    
             borderPane.setCenter(Main);
+            setTitle("Opis");  
             }
         });
         
@@ -447,6 +448,7 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
             LastNamePar.clear();
             prepareGridPaneAdd();    
             borderPane.setCenter(gridAdd);
+            setTitle("Dodaj uczestnika OHP");   
             }
         });
        
@@ -457,6 +459,7 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
             LastNamePar.clear();    
             prepareGridPaneUpdate();    
             borderPane.setCenter(gridUpdate);
+            setTitle("Zmień dane uczestnika OHP");
             }
         });
         

@@ -44,8 +44,8 @@ public class MainWindow extends Stage {
     
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
-    private HBox hbuttonMenu, hbnameLogin; 
-    private Button buttonAdmin, buttonClose, confirm;
+    private HBox hbuttonMenu, hbnameLogin, hbAdminChange; 
+    private Button buttonAdmin, buttonClose, confirm, resetviev, generetRaport, adminChange;
     private Label uTextNow, Zdarzenie;
     private Label nameLogin, userText;
     public ComboBox participant;
@@ -68,8 +68,6 @@ public class MainWindow extends Stage {
         this.id_user = id_part;
         prepareScene();
         if(role==1||user.equalsIgnoreCase("root")) {
-            buttonAdmin.setDisable(false);
-            buttonAdmin.setVisible(true);
             if(user.equalsIgnoreCase("root")){
                 buttonExit.setDisable(true);
                 buttonHome.setDisable(true);
@@ -86,6 +84,7 @@ public class MainWindow extends Stage {
         else {
             buttonAdmin.setDisable(true);
             buttonAdmin.setVisible(false);
+            hbAdminChange.setVisible(false);
         }
     }
         
@@ -333,8 +332,8 @@ public class MainWindow extends Stage {
         
         buttonExitBig = new Button("Wypisy");
         buttonExitBig.setId("windows7");
-        buttonExitBig.setMaxSize(180, 75);
-        buttonExitBig.setMinSize(180, 75);
+        buttonExitBig.setMaxSize(150, 75);
+        buttonExitBig.setMinSize(150, 75);
         buttonExitBig.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -344,8 +343,8 @@ public class MainWindow extends Stage {
         
         buttonHomeBig = new Button("Powroty");
         buttonHomeBig.setId("windows7");
-        buttonHomeBig.setMaxSize(180, 75);
-        buttonHomeBig.setMinSize(180, 75);
+        buttonHomeBig.setMaxSize(150, 75);
+        buttonHomeBig.setMinSize(150, 75);
         buttonHomeBig.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -398,11 +397,10 @@ public class MainWindow extends Stage {
         
         bottomPane.setRight(VBoxBottomPaneRight);
         
-        Label lParticipant = new Label("Wybierz uczestnika, aby zobaczyć wypisy:");
+        Label lParticipant = new Label("Wybierz uczestnika, aby zobaczyć jego wypisy:");
         lParticipant.setId("VBPC_hbFirst_Item_lParticipant");
         participant = new ComboBox();
-        participant.setMinWidth(200);
-        participant.setMaxWidth(200);
+        participant.setPrefWidth(200);
         
         confirm = new Button("Potwierdź");
         confirm.setId("windows7");
@@ -433,12 +431,87 @@ public class MainWindow extends Stage {
         
         HBox hbGridComBoxPar = new HBox();
         hbGridComBoxPar.setId("VBPC_hbFirst");
-        hbGridComBoxPar.setAlignment(Pos.CENTER);
+        hbGridComBoxPar.setAlignment(Pos.CENTER_LEFT);
         hbGridComBoxPar.getChildren().addAll(lParticipant, participant, confirm);
+        
+        Label lResetViev = new Label("Powrót do głównego widoku wypisów:");
+        lResetViev.setId("VBPC_hbFirst_Item_lParticipant");
+        
+        resetviev = new Button("Resetuj widok");
+        resetviev.setId("windows7");
+        resetviev.setPrefWidth(250);
+        
+        resetviev.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                NewDataAdd();
+            }
+        });
+        
+        Label pomoc = new Label(" ");
+        StackPane enterMenuStack1 = new StackPane();
+        enterMenuStack1.getChildren().add(pomoc);
+        enterMenuStack1.setAlignment(Pos.CENTER);
+        
+        HBox hbResetViev = new HBox();
+        hbResetViev.setId("VBPC_hbTwo");
+        hbResetViev.setAlignment(Pos.CENTER_LEFT);
+        hbResetViev.getChildren().addAll(lResetViev, enterMenuStack1, resetviev);
+        HBox.setHgrow(enterMenuStack1, Priority.ALWAYS); 
+        
+        Label lhbGeneretRaport = new Label("Wygeneruj raport do pliku PDF:");
+        lhbGeneretRaport.setId("VBPC_hbFirst_Item_lParticipant");
+        
+        generetRaport = new Button("Generator raportów");
+        generetRaport.setId("windows7");
+        generetRaport.setPrefWidth(250);
+        
+        generetRaport.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+      
+            }
+        });
+        
+        Label pomoc1 = new Label(" ");
+        StackPane enterMenuStack2 = new StackPane();
+        enterMenuStack2.getChildren().add(pomoc1);
+        enterMenuStack2.setAlignment(Pos.CENTER_RIGHT);
+        
+        HBox hbGeneretRaport = new HBox();
+        hbGeneretRaport.setId("VBPC_hbTwo");
+        hbGeneretRaport.setAlignment(Pos.CENTER_LEFT);
+        hbGeneretRaport.getChildren().addAll(lhbGeneretRaport, enterMenuStack2, generetRaport);
+        HBox.setHgrow(enterMenuStack2, Priority.ALWAYS);
+        
+        Label lAdminChange = new Label("Przycisk do przęglądu i zmiany wszystkich wypisów:");
+        lAdminChange.setId("VBPC_hbFirst_Item_lParticipant");
+        
+        adminChange = new Button("Zobacz szczegóły");
+        adminChange.setId("windows7");
+        adminChange.setPrefWidth(250);
+        
+        adminChange.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+      
+            }
+        });
+        
+        Label pomoc2 = new Label(" ");
+        StackPane enterMenuStack3 = new StackPane();
+        enterMenuStack3.getChildren().add(pomoc2);
+        enterMenuStack3.setAlignment(Pos.CENTER_RIGHT);
+        
+        hbAdminChange = new HBox();
+        hbAdminChange.setId("VBPC_hbTwo");
+        hbAdminChange.setAlignment(Pos.CENTER_LEFT);
+        hbAdminChange.getChildren().addAll(lAdminChange, enterMenuStack3, adminChange);
+        HBox.setHgrow(enterMenuStack3, Priority.ALWAYS);
         
         VBox VboxBottomPaneCenter = new VBox();
         VboxBottomPaneCenter.setId("VboxBottomPaneCenter");
-        VboxBottomPaneCenter.getChildren().add(hbGridComBoxPar);
+        VboxBottomPaneCenter.getChildren().addAll(hbGridComBoxPar, hbResetViev, hbGeneretRaport, hbAdminChange);
         
         bottomPane.setCenter(VboxBottomPaneCenter);
                            

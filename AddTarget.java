@@ -72,7 +72,7 @@ public class AddTarget extends Stage{
        
        SceneTarget.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneTarget);
-       setTitle("Add Target");    
+       setTitle("Dodaj cel wyjścia");    
     }
   
     private void createItem() {
@@ -322,16 +322,17 @@ public class AddTarget extends Stage{
             @Override
             public void handle(ActionEvent event) {    
             borderPane.setCenter(Main);
+            setTitle("Opis");
             }
         });
         
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            
             LastNamePar.clear();
             prepareGridPaneAdd();    
             borderPane.setCenter(gridAdd);
+            setTitle("Dodaj cel wyjścia");
             }
         });
        
@@ -341,6 +342,7 @@ public class AddTarget extends Stage{
             LastNamePar.clear();    
             prepareGridPaneUpdate();    
             borderPane.setCenter(gridUpdate);
+            setTitle("Zmień cel wyjścia");
             }
         });
         
