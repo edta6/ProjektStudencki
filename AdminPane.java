@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -30,6 +31,7 @@ public class AdminPane extends Stage {
     private HBox hbGridAddTitle;
     private Button buttonAddParticipant, buttonAddTarget, buttonAddUser, buttonClose;
     private Text AddTitle;
+    private AddUser user;
     
     public AdminPane() {
        
@@ -91,10 +93,11 @@ public class AdminPane extends Stage {
         buttonAddUser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                AddUser user = new AddUser();
+                user = new AddUser();
                 user.db = db;
+                user.user = user;
                 user.addUserData();
-                user.resizableProperty().setValue(Boolean.FALSE);
+                user.resizableProperty().setValue(Boolean.FALSE);                
                 user.show();
                 close();
             }

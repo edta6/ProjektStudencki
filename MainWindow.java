@@ -5,6 +5,8 @@
  */
 package testowa;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import javafx.application.Platform;
@@ -60,6 +62,7 @@ public class MainWindow extends Stage {
     public final int role;
     public final int id_user;
     int ItemIdPart=-1;
+    double widthW, heightW;
        
     public MainWindow(String name, String user, int role, int id_part) {
         this.nameU = name;
@@ -89,7 +92,17 @@ public class MainWindow extends Stage {
     }
         
     private void prepareScene(){
-         
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
+        
+        widthW = width * 0.93;
+        heightW = height * 0.85;
+        
+//        System.out.println(widthW);
+//        System.out.println(heightW);
+        
         borderPane = new BorderPane();
         
         prepareBorderPaneTop ();
@@ -101,7 +114,7 @@ public class MainWindow extends Stage {
         prepareBorderPaneBottom();
         borderPane.setBottom(bottomPane);
         
-        sceneMainWindow = new Scene(borderPane, 1190, 640);
+        sceneMainWindow = new Scene(borderPane, widthW, heightW);
         sceneMainWindow.getStylesheets().add(Testowa.class.getResource("MainWindow.css").toExternalForm());
         setScene(sceneMainWindow);
         setTitle("The book out and trips");
@@ -167,8 +180,8 @@ public class MainWindow extends Stage {
         hbuttonMenu = new HBox();
         hbuttonMenu.setId("hbMenu");
         hbuttonMenu.setAlignment(Pos.CENTER_LEFT);
-        hbuttonMenu.setMinWidth(1200);
-        hbuttonMenu.setMaxWidth(1200);
+        hbuttonMenu.setMinWidth(widthW + 10);
+        hbuttonMenu.setMaxWidth(widthW + 10);
         hbuttonMenu.getChildren().addAll(buttonExit, buttonHome, buttonAdmin, enterMenuStack, hbnameLogin, buttonClose);
         HBox.setHgrow(enterMenuStack, Priority.ALWAYS); 
     }
@@ -221,46 +234,46 @@ public class MainWindow extends Stage {
 
         lp = new TableColumn("Lp.");
         lp.setCellValueFactory(new PropertyValueFactory("id_exre"));
-        lp.setMinWidth(58);
-        lp.setMaxWidth(58);
+        lp.setMinWidth(widthW * 0.05);
+        lp.setMaxWidth(widthW * 0.05);
         final TableColumn  name = new TableColumn("Nazwisko i Imię");
         name.setCellValueFactory(new PropertyValueFactory("FullNamePar"));
-        name.setMinWidth(200);
-        name.setMaxWidth(200);
+        name.setMinWidth(widthW * 0.17);
+        name.setMaxWidth(widthW * 0.17);
         final TableColumn target = new TableColumn("Cel wyjścia");
         target.setCellValueFactory(new PropertyValueFactory("Target"));
-        target.setMinWidth(200);
-        target.setMaxWidth(200);
+        target.setMinWidth(widthW * 0.17);
+        target.setMaxWidth(widthW * 0.17);
         final TableColumn exit = new TableColumn("Wyszedł");
-        exit.setMinWidth(173);
-        exit.setMaxWidth(173);
+        exit.setMinWidth(widthW * 0.145);
+        exit.setMaxWidth(widthW * 0.145);
         final TableColumn dataExit = new TableColumn("dnia");
         dataExit.setCellValueFactory(new PropertyValueFactory("DateEx"));
-        dataExit.setMinWidth(88);
-        dataExit.setMaxWidth(88);
+        dataExit.setMinWidth((widthW * 0.145)/2);
+        dataExit.setMaxWidth((widthW * 0.145)/2);
         final TableColumn timeExit = new TableColumn("godz.");
         timeExit.setCellValueFactory(new PropertyValueFactory("HourEx"));
-        timeExit.setMinWidth(85);
-        timeExit.setMaxWidth(85);
+        timeExit.setMinWidth((widthW * 0.145)/2);
+        timeExit.setMaxWidth((widthW * 0.145)/2);
         final TableColumn adres = new TableColumn("Przewidywane miejsce\nTel. kontaktowy");
         adres.setCellValueFactory(new PropertyValueFactory("Place"));
-        adres.setMinWidth(210);
-        adres.setMaxWidth(210);
+        adres.setMinWidth(widthW * 0.16);
+        adres.setMaxWidth(widthW * 0.16);
         final TableColumn cameBack = new TableColumn("Powrócił");
-        cameBack.setMinWidth(173);
-        cameBack.setMaxWidth(173);
+        cameBack.setMinWidth(widthW * 0.145);
+        cameBack.setMaxWidth(widthW * 0.145);
         final TableColumn datacameBack = new TableColumn("dnia");
         datacameBack.setCellValueFactory(new PropertyValueFactory("DateRe"));
-        datacameBack.setMinWidth(88);
-        datacameBack.setMaxWidth(88);
+        datacameBack.setMinWidth((widthW * 0.145)/2);
+        datacameBack.setMaxWidth((widthW * 0.145)/2);
         final TableColumn timecameBack = new TableColumn("godz.");
         timecameBack.setCellValueFactory(new PropertyValueFactory("HourRe"));
-        timecameBack.setMinWidth(85);
-        timecameBack.setMaxWidth(85);
+        timecameBack.setMinWidth((widthW * 0.145)/2);
+        timecameBack.setMaxWidth((widthW * 0.145)/2);
         final TableColumn comments = new TableColumn("Uwagi");
         comments.setCellValueFactory(new PropertyValueFactory("Comm"));
-        comments.setMinWidth(170);
-        comments.setMaxWidth(170);
+        comments.setMinWidth((widthW * 0.14));
+        comments.setMaxWidth((widthW * 0.14));
         
         exit.getColumns().addAll(dataExit, timeExit);
         
@@ -324,16 +337,16 @@ public class MainWindow extends Stage {
         HBox HBoxBottomPaneTop = new HBox();
         HBoxBottomPaneTop.setId("HBoxBottomPaneTop");
         HBoxBottomPaneTop.setAlignment(Pos.CENTER);
-        HBoxBottomPaneTop.setMinWidth(1200);
-        HBoxBottomPaneTop.setMaxWidth(1200);
+        HBoxBottomPaneTop.setMinWidth(widthW + 10);
+        HBoxBottomPaneTop.setMaxWidth(widthW + 10);
         HBoxBottomPaneTop.getChildren().addAll(uTextNow, Zdarzenie);
        
         bottomPane.setTop(HBoxBottomPaneTop);
         
         buttonExitBig = new Button("Wypisy");
         buttonExitBig.setId("windows7");
-        buttonExitBig.setMaxSize(150, 75);
-        buttonExitBig.setMinSize(150, 75);
+        buttonExitBig.setMaxSize(widthW * 0.125, heightW * 0.11);
+        buttonExitBig.setMinSize(widthW * 0.125, heightW * 0.11);
         buttonExitBig.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -343,8 +356,8 @@ public class MainWindow extends Stage {
         
         buttonHomeBig = new Button("Powroty");
         buttonHomeBig.setId("windows7");
-        buttonHomeBig.setMaxSize(150, 75);
-        buttonHomeBig.setMinSize(150, 75);
+        buttonHomeBig.setMaxSize(widthW * 0.125, heightW * 0.11);
+        buttonHomeBig.setMinSize(widthW * 0.125, heightW * 0.11);
         buttonHomeBig.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -400,7 +413,7 @@ public class MainWindow extends Stage {
         Label lParticipant = new Label("Wybierz uczestnika, aby zobaczyć jego wypisy:");
         lParticipant.setId("VBPC_hbFirst_Item_lParticipant");
         participant = new ComboBox();
-        participant.setPrefWidth(200);
+        participant.setPrefWidth(widthW * 0.17);
         
         confirm = new Button("Potwierdź");
         confirm.setId("windows7");
@@ -439,7 +452,7 @@ public class MainWindow extends Stage {
         
         resetviev = new Button("Resetuj widok");
         resetviev.setId("windows7");
-        resetviev.setPrefWidth(250);
+        resetviev.setPrefWidth(widthW * 0.2);
         
         resetviev.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -464,7 +477,7 @@ public class MainWindow extends Stage {
         
         generetRaport = new Button("Generator raportów");
         generetRaport.setId("windows7");
-        generetRaport.setPrefWidth(250);
+        generetRaport.setPrefWidth(widthW * 0.2);
         
         generetRaport.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -489,7 +502,7 @@ public class MainWindow extends Stage {
         
         adminChange = new Button("Zobacz szczegóły");
         adminChange.setId("windows7");
-        adminChange.setPrefWidth(250);
+        adminChange.setPrefWidth(widthW * 0.2);
         
         adminChange.setOnAction(new EventHandler<ActionEvent>() {
             @Override

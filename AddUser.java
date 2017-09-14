@@ -32,6 +32,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -41,9 +42,11 @@ public class AddUser extends Stage {
     
     DB db;
     Statement st;
+    AddUser user;
     
     private final Scene SceneParticipant;
     private final BorderPane borderPane;
+    public Stage changePas;
     private GridPane gridAdd, gridUpdate;
     private StackPane stack;
     private HBox hbGridAddTitle, hbuttonMenu, hbGridAddParButton, hbGridUpdateComBoxPar;
@@ -77,7 +80,8 @@ public class AddUser extends Stage {
        
        SceneParticipant.getStylesheets().add(Testowa.class.getResource("AddParticipant.css").toExternalForm());
        setScene(SceneParticipant);
-       setTitle("Dodaj wychowawce");      
+       setTitle("Dodaj wychowawce");
+       
     }
     
     private void prepareScene(){
@@ -114,14 +118,20 @@ public class AddUser extends Stage {
             @Override
             public void handle(ActionEvent event) {
                 NamePar.clear();
+                NamePar.setId("");
                 LastNamePar.clear();
+                LastNamePar.setId("");
                 NickUser.clear();
+                NickUser.setId("");
                 PassUser.clear();
+                PassUser.setId("");
                 PassUserR.clear();
+                PassUserR.setId("");
                 simplerole.setSelected(false);
                 adminrole.setSelected(false);
                 role = -1;
                 lNick.setText("Nick: ");
+                lInfo.setText("");
                 prepareGridPaneAdd();
                 borderPane.setCenter(gridAdd);
                 setTitle("Dodaj wychowawce"); 
@@ -132,7 +142,11 @@ public class AddUser extends Stage {
             @Override
             public void handle(ActionEvent event) {
                 NamePar.clear();
+                NamePar.setId("");
                 LastNamePar.clear();
+                LastNamePar.setId("");
+                PassUser.clear();
+                PassUserR.clear();
                 simplerole.setSelected(false);
                 adminrole.setSelected(false);
                 prepareGridUpdate();
@@ -517,7 +531,16 @@ public class AddUser extends Stage {
                 changePas.setScene(changePasUser);
                 changePas.setTitle("Zmiana Hasła");
                 changePas.show();
-                changePasButton.setDisable(true);
+                borderPane.setDisable(true);
+                user.hide();
+                
+                changePas.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(final WindowEvent event) {
+                            borderPane.setDisable(false);
+                            user.show();
+                    }
+                });
                 
             changePassword.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -537,7 +560,8 @@ public class AddUser extends Stage {
                             String pass_new = "SET PASSWORD FOR '" + data.get(ItemId).nick + "'@'localhost' = PASSWORD('" + PassUser.getText() +"');";
                             sqlQuery(pass_new);
                             changePas.close();
-                            changePasButton.setDisable(false);
+                            borderPane.setDisable(false);
+                            user.show();
                         }
                         else lInfo.setText("Hasła nie pasują!");
                     }
@@ -677,5 +701,6 @@ public class AddUser extends Stage {
         catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }    
-    }    
+    }   
+    
 }
