@@ -68,6 +68,7 @@ public class AdminPane extends Stage {
                 participant.addParticipantData();
                 participant.resizableProperty().setValue(Boolean.FALSE);
                 participant.show();
+                buttonAdminPane(participant);
                 close();
             }
         });
@@ -80,9 +81,11 @@ public class AdminPane extends Stage {
             public void handle(ActionEvent event) {
                 AddTarget target = new AddTarget(); 
                 target.db = db;
+                target.window = window;
                 target.addTargetData();
                 target.resizableProperty().setValue(Boolean.FALSE);
                 target.show();
+                buttonAdminPane(target);
                 close();
             }
         });
@@ -96,9 +99,11 @@ public class AdminPane extends Stage {
                 user = new AddUser();
                 user.db = db;
                 user.user = user;
+                user.window = window;
                 user.addUserData();
                 user.resizableProperty().setValue(Boolean.FALSE);                
                 user.show();
+                buttonAdminPane(user);
                 close();
             }
         });
@@ -110,9 +115,19 @@ public class AdminPane extends Stage {
             @Override
             public void handle(ActionEvent event) {
                 close();
+                window.buttonAdmin.setDisable(false);
             }
         });
         
         vbpane.getChildren().addAll(hbGridAddTitle, buttonAddParticipant, buttonAddTarget, buttonAddUser, buttonClose);   
-     }    
+     }
+     
+    public void buttonAdminPane(Stage o){
+        o.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(final WindowEvent event) {
+                window.buttonAdmin.setDisable(false);
+            }
+        });    
+    } 
 }

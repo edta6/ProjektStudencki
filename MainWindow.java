@@ -47,12 +47,12 @@ public class MainWindow extends Stage {
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
     private HBox hbuttonMenu, hbnameLogin, hbAdminChange; 
-    private Button buttonAdmin, buttonClose, confirm, resetviev, generetRaport, adminChange;
+    private Button buttonClose, confirm, resetviev, generetRaport, adminChange;
     private Label uTextNow, Zdarzenie;
     private Label nameLogin, userText;
     public ComboBox participant;
     public Label two, four, six;
-    public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig;
+    Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig, buttonAdmin;
     private ObservableList<ParticipantData> dataComboPar;
     public  TableColumn lp;
     public  TableView<ExreData> table;
@@ -99,10 +99,7 @@ public class MainWindow extends Stage {
         
         widthW = width * 0.93;
         heightW = height * 0.85;
-        
-//        System.out.println(widthW);
-//        System.out.println(heightW);
-        
+         
         borderPane = new BorderPane();
         
         prepareBorderPaneTop ();
@@ -149,7 +146,15 @@ public class MainWindow extends Stage {
                 panelAdmin.db = db;
                 panelAdmin.window = window;
                 panelAdmin.resizableProperty().setValue(Boolean.FALSE);
-                panelAdmin.showAndWait();
+                panelAdmin.show();
+                buttonAdmin.setDisable(true);
+                
+                panelAdmin.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(final WindowEvent event) {
+                        buttonAdmin.setDisable(false);
+                    }
+                });
             }
         });
         

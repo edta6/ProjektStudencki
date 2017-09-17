@@ -43,6 +43,7 @@ public class AddUser extends Stage {
     DB db;
     Statement st;
     AddUser user;
+    MainWindow window;
     
     private final Scene SceneParticipant;
     private final BorderPane borderPane;
@@ -158,6 +159,7 @@ public class AddUser extends Stage {
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                window.buttonAdmin.setDisable(false);
                 close();
              }
         });                       
@@ -560,12 +562,15 @@ public class AddUser extends Stage {
                             String pass_new = "SET PASSWORD FOR '" + data.get(ItemId).nick + "'@'localhost' = PASSWORD('" + PassUser.getText() +"');";
                             sqlQuery(pass_new);
                             changePas.close();
+                            PassUser.clear();
+                            PassUser.setId("");
+                            PassUserR.clear();
+                            PassUserR.setId("");
                             borderPane.setDisable(false);
                             user.show();
                         }
                         else lInfo.setText("Hasła nie pasują!");
                     }
-
                  }
             });
                    

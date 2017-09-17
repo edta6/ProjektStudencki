@@ -38,6 +38,7 @@ public class AddTarget extends Stage{
 
     DB db;
     Statement st;
+    MainWindow window;
     
     private final Scene SceneTarget;
     private final BorderPane borderPane;
@@ -350,7 +351,7 @@ public class AddTarget extends Stage{
             @Override
             public void handle(ActionEvent event) {
             close();
-            
+            window.buttonAdmin.setDisable(false);
             }
         });                       
     }
