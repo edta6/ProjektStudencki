@@ -256,7 +256,7 @@ public final class DeSubscribe extends Stage {
                         lInfo.setText("");
                     }
                     else {
-                        lInfo.setText("Godzina powrótu jest wcześniejsza\nniż godzina wyjścia!");
+                        lInfo.setText("Godzina powrotu jest wcześniejsza\nniż godzina wyjścia!");
                         flag = 1;
                         exit.setDisable(true);
                     }
