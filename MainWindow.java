@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package testowa;
+package OHP;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -47,12 +47,12 @@ public class MainWindow extends Stage {
     private Scene sceneMainWindow;
     private BorderPane borderPane, bottomPane;
     private HBox hbuttonMenu, hbnameLogin, hbAdminChange; 
-    private Button buttonClose, confirm, resetviev, generetRaport, adminChange;
+    private Button buttonClose, confirm, resetviev, adminChange;
     private Label uTextNow, Zdarzenie;
     private Label nameLogin, userText;
     public ComboBox participant;
     public Label two, four, six;
-    Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig, buttonAdmin;
+    public Button buttonExit, buttonHome, buttonExitBig, buttonHomeBig, buttonAdmin, generetRaport;
     private ObservableList<ParticipantData> dataComboPar;
     public  TableColumn lp;
     public  TableView<ExreData> table;
@@ -487,7 +487,19 @@ public class MainWindow extends Stage {
         generetRaport.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-      
+                
+                RaportGen raport = new RaportGen();
+                raport.db=db;
+                raport.window=window;
+                raport.addParticipantData();
+                raport.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(final WindowEvent event) {
+                        generetRaport.setDisable(false);
+                    }
+                });
+                generetRaport.setDisable(true);
+                raport.show();
             }
         });
         

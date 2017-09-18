@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package testowa;
+package OHP;
 
 import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -467,6 +467,7 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
             @Override
             public void handle(ActionEvent event) {
             close();
+            window.buttonAdmin.setDisable(false);
             }
         });                       
     }
@@ -613,5 +614,6 @@ public class AddParticipant extends Stage { //klasa okienka dodawania uczestniko
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }    
-    }       
+    }  
+    
 }

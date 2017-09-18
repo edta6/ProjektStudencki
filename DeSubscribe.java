@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package testowa;
+package OHP;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import testowa.TimeTextFieldTest.TimeTextField;
+import OHP.TimeTextFieldTest.TimeTextField;
 
 /**
  *

@@ -102,3 +102,34 @@ and open the template in the editor.
     -fx-text-box-border: red;
     -fx-focus-color: red;
 }
+
+#borderPaneBodyVboxTop {
+    -fx-spacing: 10;
+    -fx-padding: 20 20 20 20;
+    -fx-border-color: black;
+    -fx-border-width: 0 2 2 2;
+    -fx-border-style: solid;  
+        -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+}
+
+#partVbox {
+   -fx-padding: 10 40 10 40; 
+   -fx-spacing: 30;
+    -fx-border-color: black;
+    -fx-border-width: 0 2 2 2;
+    -fx-border-style: solid;  
+        -fx-background-color: 
+        #000000,
+        linear-gradient(#7ebcea, #2f4b8f),
+        linear-gradient(#426ab7, #263e75),
+        linear-gradient(#395cab, #223768);
+    -fx-background-insets: 0,1,2,3;
+    -fx-background-radius: 3,2,2,2;
+   -fx-alignment: TOP_CENTER;
+}

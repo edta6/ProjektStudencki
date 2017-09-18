@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package testowa;
+package OHP;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -16,7 +16,7 @@ import javafx.beans.property.StringProperty;
  */
 public class ExreData {
     
-    private final SimpleIntegerProperty id_exre;
+    public final SimpleIntegerProperty id_exre;
     String Par_first_name;
     String Par_last_name;
     String Target_name;

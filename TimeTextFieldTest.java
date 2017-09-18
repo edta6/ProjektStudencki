@@ -3,13 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package testowa;
+package OHP;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.regex.Pattern;
-import javafx.application.Application;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -24,17 +20,8 @@ import javafx.stage.Stage;
  *
  * @author xxx
  */
-public class TimeTextFieldTest extends Application {
+public class TimeTextFieldTest extends Stage {
 
-    public static void main(String[] args) {
-        launch(args);
-
-    }
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     public static class TimeTextField extends TextField {
 
