@@ -6,21 +6,17 @@
 package OHP;
 
 import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.events.Event;
-import com.itextpdf.kernel.events.IEventHandler;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.VerticalAlignment;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -59,6 +55,7 @@ public class RaportGen extends Stage {
     MainWindow window;
     
     private final Scene SceneParticipant;
+    @SuppressWarnings("FieldMayBeFinal")
     private BorderPane borderPane, borderPaneBody;
     private StackPane stack;
     private HBox hbGridAddTitle, hbuttonMenu;
@@ -178,6 +175,7 @@ public class RaportGen extends Stage {
         
         timeCheckBox = new RadioButton("okres czasu");
         timeCheckBox.setId("lNamePar");
+        timeCheckBox.setDisable(true);
         
         timeCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -342,34 +340,39 @@ public class RaportGen extends Stage {
         
         PdfWriter writer = new PdfWriter(dest);
         PdfDocument pdf = new PdfDocument(writer);
-        PageOrientationsEventHandler eventHandler = new PageOrientationsEventHandler();
-        pdf.addEventHandler(PdfDocumentEvent.START_PAGE, eventHandler);
         
-        try (Document document = new Document(pdf)) {
-            
+        try (Document document = new Document((pdf), PageSize.A4.rotate())) {
             
             PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN, "CP1250", true);
             document.setFont(font);
             document.add(new Paragraph("Raport z Książki Wyjść i Wyjazdów dla uczestnika"));
-            document.add(new Paragraph(data.get(2).FullNameParProperty().getValue()));
-            Table table = new Table(6);
-            table.addCell(new Cell(2,1).setTextAlignment(TextAlignment.CENTER).add("Lp"));
-            table.addCell(new Cell(2,1).setTextAlignment(TextAlignment.CENTER).add("Cel Wyjśćia"));
-            table.addCell(new Cell(1,2).setTextAlignment(TextAlignment.CENTER).add("Wyszedł"));
-            table.addCell(new Cell(2,1).setTextAlignment(TextAlignment.CENTER).add("Przewidywane miejsce pobytu"));
-            table.addCell(new Cell(1,2).setTextAlignment(TextAlignment.CENTER).add("Powrócił"));
-            table.addCell(new Cell(1,1).setTextAlignment(TextAlignment.CENTER).add("dnia"));
-            table.addCell(new Cell(1,1).setTextAlignment(TextAlignment.CENTER).add("godzina"));
-            table.addCell(new Cell(1,1).setTextAlignment(TextAlignment.CENTER).add("dnia"));
-            table.addCell(new Cell(1,1).setTextAlignment(TextAlignment.CENTER).add("godzina"));
-//            table.addCell(new Cell(2,1).setTextAlignment(TextAlignment.CENTER).add("Uwagi"));
-//            for (ExreData data1 : data) {
-//                table.addCell(Integer.toString(data1.id_exre.getValue()));
-//                table.addCell(data1.TargetProperty().getValue());
-//          }
+            document.add(new Paragraph(data.get(1).FullNameParProperty().getValue()));
+            Table table = new Table(8);
+            table.addCell(createCell("Lp",2,1,6));
+            table.addCell(createCell("Cel Wyjśćia",2,1,14));
+            table.addCell(createCell("Wyszedł",1,2,12));
+            table.addCell(createCell("Przewidywane miejsce pobytu",2,1,14));
+            table.addCell(createCell("Powrócił",1,2,12));
+            table.addCell(createCell("Uwagi",2,1,14));
+            for( int i=0; i<2; i++) {
+                table.addCell(createCell("dnia",1,1,7));
+                table.addCell(createCell("godzina",1,1,5));
+            }
+
+            for (ExreData data1 : data) {
+                table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add(Integer.toString(data1.id_exre.getValue())));
+                table.addCell(createCell(data1.TargetProperty().getValue(),1,1,14));
+                table.addCell(createCell(data1.DateExProperty().getValue(),1,1,7));
+                table.addCell(createCell(data1.HourExProperty().getValue(),1,1,5));
+                table.addCell(createCell(data1.PlaceProperty().getValue(),1,1,14));
+                table.addCell(createCell(data1.DateReProperty().getValue(),1,1,7));
+                table.addCell(createCell(data1.HourReProperty().getValue(),1,1,5));
+                table.addCell(createCell(data1.CommProperty().getValue(),1,1,14));
+            }
+            
             document.add(table);
-            eventHandler.setOrientation(SEASCAPE);
             document.close();
+            
     }   catch (IOException ex) {
             Logger.getLogger(AddParticipant.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -411,23 +414,15 @@ public class RaportGen extends Stage {
         } catch(Exception ex) {}
     }
     
-    public static class PageOrientationsEventHandler implements IEventHandler {
-        protected PdfNumber orientation = PORTRAIT;
- 
-        public void setOrientation(PdfNumber orientation) {
-            this.orientation = orientation;
-        }
- 
-        @Override
-        public void handleEvent(Event event) {
-            PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
-            docEvent.getPage().put(PdfName.Rotate, orientation);
-        }
+    public Cell createCell(String a, int row, int col, float width) throws IOException {
+        
+        Cell nowa = new Cell(row, col);
+        nowa.setTextAlignment(TextAlignment.CENTER);
+        nowa.setVerticalAlignment(VerticalAlignment.MIDDLE);
+        nowa.add(a);
+        nowa.setWidthPercent(width);
+        
+        return nowa;
     }
-    
-    public static final PdfNumber INVERTEDPORTRAIT = new PdfNumber(180);
-    public static final PdfNumber LANDSCAPE = new PdfNumber(90);
-    public static final PdfNumber PORTRAIT = new PdfNumber(0);
-    public static final PdfNumber SEASCAPE = new PdfNumber(270);
-     
+       
 }

@@ -514,34 +514,34 @@ public class MainWindow extends Stage {
         hbGeneretRaport.getChildren().addAll(lhbGeneretRaport, enterMenuStack2, generetRaport);
         HBox.setHgrow(enterMenuStack2, Priority.ALWAYS);
         
-        Label lAdminChange = new Label("Przycisk do przęglądu i zmiany wszystkich wypisów:");
-        lAdminChange.setId("VBPC_hbFirst_Item_lParticipant");
-        
-        adminChange = new Button("Zobacz szczegóły");
-        adminChange.setId("windows7");
-        adminChange.setPrefWidth(widthW * 0.2);
-        
-        adminChange.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-      
-            }
-        });
-        
-        Label pomoc2 = new Label(" ");
-        StackPane enterMenuStack3 = new StackPane();
-        enterMenuStack3.getChildren().add(pomoc2);
-        enterMenuStack3.setAlignment(Pos.CENTER_RIGHT);
-        
-        hbAdminChange = new HBox();
-        hbAdminChange.setId("VBPC_hbTwo");
-        hbAdminChange.setAlignment(Pos.CENTER_LEFT);
-        hbAdminChange.getChildren().addAll(lAdminChange, enterMenuStack3, adminChange);
-        HBox.setHgrow(enterMenuStack3, Priority.ALWAYS);
+//        Label lAdminChange = new Label("Przycisk do przęglądu i zmiany wszystkich wypisów:");
+//        lAdminChange.setId("VBPC_hbFirst_Item_lParticipant");
+//        
+//        adminChange = new Button("Zobacz szczegóły");
+//        adminChange.setId("windows7");
+//        adminChange.setPrefWidth(widthW * 0.2);
+//        
+//        adminChange.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//      
+//            }
+//        });
+//        
+//        Label pomoc2 = new Label(" ");
+//        StackPane enterMenuStack3 = new StackPane();
+//        enterMenuStack3.getChildren().add(pomoc2);
+//        enterMenuStack3.setAlignment(Pos.CENTER_RIGHT);
+//        
+//        hbAdminChange = new HBox();
+//        hbAdminChange.setId("VBPC_hbTwo");
+//        hbAdminChange.setAlignment(Pos.CENTER_LEFT);
+//        hbAdminChange.getChildren().addAll(lAdminChange, enterMenuStack3, adminChange);
+//        HBox.setHgrow(enterMenuStack3, Priority.ALWAYS);
         
         VBox VboxBottomPaneCenter = new VBox();
         VboxBottomPaneCenter.setId("VboxBottomPaneCenter");
-        VboxBottomPaneCenter.getChildren().addAll(hbGridComBoxPar, hbResetViev, hbGeneretRaport, hbAdminChange);
+        VboxBottomPaneCenter.getChildren().addAll(hbGridComBoxPar, hbResetViev, hbGeneretRaport /*, hbAdminChange*/);
         
         bottomPane.setCenter(VboxBottomPaneCenter);
                            
